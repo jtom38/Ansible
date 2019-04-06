@@ -1,0 +1,36 @@
+
+- name: Install PowerShell Core
+  hosts: linux
+  #debugger: always
+
+  tasks:
+    - name: Check if PowerShell is installed
+      #register: command_result
+      failed_when: "'Failed' PowerShell is already installed."
+      apt:
+        name: powershell
+        state: absent
+
+    - name: Install Microsoft GPG Key
+      get_url:
+        url: https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb
+        dest: /tmp/
+
+    - name: Register GPG Key
+      become: true
+      become_method: sudo
+      apt: deb="/tmp/packages-microsoft-prod.deb"
+      #command: dpkg -i ~/packages-microsoft-prod.deb
+      
+    - name: Update repos and Install PowerShell Core
+      become: true
+      become_method: sudo
+      apt:
+        name: powershell
+        update_cache: yes
+        state: present
+
+    - name: Remove Extra files
+      file:
+        state: absent
+        path: /tmp/packages-microsoft-prod.deb
