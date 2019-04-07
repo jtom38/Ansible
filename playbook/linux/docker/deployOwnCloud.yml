@@ -1,0 +1,12 @@
+
+- name: Deploy OwnCloud
+  hosts: linux
+  become_method: sudo
+
+  tasks:
+    - name: Check if docker is installed.
+      apt:
+        name: docker
+        state: present
+    
+    
