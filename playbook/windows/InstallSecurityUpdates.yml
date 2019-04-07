@@ -3,5 +3,18 @@
   hosts: windows
 
   tasks:
-    - name: 
+    - name: Check for updates.  Log the needed updates.
+      win_updates:
+        state: searched
+        category_name:
+          - SecurityUpdates
+          - CriticalUpdates
+          - UpdateRollups
+        #log_path: C:\ansible-Updates.txt
+        register: updates
+    
+    - name: return report
+      debug:
+        var: updates 
+
 
