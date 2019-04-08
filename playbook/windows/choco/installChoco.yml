@@ -1,0 +1,17 @@
+
+- name: Install Choco
+  hosts: windows
+
+  tasks:
+    - name: Install Choco
+      win_chocolatey:
+        name: chocolatey
+        source: internal_repo
+
+      # This was added because of breaking changes added to choco that conflicted with ansible
+      # https://github.com/ansible/ansible/pull/53841
+    - name: Disable EnhancedExitCodes
+      win_chocolatey_feature:
+        name: useEnhancedExitCodes
+        state: disabled
+

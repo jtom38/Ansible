@@ -3,5 +3,15 @@
   hosts: windows
 
   tasks:
-    - name: 
+    - name: Check for updates.  Log the needed updates.
+      win_updates:
+        state: searched
+        category_name:
+          - SecurityUpdates
+          - CriticalUpdates
+          - UpdateRollups
+      register: output
+    
+    - debug: msg="{{ output }}"
+
 
