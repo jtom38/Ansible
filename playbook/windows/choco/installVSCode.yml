@@ -5,8 +5,8 @@
   tasks:
     - name: Install Package
       win_chocolatey:
-        name: brave
+        name: vscode
         state: present
       register: output
 
-    - debug: msg="{{ output  }}"
+    - debug: msg="{{ output }}"
