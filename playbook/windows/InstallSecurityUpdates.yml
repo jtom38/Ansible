@@ -10,11 +10,8 @@
           - SecurityUpdates
           - CriticalUpdates
           - UpdateRollups
-        #log_path: C:\ansible-Updates.txt
-        register: updates
+      register: output
     
-    - name: return report
-      debug:
-        var: updates 
+    - debug: msg="{{ output }}"
 
 

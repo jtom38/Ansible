@@ -1,0 +1,16 @@
+
+# This is a testing script to see what box you are connected to.
+# We will run a shell command to get our output.
+
+- name: Get SystemInfo
+  hosts: windows
+
+  tasks:
+        - name: Run SystemInfo
+          win_shell: systeminfo
+          register: sysinfo
+
+        - debug: msg="{{ sysinfo.stdout_lines  }}"
+          
+  
+

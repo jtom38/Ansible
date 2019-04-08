@@ -1,0 +1,11 @@
+
+- name: Install .Net Core Runtime
+  hosts: windows
+
+  tasks:
+    - name: Download binary
+      win_get_url:
+        - 
+
+
+      https://dotnet.microsoft.com/download/thank-you/dotnet-

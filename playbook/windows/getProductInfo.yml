@@ -1,0 +1,11 @@
+
+- name: Get Windows info
+  hosts: windows
+
+  tasks:
+    - name: get stuff
+      win_product_facts:
+      register: output
+
+    - debug: msg="{{ output }}"
+

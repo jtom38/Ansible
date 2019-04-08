@@ -1,0 +1,12 @@
+
+- name: Install Brave Browser from Choco
+  hosts: windows
+
+  tasks:
+    - name: Install Package
+      win_chocolatey:
+        name: brave
+        state: present
+      register: output
+
+    - debug: msg="{{ output  }}"
