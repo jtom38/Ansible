@@ -1,5 +1,25 @@
 # Ansible
 
+This repo contains my configuration and setup for my ansible use.  Use at your own risk.
+
+## Installers
+
+### New hosts
+
+#### Linux
+
+```bash
+wget https://github.com/luther38/Ansible/blob/master/scripts/installAnsible.sh
+chmod 777 installAnsible.sh
+./installOpenSSH.sh
+```
+
+#### Windows
+
+```powershell
+
+```
+
 Review the installAnsible.sh for quick setup.
 
 Make sure you run the commands out of this folder so things work as desired.
