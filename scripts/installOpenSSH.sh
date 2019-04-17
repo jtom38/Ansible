@@ -21,6 +21,7 @@ sudo systemctl status ssh
 
 echo "Install is complete.  Test ansible!"
 echo "If you want to change the port, check this scripts config on how to"
+echo "With the ansible device you will want to connect to this host to get the SSH key from it before testing."
 
 # Edit /etc/ssh/sshd_config
 # Uncomment #Port 22
