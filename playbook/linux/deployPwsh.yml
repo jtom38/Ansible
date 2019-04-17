@@ -5,11 +5,9 @@
 
   tasks:
     - name: Check if PowerShell is installed
-      #register: command_result
       failed_when: "'Failed' PowerShell is already installed."
       apt:
         name: powershell
-        state: absent
 
     - name: Install Microsoft GPG Key
       get_url:

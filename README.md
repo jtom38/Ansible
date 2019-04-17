@@ -1,33 +1,32 @@
 # Ansible
 
-First things first, install ansible
+Review the installAnsible.sh for quick setup.
 
-```bash
-sudo apt-get install ansible
-```
+Make sure you run the commands out of this folder so things work as desired.
 
 ## Configuration
 
-[doc](https://docs.ansible.com/ansible/latest/reference_appendices/config.html#ansible-configuration-settings-locations)
-
-The configuration file
-Changes can be made and used in a configuration file which will be searched for in the following order:
-
-ANSIBLE_CONFIG (environment variable if set)
-ansible.cfg (in the current directory)
-~/.ansible.cfg (in the home directory)
-/etc/ansible/ansible.cfg
+I have a basic configuration file in place at the root of this folder for anisble to find.
 
 ## Inventory
 
-The default location for inventory should be placed in /etc/ansible/hosts.  But you can always overwrite what inventory file is used with the -i flag
+I have a template file in place that should only be used as a refrence.  Make a copy of that file and name it hosts then update that file.
+
+## Testing Inventory
 
 
 
-## Cheat Sheet
-
-Quick notes for ansible via cmd
+### Testing Linux devices
 
 ```bash
-ansible -i \inb
+ansible linux -i hosts -m ping
 ```
+
+### Testing Windows devices
+
+```bash
+ansible windows -i hosts -m win_ping
+```
+
+
+
