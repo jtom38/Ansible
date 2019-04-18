@@ -1,0 +1,11 @@
+
+
+- name: Install Nagios Core Dependancies
+  hosts: nagios
+
+  tasks:
+        - name: Update apt
+        apt:
+                update_cache: yes
+
+

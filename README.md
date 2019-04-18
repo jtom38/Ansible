@@ -17,12 +17,11 @@ chmod 777 installAnsible.sh
 #### Windows
 
 ```powershell
-
+$url = "https://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1"
+$file = "$env:temp\ConfigureRemotingForAnsible.ps1"
+(New-Object -TypeName System.Net.WebClient).DownloadFile($url, $file)
+powershell.exe -ExecutionPolicy ByPass -File $file
 ```
-
-Review the installAnsible.sh for quick setup.
-
-Make sure you run the commands out of this folder so things work as desired.
 
 ## Configuration
 
@@ -31,10 +30,6 @@ I have a basic configuration file in place at the root of this folder for anisbl
 ## Inventory
 
 I have a template file in place that should only be used as a refrence.  Make a copy of that file and name it hosts then update that file.
-
-## Testing Inventory
-
-
 
 ### Testing Linux devices
 
@@ -48,5 +43,7 @@ ansible linux -i hosts -m ping
 ansible windows -i hosts -m win_ping
 ```
 
+## Unit Testing
 
+Still in the works
 
