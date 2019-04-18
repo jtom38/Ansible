@@ -30,6 +30,13 @@
             become: true
             apt:
                     name: kibana
+         
+          - name: Update kibana config
+            become: true
+            copy:
+                    src: kibana.yml
+                    dest: /etc/kibana/
+                    backup: yes
 
           - name: Allow port 5601
             become: true
