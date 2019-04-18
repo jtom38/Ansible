@@ -31,10 +31,22 @@
           apt:
                 name: elasticsearch
 
-        - name: Start Service
+        - name: Allow port 9200 though UFW
+          become: true
+          ufw:
+                rule: allow
+                port: 9200
+                #name: ElasticSearch
+
+        - name: Service reload daemon
+          become: true
           systemd:
                 daemon_reload: yes
-                enabled: yes
+
+        - name: Start ElasticSearch
+          become: true
+          systemd:
                 name: elasticsearch
+                enabled: yes
 
 
