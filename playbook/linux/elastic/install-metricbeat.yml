@@ -13,7 +13,32 @@
           apt:
                   deb: /tmp/metricbeat.deb
 
-        - name: enable modules
+        # - name: enable modules
+        
+        - name: define kibana host:
+          become: true
+          lineinfile:
+                  path: /etc/metricbeat/metricbeat.yml
+                  regex: '^host: "localhost:5601"'
+                  insertafter: '#host: "localhost:5601"'
+                  line: 'host: '
 
 
         - name: config where to send information
+
+        - name: systemd - daemon reload
+          become: true
+          systemd:
+                  daemon_reload: yes
+
+        - name: Enable service on system startup
+          become: true
+          systemd:
+                  name: metricbeat
+                  enabed: yes
+
+        - name: systemd - restart Metricbeat
+          become: true
+          systemd:
+                  name: metricbeat
+                  state: restarted
