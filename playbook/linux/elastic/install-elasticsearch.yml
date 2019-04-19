@@ -63,10 +63,15 @@
           systemd:
                 daemon_reload: yes
 
-        - name: Start ElasticSearch
+        - name: systemd - enable ElasticSearch on startup
           become: true
           systemd:
                 name: elasticsearch
                 enabled: yes
 
+        - name: systemd - restart ElasticSearch service
+          become: true
+          systemd:
+                name: elasticsearch
+                state: restarted
 
