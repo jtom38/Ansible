@@ -1,0 +1,19 @@
+
+- name: Install Metricbeat
+  hosts: elastic
+
+  tasks:
+        - name: Download metricbeat deb
+          get_url:
+                  url: 'https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-7.0.0-amd64.deb'
+                  dest: /tmp/metricbeat.deb
+
+        - name: Install metricbeat
+          become: true
+          apt:
+                  deb: /tmp/metricbeat.deb
+
+        - name: enable modules
+
+
+        - name: config where to send information

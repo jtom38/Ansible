@@ -14,6 +14,7 @@
         - name: Install apt-transport-https
           apt:
                 name: apt-transport-https
+
         - name: Add Elastic Repo
           become: true
           copy:
@@ -43,6 +44,7 @@
                   line: 'cluster.name: elastic-DMI01'
                   backup: yes
 
+        # We define the name of the host we are working on
         - name: Config - node.name
           become: true
           lineinfile:
@@ -51,6 +53,7 @@
                   insertafter: '#node.name: node-1'
                   line: "node.name: {{ ansible_eno1.ipv4.address  }}"
 
+        # Allow 9200 so we can access it over the network
         - name: Allow port 9200 though UFW
           become: true
           ufw:
