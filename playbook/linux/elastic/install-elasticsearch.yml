@@ -31,6 +31,26 @@
           apt:
                 name: elasticsearch
 
+
+        # This will work on a new install.
+        # If any changes are needed to the cluster name on an existing install add another function
+        - name: Config - cluster.name 'elastic-DMI01' 
+          become: true
+          lineinfile:
+                  path: /etc/elasticsearch/elasticsearch.yml
+                  regex: '^cluster.name'
+                  insertafter: '#cluster.name: my-application'
+                  line: 'cluster.name: elastic-DMI01'
+                  backup: yes
+
+        - name: Config - node.name
+          become: true
+          lineinfile:
+                  path: /etc/elasticsearch/elasticsearch.yml
+                  regex: '^node.name'
+                  insertafter: '#node.name: node-1'
+                  line: "node.name: {{ ansible_eno1.ipv4.address  }}"
+
         - name: Allow port 9200 though UFW
           become: true
           ufw:
