@@ -1,0 +1,29 @@
+
+# - name: enable modules
+
+- name: define kibana host
+  become: true
+  lineinfile:
+        path: /etc/metricbeat/metricbeat.yml
+        regex: '^host: "dm-nagios.local:5601"'
+        insertafter: '#host: "localhost:5601"'
+        line: 'host: "dm-nagios.local:5601"'
+
+#- name: config where to send information
+
+- name: systemd - daemon reload
+  become: true
+  systemd:
+        daemon_reload: yes
+
+- name: Enable service on system startup
+  become: true
+  systemd:
+        name: metricbeat
+        enabled: yes
+
+- name: systemd - restart Metricbeat
+  become: true
+  systemd:
+        name: metricbeat
+        state: restarted

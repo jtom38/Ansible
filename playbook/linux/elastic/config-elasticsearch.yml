@@ -1,0 +1,44 @@
+# This will work on a new install.
+# If any changes are needed to the cluster name on an existing install add another function
+- name: Config - cluster.name 'elastic-DMI01'
+become: true
+lineinfile:
+        path: /etc/elasticsearch/elasticsearch.yml
+        regex: '^cluster.name'
+        insertafter: '#cluster.name: my-application'
+        line: 'cluster.name: elastic-DMI01'
+        backup: yes
+
+# We define the name of the host we are working on
+- name: Config - node.name
+become: true
+lineinfile:
+        path: /etc/elasticsearch/elasticsearch.yml
+        regex: '^node.name'
+        insertafter: '#node.name: node-1'
+        line: "node.name: {{ ansible_eno1.ipv4.address  }}"
+
+# Allow 9200 so we can access it over the network
+- name: Allow port 9200 though UFW
+become: true
+ufw:
+        rule: allow
+        port: 9200
+        #name: ElasticSearch
+
+- name: Service reload daemon
+become: true
+systemd:
+        daemon_reload: yes
+
+- name: systemd - enable ElasticSearch on startup
+become: true
+systemd:
+        name: elasticsearch
+        enabled: yes
+
+- name: systemd - restart ElasticSearch service
+become: true
+systemd:
+        name: elasticsearch
+        state: restarted

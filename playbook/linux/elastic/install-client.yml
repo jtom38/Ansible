@@ -1,0 +1,25 @@
+---
+# This will install all the client parts needed for elastic to monitor client computers
+
+- name: Install elastic client programs
+  hosts: linux
+
+  tasks:
+        - name: Install elastic repo
+          include: install-repo.yml
+
+        - name: Install elastic heartbeat
+          become: true
+          apt:
+                name: heartbeat-elastic
+        
+        - name: Configure elastic heartbeazt
+          include: config-heartbeat.yml
+
+        - name: Install elastic metricbeat
+          become: true
+          apt:
+                name: metricbeat
+
+        - name: Configure elastic metricbeat
+          include: config-metricbeat.yml
