@@ -11,6 +11,22 @@
 
 #- name: config where to send information
 
+        #- name: Remove builtin elasticsearch host config
+        #  become: true
+        #  replace:
+        #dest: /etc/metricbeat/metricbeat.yml
+        #regexp: '^hosts: ["localhost:9200"]'
+        #replace: '#hosts: ["localhost:9200"]'
+  
+- name: define elasticsearch host
+  become: true
+  lineinfile:
+        path: /etc/metricbeat/metricbeat.yml
+        regex: '^hosts: ["localhost:9200"]'
+        insertafter: 'hosts: ["localhost:9200"]'
+        line: 'hosts: ["dm-nagios.local:9200"]'
+
+
 - name: systemd - daemon reload
   become: true
   systemd:
