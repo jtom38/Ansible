@@ -5,6 +5,17 @@
 
 - name: Install Elastic server programs
   hosts: elastic
+  vars:
+          cluster_name: 'logging-dev'
+          node_name: 'dev-data-01'
+          node_master: 'true'
+          node_data: 'true'
+          path_data: '/var/lib/elasticsearch'
+          path_logs: '/var/log/elasticsearch'
+          network_host: {{ ansible_default_ipv4.address }}
+          http_port: '9200'
+          transport_host: 'localhost'
+          transport_port: '9300'
 
   tasks:
         - name: Install Requrements
