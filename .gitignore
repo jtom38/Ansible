@@ -4,3 +4,8 @@
 
 .DS_Store
 hosts
+
+# Ignore Terraform state files.
+.tfstate
+.tfstate.backup
+.terraform*
