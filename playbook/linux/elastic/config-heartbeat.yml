@@ -7,6 +7,15 @@
         insertafter: '#host: "localhost:5601"'
         line: 'host: "dm-nagios.local:5601"'
 
+- name: define elasticsearch host
+  become: true
+  lineinfile:
+        path: /etc/heartbeat/heartbeat.yml
+        regexp: 'hosts: \["localhost:9200"\]'
+        line: '  host: ["dm-nagios.local:9200"]'
+        state: present
+        backrefs: yes
+
 - name: systemd - daemon reload
   become: true
   systemd:

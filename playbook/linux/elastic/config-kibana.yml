@@ -17,13 +17,22 @@
           insertafter: '#server.host'
           line: 'server.host: {{ ansible_eno1.ipv4.address  }}'
 
+- name: Config - server.name
+  become: true
+  lineinfile:
+          path: /etc/kibana/kibana.yml
+          regexp: 'server.name:'
+          insertafter: '#server.name: "your-hostname"'
+          line: 'server.name: {{ ansible_hostname }}'
+
 - name: Config - elasticsearch.hosts
   become: true
   lineinfile:
           path: /etc/kibana/kibana.yml
           regex: '^elasticsearch.hosts'
           insertafter: '#elasticsearch.hosts:'
-          line: 'elasticsearch.hosts: ["http://localhost:9200"]'
+          #line: 'elasticsearch.hosts: ["http://{{ ansible_eno1.ipv4.address }}:9200"]'
+          line: 'elasticsearch.hosts: ["https://localhost:9200"]'
 
 - name: Allow port 5601
   become: true

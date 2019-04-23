@@ -1,0 +1,14 @@
+
+
+- name: TemplateTest
+  hosts: elasticClients
+  vars:
+          var01: 'Hello world'
+          var02: "Why did I start at 1?"
+
+
+  tasks:
+          - name: ansible template
+            template:
+                    src: templateTest.j2
+                    dest: /tmp/templatetest.txt
