@@ -1,0 +1,27 @@
+---
+# This will install all elastic services for a elastic server
+# ElasticSearch
+# Kibana
+
+- name: Install Elastic server programs
+  hosts: elastic
+
+  tasks:
+        - name: Install Requrements
+          include: install-repo.yml
+
+        - name: Install ElasticSearch from apt
+          become: true
+          apt:
+                name: elasticsearch
+
+        - name: Configure ElasticSearch
+          include: config-elasticsearch.yml
+
+        - name: Install Kibana from apt
+          become: true
+          apt: 
+                name: kibana
+
+        - name: Configure Kibana
+          include: config-kibana.yml

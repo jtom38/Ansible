@@ -1,0 +1,25 @@
+---
+- name: define kibana host
+  become: true
+  lineinfile:
+        path: /etc/heartbeat/heartbeat.yml
+        regex: '^host: "dm-nagios.local:5601"'
+        insertafter: '#host: "localhost:5601"'
+        line: 'host: "dm-nagios.local:5601"'
+
+- name: systemd - daemon reload
+  become: true
+  systemd:
+        daemon_reload: yes
+
+- name: system - enable on startup
+  become: true
+  systemd:
+        name: heartbeat-elastic
+        enabled: yes
+
+- name: systemd - restart heartbeat
+  become: true
+  systemd:
+        name: heartbeat-elastic
+        state: restarted
