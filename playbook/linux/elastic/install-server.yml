@@ -6,16 +6,17 @@
 - name: Install Elastic server programs
   hosts: elastic
   vars:
-          cluster_name: 'logging-dev'
-          node_name: 'dev-data-01'
-          node_master: 'true'
-          node_data: 'true'
-          path_data: '/var/lib/elasticsearch'
-          path_logs: '/var/log/elasticsearch'
-          network_host: {{ ansible_default_ipv4.address }}
-          http_port: '9200'
-          transport_host: 'localhost'
-          transport_port: '9300'
+          es_cluster_name: 'logging-dev'
+          es_node_name: 'dev-data-01'
+          es_node_master: 'true'
+          es_node_data: 'true'
+          es_path_data: '/var/lib/elasticsearch'
+          es_path_logs: '/var/log/elasticsearch'
+          es_http_port: '9200'
+          es_transport_host: 'localhost'
+          es_transport_port: '9300'
+          k_server_port: 5601
+          k_elasticsearch_hosts: 'http://192.168.0.173:9200'
 
   tasks:
         - name: Install Requrements
@@ -26,6 +27,12 @@
           apt:
                 name: elasticsearch
 
+        - name: Update ElasticSearch config
+          become: true
+          template:
+                  src: elasticsearch.j2
+                  dest: /etc/elasticsearch/elasticsearch.yml
+
         - name: Configure ElasticSearch
           include: config-elasticsearch.yml
 
@@ -35,4 +42,16 @@
                 name: kibana
 
         - name: Configure Kibana
+          become: true
+          template:
+                  src: kibana.j2
+                  dest: /etc/kibana/kibana.yml
+
+        - name: Configure Kibana
           include: config-kibana.yml
+
+          #- name: Install Logstash
+          #become: true
+          #apt:
+                  #name: logstash
+                                    
