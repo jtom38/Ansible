@@ -7,6 +7,7 @@
           elastic_version: '7.0.0'
           url_heartbeat: 'https://artifacts.elastic.co/downloads/beats/heartbeat/heartbeat-{{elastic_version}}-windows-x86_64.zip'
           url_metricbeat: 'https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-7.0.0-windows-x86_64.zip'
+          url_winlogbeat: 'https://artifacts.elastic.co/downloads/beats/winlogbeat/winlogbeat-7.0.0-windows-x86_64.zip'
           temp: 'c:\temp\'
           program_files: 'c:\program files\'
           kibana_host: '192.168.0.173:5601'
@@ -22,4 +23,5 @@
         - name: Install Metricbeat
           include: config-win-metricbeat.yml
 
-
+        - name: Install WinLogbeat
+          include: config-winlogbeat.yml

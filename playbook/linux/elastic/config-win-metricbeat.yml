@@ -23,17 +23,34 @@
         src: metricbeat.j2
         dest: C:\Program Files\Metricbeat\metricbeat.yml
 
+- name: Check if metricbeat service is installed
+  register: service_metricbeat
+  win_service:
+          name: metricbeat
+
+- debug: var=service_metricbeat
+
 - name: Install Metricbeat service
   win_command: powershell.exe -ExecutionPolicy ByPass -File install-service-metricbeat.ps1
   args:
         chdir: C:\program files\metricbeat\
+  when: service_metricbeat.exists == false
 
-- name: stop service
+- name: check status of metricbeat service
+  register: service_metricbeat
+  win_service:
+          name: metricbeat
+
+- debug: var=service_metricbeat
+
+- name: restart service
   win_service:
         name: metricbeat
-        state: stopped
+        state: restarted
+  when: service_metricbeat.state == 'started'
                         
 - name: start service
   win_service:
         name: metricbeat
         state: started
+  when: service_metricbeat.state == 'stopped'
