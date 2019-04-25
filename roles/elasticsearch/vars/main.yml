@@ -1,0 +1,24 @@
+---
+
+# configuration for elasticsearch.yml
+#
+# Defines the name of the cluster we are going to deploy to
+cluster_name: 'Elastic-Cluster'
+
+# Defines the name of the node
+node_name: 'hostname'
+
+node_master: true
+
+node_data: true
+
+path_data: '/var/lib/elasticsearch'
+
+path_logs: '/var/lib/elasticsearch'
+
+http_port: 9200
+
+transport_host: localhost
+
+transport_tcp_port: 9300
+

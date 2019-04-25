@@ -1,0 +1,11 @@
+
+- name: testing elastic role
+  hosts: elastic
+
+  tasks:
+        - name: test role
+          import_role: 
+                name: elasticsearch
+          vars:
+                cluster_name: "cookies"
+

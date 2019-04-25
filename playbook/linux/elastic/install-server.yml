@@ -50,6 +50,11 @@
         - name: Configure Kibana
           include: config-kibana.yml
 
+        - name: Install Heartbeat
+          become: true
+          apt:
+                  name: heartbeat
+
           #- name: Install Logstash
           #become: true
           #apt:
