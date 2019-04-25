@@ -28,7 +28,7 @@
   win_service:
           name: metricbeat
 
-- debug: var=service_metricbeat
+#- debug: var=service_metricbeat
 
 - name: Install Metricbeat service
   win_command: powershell.exe -ExecutionPolicy ByPass -File install-service-metricbeat.ps1
@@ -41,7 +41,7 @@
   win_service:
           name: metricbeat
 
-- debug: var=service_metricbeat
+#- debug: var=service_metricbeat
 
 - name: restart service
   win_service:

@@ -15,7 +15,7 @@ heartbeat.config.monitors:
   # Directory + glob pattern to search for configuration files
   path: ${path.config}/monitors.d/*.yml
   # If enabled, heartbeat will periodically check the config.monitors path for changes
-  reload.enabled: false
+  reload.enabled: true
   # How often to check for changes
   reload.period: 5s
 
@@ -24,10 +24,10 @@ heartbeat.monitors:
 - type: http
 
   # List or urls to query
-  urls: ["http://localhost:9200"]
+  urls: ["http://localhost:9200", "https://www.directorsmortgage.com", "https://www.usadirectfunding.com":]
 
   # Configure task schedule
-  schedule: '@every 10s'
+  schedule: '@every 60s'
 
   # Total test connection and data exchange timeout
   #timeout: 16s
@@ -43,7 +43,7 @@ setup.template.settings:
 
 # The name of the shipper that publishes the network data. It can be used to group
 # all the transactions sent by a single shipper in the web interface.
-#name:
+name: {{ ansible_hostname }}
 
 # The tags of the shipper are included in their own field with each
 # transaction published.
