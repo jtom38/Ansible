@@ -1,32 +1,11 @@
 ---
 # tasks file for elasticsearcih
 
-- name: Test role
-  debug: var=cluster_name
+#- name: Test role
+#debug: var=cluster_name
 
-- name: Install Elastic Repo
-  include: install-repo.yml
+- name: Running role - elasticsearch
+  include: ubuntu.yml
   when: ansible_distribution == "Ubuntu"
 
-  #- name: Install Elastic GPG Key
-  #become: true
-  #apt_key:
-    #url: "https://artifacts.elastic.co/GPG-KEY-elasticsearch"
-    #state: present
-    #id: 46095ACC8548582C1A2699A9D27D666CD88E42B4
-
-#- name: Install apt-transport-https
- # become: true
-   #apt:
-     #name: apt-transport-https
-
-#- name: Add Elastic Repo
-# become: true
-# copy:
-  #   dest: '/etc/apt/sources.list.d/elastic-7.x.list'
-  # content: "deb https://artifacts.elastic.co/packages/7.x/apt stable main"
-
-  #- name: Update Packages
-  #become: true
-  # apt:
-    # update_cache: true
+ 

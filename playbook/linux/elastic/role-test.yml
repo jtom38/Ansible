@@ -7,5 +7,9 @@
           import_role: 
                 name: elasticsearch
           vars:
-                cluster_name: "cookies"
+                cluster_name: "loggin-dev"
+                ufw_http_port: true
+                ufw_transport_port: true
+                systemd_enabled: true
+                systemd_restart: true
 
