@@ -13,3 +13,13 @@
                 systemd_enabled: true
                 systemd_restart: true
 
+        - name: install kibana
+          import_role:
+                name: kibana
+          vars:
+                server_port: 5601
+                server_host: ansible_default_ipv4.address
+                server_name: ansible_hostname
+                elasticsearch_hosts:
+                        - http://192.168.0.173:9200
+

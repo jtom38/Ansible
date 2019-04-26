@@ -19,5 +19,4 @@
 - name: systemd - restart Kibana 
   become: true
   systemd:
-          name: kibana
-          state: restarted
+          name: kiband
