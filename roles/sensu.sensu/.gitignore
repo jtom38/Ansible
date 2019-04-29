@@ -1,0 +1,4 @@
+site
+molecule/shared/data/*
+!molecule/shared/data/static/
+molecule/*/cache/
