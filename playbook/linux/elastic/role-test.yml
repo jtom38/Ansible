@@ -3,7 +3,13 @@
   hosts: elastic
 
   tasks:
-        - name: test role
+        - name: install/Update Java
+          become: true
+          import_role: 
+                name: geerlingguy.java
+
+        - name: install elasticsearch
+          become: true
           import_role: 
                 name: elasticsearch
           vars:
@@ -12,15 +18,17 @@
                 ufw_transport_port: true
                 systemd_enabled: true
                 systemd_restart: true
+                node_name: "{{ ansible_hostname }}"
+                discovery_seed_hosts: "'127.0.0.1', '172.20.0.142', '192.168.0.173'"
+                cluster_initial_master_nodes: " '172.20.0.142', '192.168.0.173' "
 
         - name: install kibana
+          become: true
           import_role:
                 name: kibana
           vars:
                 server_port: 5601
-                server_host: ansible_default_ipv4.address
-                server_name: ansible_hostname
-                elasticsearch_hosts:
-                        #- http://192.168.0.173:9200
-                        - http://192.168.0.60:9200
+                server_host: "{{ ansible_default_ipv4.address }}"
+                server_name: "{{ ansible_hostname }}"
+                elasticsearch_hosts: " 'http://localhost:9200', 'http://dm-nagios.local:9200', 'http://172.20.0.142:9200' "
 

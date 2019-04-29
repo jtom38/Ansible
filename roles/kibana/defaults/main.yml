@@ -34,5 +34,5 @@ server_host: localhost
 server_name: ansible_hostname
 
 # The URLs of the Elasticsearch instances to use for all your queries.
-elasticsearch_hosts:
-  - localhost
+# example: " 'http://localhost:9200', 'http://192.168.0.1:9200' "
+elasticsearch_hosts: " 'http://localhost:9200' "

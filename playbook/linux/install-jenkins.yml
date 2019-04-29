@@ -1,0 +1,19 @@
+
+---
+
+- name: install Jenkins
+  hosts: jenkins
+
+  tasks:
+        - name: Install Java
+          become: true
+          included_role:
+                  name: geerlingguy.java
+          vars:
+
+        # https://galaxy.ansible.com/geerlingguy/jenkins
+        - name: Install Jenkins
+          become: true
+          included_role:
+                  name: geerlingguy.jenkins
+

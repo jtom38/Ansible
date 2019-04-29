@@ -22,3 +22,6 @@ transport_host: localhost
 
 transport_tcp_port: 9300
 
+discovery_seed_hosts: 172.0.0.1
+
+discovery_seed_hosts_def: "discovery.seed_hosts: [ {{ discovery_seed_hosts }} ]"

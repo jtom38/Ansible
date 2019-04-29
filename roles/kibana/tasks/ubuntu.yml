@@ -17,11 +17,11 @@
     backup: true
     
 - name: Allow 5601 though UFW
-  when: ufw_server_port == true_
+  when: ufw_server_port == true
   become: true
   ufw:
           rule: allow
-          port: server_port
+          port: "{{ server_port }}"
 
 - name: systemd - daemon reload
   become: true

@@ -29,6 +29,16 @@ transport_host: 'localhost'
 transport_port: 9300
 
 #
+# Discovery
+#
+
+# Format data like so " '172.0.0.1', '192.168.0.0' "
+discovery_seed_host: "127.0.0.1"
+
+#cluster_initial_master_nodes: ["node-1", "node-2"]
+cluster_initial_master_nodes: "'node-1', 'node-2'"
+
+#
 # Firewall configuration
 #
 

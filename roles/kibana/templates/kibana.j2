@@ -8,7 +8,7 @@ server.port: {{ server_port }}
 # To allow connections from remote users, set this parameter to a non-loopback address.
 #server.host: "192.168.0.173"
 
-server.host: {{ server_host }}
+server.host: "{{ server_host }}"
 
 # Enables you to specify a path to mount Kibana at if you are running behind a proxy.
 # Use the `server.rewriteBasePath` setting to tell Kibana if it should remove the basePath
@@ -26,13 +26,11 @@ server.host: {{ server_host }}
 #server.maxPayloadBytes: 1048576
 
 # The Kibana server's name.  This is used for display purposes.
-server.name: {{ server_name }}
+server.name: "{{ server_name }}"
 
 # The URLs of the Elasticsearch instances to use for all your queries.
 #elasticsearch.hosts: ["http://localhost:9200"]
-elasticsearch.hosts: [
-	{{ elasticsearch_hosts }}
-]
+elasticsearch.hosts: [ {{ elasticsearch_hosts }} ]
 
 # When this setting's value is true Kibana uses the hostname specified in the server.host
 # setting. When the value of this setting is false, Kibana uses the hostname of the host
