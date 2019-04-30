@@ -28,6 +28,7 @@
                 name: kibana
           vars:
                 server_port: 5601
+                ufw_server_port: true
                 server_host: "{{ ansible_default_ipv4.address }}"
                 server_name: "{{ ansible_hostname }}"
                 elasticsearch_hosts: " 'http://localhost:9200', 'http://dm-nagios.local:9200', 'http://172.20.0.142:9200' "

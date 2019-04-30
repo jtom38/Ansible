@@ -1,0 +1,29 @@
+
+- name: Install elastic repo
+  include: install-repo.yml
+
+- name: Install metricbeat from apt
+  apt:
+    name: metricbeat
+
+- name: Update config
+  template:
+    src: metricbeat.j2
+    dest: /etc/metricbeat/metricbeat.yml
+
+- name: enable system module
+  shell: metricbeat modules enable system
+
+- name: systemd - daemon reload
+  systemd:
+        daemon_reload: yes
+
+- name: Enable service on system startup
+  systemd:
+        name: metricbeat
+        enabled: yes
+
+- name: systemd - restart Metricbeat
+  systemd:
+        name: metricbeat
+        state: restarted
