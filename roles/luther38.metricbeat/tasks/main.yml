@@ -2,6 +2,5 @@
 # tasks file for luther38.metricbeat
 
 - name: Install Metricbeat on Ubuntu
-  become: true
-  when:: ansible_distribution == 'Ubuntu'
+  when: ansible_distribution == 'Ubuntu'
   include: ubuntu.yml

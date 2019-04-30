@@ -17,10 +17,7 @@
   copy:
         dest: '/etc/apt/sources.list.d/elastic-7.x.list'
         content: "deb https://artifacts.elastic.co/packages/7.x/apt stable main"
-  # copy:
-  #src: elastic-7.x.list
-  #     dest: /etc/apt/sources.list.d/
-  #     backup: yes
+
 
 - name: Update Packages
   become: true

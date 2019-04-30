@@ -1,2 +1,12 @@
 ---
 # defaults file for luther38.metricbeat
+
+
+kibana_host: 127.0.0.1
+
+# Example: '["172.0.0.1:9200"]'
+elasticsearch_hosts: '["172.0.0.1:9200"]'
+
+systemd_enable_service: true
+
+systemd_restart_service: true
