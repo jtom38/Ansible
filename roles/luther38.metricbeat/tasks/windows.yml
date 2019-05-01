@@ -1,32 +1,62 @@
-
+#https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-7.0.0-windows-x86_64.zip
 # This will install metricbeat on a windows host.
 ---
-- name:  make temp folder
+- name:  make tmp folder
   win_file:
     path: c:\tmp\
     state: directory
 
 - name: download metricbeat
   win_get_url:
-    url: '{{ url_metricbeat }}'
-    dest: 'C:\temp\metricbeat-{{ version }}.zip'
+    url: 'https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-{{ version }}-windows-x86_64.zip'
+    dest: 'C:\tmp\metricbeat-{{ version }}.zip'
     force: no
 
 - name: unzip metricbeat
   win_unzip:
-    src: c:\temp\metricbeat-{{ version }}.zip
-    dest: C:\temp\metricbeat-{{ version }}\
-    creates: C:\temp\metricbeat-{{ version }}\
+    src: c:\tmp\metricbeat-{{ version }}.zip
+    dest: C:\tmp\metricbeat-{{ version }}\
+    creates: C:\tmp\metricbeat-{{ version }}\
 
 - name: Copy metricbeat-{{ version }} folder
-  win_command: powershell.exe copy-item -Path 'c:\temp\metricbeat-{{ version }}\heartbeat-{{ version }}-windows-x86_64\' -Filter * -Recurse -Destination 'C:\Program Files\Metricbeat\'
+  win_command: powershell.exe copy-item -Path 'c:\tmp\metricbeat-{{ version }}\metricbeat-{{ version }}-windows-x86_64\' -Filter * -Recurse -Destination 'C:\Program Files\Metricbeat\'
   args:
     creates: C:\Program Files\Metricbeat\
 
-- name: Update template
+- name: Update tmplate
   win_template:
     src: metricbeat.j2
     dest: C:\Program Files\Metricbeat\metricbeat.yml
 
+- name: Check if metricbeat service is installed
+  register: service
+  win_service:
+          name: metricbeat
+
+#- debug: var=service
+
 - name: Install Metricbeat service
-  win_command: powershell.exe -ExecutionPolicy ByPass -File 'C:\Program Files\Metricbeat\install-service-metricbeat.ps1'
+  when: service.exists == false
+  win_command: powershell.exe -ExecutionPolicy ByPass -File install-service-metricbeat.ps1
+  args:
+        chdir: C:\program files\metricbeat\
+
+- name: check status of metricbeat service
+  register: service
+  win_service:
+          name: metricbeat
+
+#- debug: var=service
+
+- name: restart service
+  when: service.state == 'running'
+  win_service:
+        name: metricbeat
+        state: restarted
+                        
+- name: start service
+  when: service.state == 'stopped'
+  win_service:
+        name: metricbeat
+        state: started
+

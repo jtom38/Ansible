@@ -1,0 +1,16 @@
+---
+
+- name: Install WinLogBeat
+  hosts: elasticClients
+
+  tasks:
+        - name: Install WinLogBeat
+          become: true
+          include_role:
+                  name: luther38.winlogbeat
+          vars:
+                  version: 7.0.0
+                  kibana_host: 172.20.0.142
+                  elasticsearch_hosts: '["172.20.0.142:9200"]' 
+ 
+

@@ -6,5 +6,5 @@
   include: ubuntu.yml
 
 - name: Install Metricbeat on Windows
-  when: ansible_distribution == 'Windows'
+  when: ansible_os_family == 'Windows'
   include: windows.yml
