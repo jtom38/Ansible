@@ -1,2 +1,5 @@
 ---
 # defaults file for luther38.logstash
+
+
+http_host: '127.0.0.1'

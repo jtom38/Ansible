@@ -1,2 +1,6 @@
 ---
 # tasks file for luther38.logstash
+
+- name: Install Logstash on Ubuntu
+  when: ansible_distribution == 'Ubuntu'
+  include: ubuntu.yml
