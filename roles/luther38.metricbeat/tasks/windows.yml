@@ -1,0 +1,32 @@
+
+# This will install metricbeat on a windows host.
+---
+- name:  make temp folder
+  win_file:
+    path: c:\tmp\
+    state: directory
+
+- name: download metricbeat
+  win_get_url:
+    url: '{{ url_metricbeat }}'
+    dest: 'C:\temp\metricbeat-{{ version }}.zip'
+    force: no
+
+- name: unzip metricbeat
+  win_unzip:
+    src: c:\temp\metricbeat-{{ version }}.zip
+    dest: C:\temp\metricbeat-{{ version }}\
+    creates: C:\temp\metricbeat-{{ version }}\
+
+- name: Copy metricbeat-{{ version }} folder
+  win_command: powershell.exe copy-item -Path 'c:\temp\metricbeat-{{ version }}\heartbeat-{{ version }}-windows-x86_64\' -Filter * -Recurse -Destination 'C:\Program Files\Metricbeat\'
+  args:
+    creates: C:\Program Files\Metricbeat\
+
+- name: Update template
+  win_template:
+    src: metricbeat.j2
+    dest: C:\Program Files\Metricbeat\metricbeat.yml
+
+- name: Install Metricbeat service
+  win_command: powershell.exe -ExecutionPolicy ByPass -File 'C:\Program Files\Metricbeat\install-service-metricbeat.ps1'
