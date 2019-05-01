@@ -1,2 +1,15 @@
 ---
 # defaults file for luther38.filebeat
+
+# config file
+
+# Single value
+kibana_host: 127.0.0.1
+
+# Takes multiple values 
+# "'127.0.0.1:9200', '0.0.0.0:9200'"
+elasticsearch_hosts: "'127.0.0.1:9200'"
+
+# Systemd
+systemd_enable: false
+systemd_restart: false
