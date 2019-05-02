@@ -6,14 +6,16 @@
 
   tasks:
         - name: Install Java
-          become: true
-          included_role:
+          become: yes
+          import_role:
                   name: geerlingguy.java
-          vars:
 
-        # https://galaxy.ansible.com/geerlingguy/jenkins
-        - name: Install Jenkins
-          become: true
-          included_role:
-                  name: geerlingguy.jenkins
+         # https://galaxy.ansible.com/geerlingguy/jenkins
+         - name: Install Jenkins
+           become: yes
+           import_role:
+                   name: geerlingguy.jenkins
+           vars:
+                   jenkins_package_state: latest
+                   jenkins_http_port: 8080
 
