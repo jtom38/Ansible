@@ -1,0 +1,19 @@
+
+- name: testing sensu
+  hosts: linux
+
+  tasks:
+        - name: install sensu server
+          become: true
+          import_role:
+                  name: sensu.sensu
+          vars:
+                  # Sever vars
+                  sensu_deploy_redis_server: true
+                  sensu_deploy_rabbitmq_server: true
+                  sensu_master: true
+                  #sensu_include_plugins: true
+                  sensu_include_dashboard: true
+                  # Client Vars
+                  #sensu_client: true
+                  

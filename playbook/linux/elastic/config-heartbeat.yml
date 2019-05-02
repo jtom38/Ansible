@@ -1,11 +1,4 @@
 ---
-- name: define kibana host
-  become: true
-  lineinfile:
-        path: /etc/heartbeat/heartbeat.yml
-        regex: '^host: "dm-nagios.local:5601"'
-        insertafter: '#host: "localhost:5601"'
-        line: 'host: "dm-nagios.local:5601"'
 
 - name: systemd - daemon reload
   become: true

@@ -1,0 +1,30 @@
+
+
+- name: Add Elastic repo
+  include: install-repo.yml
+
+- name: Install ElasticSearch from apt
+  become: true
+  apt:
+    name: filebeat
+
+- name: Update config
+  become: true
+  template:
+    src: filebeat.j2
+    dest: /etc/filebeat/filebeat.yml
+    backup: yes
+
+- name: systemd enable elasticsearch
+  become: true
+  when: systemd_enabled == true
+  systemd:
+    name: filebeat
+    enabled: true
+
+- name: systemd restart elasticsearch
+  become: true
+  when: systemd_restart == true
+  systemd:
+    name: filebeat
+    state: restarted

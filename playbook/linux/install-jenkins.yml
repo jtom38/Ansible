@@ -1,0 +1,21 @@
+
+---
+
+- name: install Jenkins
+  hosts: jenkins
+
+  tasks:
+        - name: Install Java
+          become: yes
+          import_role:
+                  name: geerlingguy.java
+
+         # https://galaxy.ansible.com/geerlingguy/jenkins
+         - name: Install Jenkins
+           become: yes
+           import_role:
+                   name: geerlingguy.jenkins
+           vars:
+                   jenkins_package_state: latest
+                   jenkins_http_port: 8080
+

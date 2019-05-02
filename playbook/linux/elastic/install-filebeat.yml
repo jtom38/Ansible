@@ -1,0 +1,14 @@
+
+- name: Install Filebeat
+  hosts: elasticClients
+
+  tasks:
+        - name: Install Filebeat
+          include_role:
+                  name: luther38.filebeat
+          vars:
+                  kibana_host: 172.20.0.142:5601
+                  elasticsearch_hosts: "'172.20.0.142:9200'"
+                  systemd_enabled: true
+                  systemd_restart: true
+

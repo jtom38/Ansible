@@ -1,0 +1,6 @@
+---
+# tasks file for luther38.winlogbeat
+
+- name: Install Metricbeat on Windows
+  when: ansible_os_family == 'Windows'
+  include: windows.yml

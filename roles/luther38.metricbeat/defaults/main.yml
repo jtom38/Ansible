@@ -1,0 +1,18 @@
+---
+# defaults file for luther38.metricbeat
+
+# Defines the kibana host we will send data to
+kibana_host: 127.0.0.1
+
+# Example: '["172.0.0.1:9200"]'
+elasticsearch_hosts: '["172.0.0.1:9200"]'
+
+# tells ansible to enable the service on startup
+systemd_enable_service: true
+
+# Tells ansible to restart the service after everything has been done
+systemd_restart_service: true
+
+# Defines the version of metricbeat to install.
+# Currently used for Windows
+version: 7.0.0

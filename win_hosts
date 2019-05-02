@@ -1,0 +1,69 @@
+
+# All Linux hosts go here
+# Use this for general updates
+[linux]
+192.168.0.151
+dm-nagios.local
+
+[linux:vars]
+ansible_user=ansible
+ansible_connection=ssh
+ansible_password=$$DMI@@dm1n!$$
+ansible_become_method=sudo
+ansible_become_pass=$$DMI@@dm1n!$$
+ansible_python_interpreter=/usr/bin/python3
+
+
+# Nagios devices are placed here so we can send nagios configs to these devices
+[nagios]
+#dm-nagios.local
+#192.168.0.173
+
+[nagios:vars]
+ansible_user=ansible
+ansible_connection=ssh
+ansible_password=$$DMI@@dm1n!$$
+ansible_become_method=sudo
+ansible_become_pass=$$DMI@@dm1n!$$
+ansible_python_interpreter=/usr/bin/python3
+
+
+# This defines elastic servers
+[elastic]
+#192.168.0.151
+dm-nagios.local
+
+[elastic:vars]
+ansible_user=ansible
+ansible_connection=ssh
+ansible_password=$$DMI@@dm1n!$$
+ansible_become_method=sudo
+ansible_become_pass=$$DMI@@dm1n!$$
+ansible_python_interpreter=/usr/bin/python3
+
+# This defines elastic clients
+[elasticClients]
+192.168.0.151
+
+
+[elasticClients:vars]
+ansible_user=ansible
+ansible_connection=ssh
+ansible_password=$$DMI@@dm1n!$$
+ansible_become_method=sudo
+ansible_become_pass=$$DMI@@dm1n!$$
+ansible_python_interpreter=/usr/bin/python3
+
+
+# All Windows servers go here
+[windows]
+dmi-dev01
+
+[windows:vars]
+ansible_user=svcansible
+ansible_password=$$DMI@@dm1n!$$
+ansible_connection=winrm
+ansible_port=5986
+ansible_winrm_scheme=https
+ansible_winrm_transport=ntlm
+ansible_winrm_server_cert_validation=ignore
