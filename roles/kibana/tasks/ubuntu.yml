@@ -1,0 +1,42 @@
+
+#  This handles the install and configuration for ubuntu based computers.
+
+- name: Install Elastic Repo
+  include: install-repo.yml
+
+- name: Intall Kibana from APT
+  become: true
+  apt:
+    name: kibana
+
+- name: Update Kibana config from template
+  become: true
+  template:
+    src: kibana.j2
+    dest: /etc/kibana/kibana.yml
+    backup: true
+    
+- name: Allow 5601 though UFW
+  when: ufw_server_port == true
+  become: true
+  ufw:
+          rule: allow
+          port: "{{ server_port }}"
+
+- name: systemd - daemon reload
+  become: true
+  systemd:
+          daemon_reload: yes
+
+- name: systemd - enable Kibana on startup
+  when: systemd_enabled == true
+  become: true
+  systemd:
+          name: kibana
+          enabled: yes
+
+- name: systemd - restart Kibana
+  when: systemd_restart == true
+  become: true
+  systemd:
+          name: kiband

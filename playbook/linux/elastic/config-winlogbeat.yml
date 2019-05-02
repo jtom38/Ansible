@@ -1,0 +1,52 @@
+---
+# This will install all the client parts needed for elastic to monitor client computers
+
+- name: download winlogbeat
+  win_get_url:
+        url: '{{ url_winlogbeat }}'
+        dest: 'C:\temp\winlogbeat-{{ elastic_version }}.zip'
+        force: no
+
+- name: unzip winlogbeat
+  win_unzip:
+        src: c:\temp\winlogbeat-{{ elastic_version }}.zip
+        dest: C:\temp\winlogbeat-{{ elastic_version }}\
+        creates: C:\temp\winlogbeat-{{ elastic_version }}\
+
+- name: Copy winlogbeat-{{ elastic_version }} folder
+  win_command: powershell.exe copy-item -Path 'c:\temp\winlogbeat-{{ elastic_version }}\winlogbeat-{{ elastic_version }}-windows-x86_64\' -Filter * -Recurse -Destination 'C:\Program Files\winlogbeat\'
+  args:
+        creates: C:\Program Files\winlogbeat\
+
+- name: Update template
+  win_template:
+        src: winlogbeat.j2
+        dest: C:\Program Files\winlogbeat\winlogbeat.yml
+
+- name: check for service
+  register: service
+  win_service:
+          name: winlogbeat
+
+- name: Install winlogbeat service
+  win_command: powershell.exe -ExecutionPolicy ByPass -File install-service-winlogbeat.ps1
+  args:
+        chdir: C:\program files\winlogbeat\
+  when: service.exists == false
+
+- name: check status of service
+  register: service
+  win_service:
+          name: winlogbeat
+
+- name: restart service
+  win_service:
+        name: winlogbeat
+        state: restarted
+  when: service.state == 'started'
+                        
+- name: start service
+  win_service:
+        name: winlogbeat
+        state: started
+  when: service.state == 'stopped'

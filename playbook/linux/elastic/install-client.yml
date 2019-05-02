@@ -2,7 +2,10 @@
 # This will install all the client parts needed for elastic to monitor client computers
 
 - name: Install elastic client programs
-  hosts: linux
+  hosts: elasticClients
+  vars:
+          kibana_host: '192.168.0.173:5601'
+          elasticsearch_hosts: '["192.168.0.173:9200"]'
 
   tasks:
         - name: Install elastic repo
@@ -11,15 +14,27 @@
         - name: Install elastic heartbeat
           become: true
           apt:
-                name: heartbeat-elastic
+          name: heartbeat-elastic
+
+        - name: Update Heatbeat config
+          become: true
+          template:
+                  src: heartbeat.j2
+                  dest: /etc/heartbeat/heartbeat.yml
         
-        - name: Configure elastic heartbeazt
+        - name: Configure elastic heartbeat
           include: config-heartbeat.yml
 
         - name: Install elastic metricbeat
           become: true
           apt:
                 name: metricbeat
+
+        - name: Update Metricbeat config
+          become: true
+          template:
+                  src: metricbeat.j2
+                  dest: /etc/metricbeat/metricbeat.yml
 
         - name: Configure elastic metricbeat
           include: config-metricbeat.yml

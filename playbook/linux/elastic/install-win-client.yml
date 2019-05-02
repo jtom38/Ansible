@@ -1,0 +1,27 @@
+---
+# This will install all the client parts needed for elastic to monitor client computers
+
+- name: Install elastic client programs
+  hosts: windows
+  vars:
+          elastic_version: '7.0.0'
+          url_heartbeat: 'https://artifacts.elastic.co/downloads/beats/heartbeat/heartbeat-{{elastic_version}}-windows-x86_64.zip'
+          url_metricbeat: 'https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-7.0.0-windows-x86_64.zip'
+          url_winlogbeat: 'https://artifacts.elastic.co/downloads/beats/winlogbeat/winlogbeat-7.0.0-windows-x86_64.zip'
+          temp: 'c:\temp\'
+          program_files: 'c:\program files\'
+          kibana_host: '192.168.0.173:5601'
+          elasticsearch_hosts: '["192.168.0.173:9200"]'
+
+
+  tasks:
+        - name:  make temp folder
+          win_file:
+                  path: c:\temp\
+                  state: directory
+
+        - name: Install Metricbeat
+          include: config-win-metricbeat.yml
+
+        - name: Install WinLogbeat
+          include: config-winlogbeat.yml

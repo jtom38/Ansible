@@ -1,0 +1,56 @@
+---
+# This will install all the client parts needed for elastic to monitor client computers
+
+- name: Install elastic client programs
+  hosts: windows
+  vars:
+          elastic_version: '7.0.0'
+          url_heartbeat: 'https://artifacts.elastic.co/downloads/beats/heartbeat/heartbeat-{{elastic_version}}-windows-x86_64.zip'
+          temp: 'c:\temp\'
+          program_files: 'c:\program files\'
+          kibana_host: '192.168.0.173:5601'
+          elasticsearch_hosts: '["192.168.0.173:9200"]'
+
+
+  tasks:
+        - name:  make temp folder
+          win_file:
+                  path: c:\temp\
+                  state: directory
+
+        - name: download heartbeat
+          win_get_url:
+                  url: '{{ url_heartbeat }}'
+                  dest: 'C:\temp\heartbeat-{{ elastic_version }}.zip'
+                  force: no
+
+        - name: unzip heartbeat
+          win_unzip:
+                  src: c:\temp\heartbeat-{{ elastic_version }}.zip
+                  dest: C:\temp\heartbeat-{{ elastic_version }}\
+                  creates: C:\temp\heartbeat-{{ elastic_version }}\
+
+        - name: Copy heartbeat-{{ elastic_version }} folder
+          win_command: powershell.exe copy-item -Path 'c:\temp\heartbeat-{{ elastic_version }}\heartbeat-{{ elastic_version }}-windows-x86_64\' -Filter * -Recurse -Destination 'C:\Program Files\Heartbeat\'
+          args:
+                  creates: C:\Program Files\Heartbeat\
+
+        - name: Update template
+          win_template:
+                  src: heartbeat.j2
+                  dest: C:\Program Files\Heartbeat\heartbeat.yml
+
+        - name: Install Heartbeat service
+          win_command: powershell.exe -ExecutionPolicy ByPass -File install-service-heartbeat.ps1
+          args:
+                  chdir: C:\program files\heartbeat\
+
+        - name: stop heartbeat service
+          win_service:
+                  name: heartbeat
+                  state: stopped
+                        
+        - name: start heartbeat service
+          win_service:
+                  name: heartbeat
+                  state: started

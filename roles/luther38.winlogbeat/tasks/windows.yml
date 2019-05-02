@@ -1,0 +1,62 @@
+#https://artifacts.elastic.co/downloads/beats/winlogbeat/metricbeat-7.0.0-windows-x86_64.zip
+# This will install winlogbeat on a windows host.
+---
+- name:  make tmp folder
+  win_file:
+    path: c:\tmp\
+    state: directory
+
+- name: download winlogbeat
+  win_get_url:
+    url: 'https://artifacts.elastic.co/downloads/beats/winlogbeat/winlogbeat-{{ version }}-windows-x86_64.zip'
+    dest: 'C:\tmp\winlogbeat-{{ version }}.zip'
+    force: no
+
+- name: unzip winlogbeat
+  win_unzip:
+    src: c:\tmp\winlogbeat-{{ version }}.zip
+    dest: C:\tmp\winlogbeat-{{ version }}\
+    creates: C:\tmp\winlogbeat-{{ version }}\
+
+- name: Copy winlogbeat-{{ version }} folder
+  win_command: powershell.exe copy-item -Path 'c:\tmp\winlogbeat-{{ version }}\winlogbeat-{{ version }}-windows-x86_64\' -Filter * -Recurse -Destination 'C:\Program Files\Winlogbeat\'
+  args:
+    creates: C:\Program Files\Winlogbeat\
+
+- name: Update tmplate
+  win_template:
+    src: winlogbeat.j2
+    dest: C:\Program Files\Winlogbeat\winlogbeat.yml
+
+- name: Check if winlogbeat service is installed
+  register: service
+  win_service:
+          name: winlogbeat
+
+#- debug: var=service
+
+- name: Install service
+  when: service.exists == false
+  win_command: powershell.exe -ExecutionPolicy ByPass -File install-service-winlogbeat.ps1
+  args:
+        chdir: C:\program files\winlogbeat\
+
+- name: check status service
+  register: service
+  win_service:
+          name: winlogbeat
+
+#- debug: var=service
+
+- name: restart service
+  when: service.state == 'running'
+  win_service:
+        name: winlogbeat
+        state: restarted
+                        
+- name: start service
+  when: service.state == 'stopped'
+  win_service:
+        name: winlogbeat
+        state: started
+
