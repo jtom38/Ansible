@@ -10,3 +10,6 @@
 # Ansible Inventory
 hosts
 win_hosts
+
+# Vagrant 
+.vagrant
