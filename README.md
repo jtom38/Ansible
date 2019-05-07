@@ -25,11 +25,13 @@ powershell.exe -ExecutionPolicy ByPass -File $file
 
 ## Configuration
 
-I have a basic configuration file in place at the root of this folder for anisble to find.
+I have a basic configuration file in place at the root of this folder for anisble to find.  If you work out of this directory the configuration file will take effect that is loaded. 
 
 ## Inventory
 
-I have a template file in place that should only be used as a refrence.  Make a copy of that file and name it hosts then update that file.
+I have a template file in place that should only be used as a reference.  Make a copy of that file and name it hosts then update that file.
+
+The configuration file that is active is looking for a directory that contains all of the inventory files.  This way all files can be parted out rather then one big file.
 
 ### Testing Linux devices
 
