@@ -1,7 +1,16 @@
+# Ansible Files
 *.retry
-
 *.swp
 
+
+# OSX files
 .DS_Store
+
+
+# Ansible Inventory
 hosts
 win_hosts
+hosts.d
+
+# Vagrant 
+.vagrant

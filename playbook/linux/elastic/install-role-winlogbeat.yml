@@ -1,7 +1,7 @@
 ---
 
 - name: Install WinLogBeat
-  hosts: elasticClients
+  hosts: windows
 
   tasks:
         - name: Install WinLogBeat
