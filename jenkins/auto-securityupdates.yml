@@ -1,0 +1,17 @@
+
+---
+
+- name: enable 
+  hosts: linux
+
+  tasks:
+        # https://galaxy.ansible.com/jnv/unattended-upgrades
+        - name: unattended-upgrades
+          become: true
+          include_role:
+                  name: jnv.unattended-upgrades
+          vars:
+                  #unattended_package_blacklist: []
+                  unattended_automatic_reboot: true
+
+
