@@ -9,7 +9,6 @@ This repo contains my configuration and setup for my ansible use.  Use at your o
 5. Set Vault Secret
 6. Run Connection tests
 
-
 ## Installers
 
 ### New hosts
