@@ -1,0 +1,48 @@
+---
+- hosts: linux
+  become: yes
+
+  vars:
+    nodejs_version: "6.x"
+    pip_install_packages:
+      - name: docker-compose
+      - name: docker
+    awx_run_install_playbook: yes
+
+  pre_tasks:
+  # Note: First time running this I had to go and manually remove the pip docker modules.
+  # For some reason the playbook was failing to do this for me.
+  # Once I did that, AWX installed.
+    - name: install pip3
+      apt:
+        name: python3-pip
+        state: present
+
+    - name: pip3 remove docker
+      pip:
+        name: docker
+        state: absent
+        executable: pip3
+    
+    - name: pip3 install docker-py
+      pip:
+        name: docker-py
+        state: absent
+        executable: pip3
+
+    - name: pip remove docker
+      pip:
+        name: docker
+        state: absent
+        executable: pip
+
+
+
+  roles:
+    #- geerlingguy.repo-epel
+    - geerlingguy.git
+    - geerlingguy.ansible
+    - geerlingguy.docker
+    - geerlingguy.pip
+    - geerlingguy.nodejs
+    - geerlingguy.awx

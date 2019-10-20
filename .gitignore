@@ -12,5 +12,12 @@ hosts
 win_hosts
 hosts.d
 
+# Ansible vault secret
+# Used to decrypt the vault files
+.ansible_vault
+
 # Vagrant 
 .vagrant
+
+# Debug files
+ansible-vars.all

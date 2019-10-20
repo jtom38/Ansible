@@ -1,0 +1,16 @@
+
+- name: Export all vars
+  hosts: osx
+
+  tasks:
+    - name: Dump all vars
+      template:
+        src: dumpall.j2 
+        dest: /tmp/ansible-vars.all
+
+    - name: Copy new file to host
+      fetch:
+        src: /tmp/ansible-vars.all
+        dest: ansible-vars.all
+        flat: yes
+
