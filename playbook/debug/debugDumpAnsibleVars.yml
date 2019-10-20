@@ -11,6 +11,6 @@
     - name: Copy new file to host
       fetch:
         src: /tmp/ansible-vars.all
-        dest: special/ansible-vars.all
+        dest: ansible-vars.all
         flat: yes
 
