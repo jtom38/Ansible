@@ -1,0 +1,47 @@
+---
+# https://github.com/linuxserver/docker-hydra2
+- name: Media Server
+  hosts: localhost
+  vars_files:
+    - vars.yml
+
+  tasks:
+    - name: pip docker
+      pip:
+        name: docker
+
+    - name: Hydra Config
+      docker_volume:
+        name: "{{ hydra_config }}"
+        state: present
+
+    - name: Volume Shared Downloads
+      docker_volume:
+        name: "{{ shared_downloads }}"
+        state: present
+
+    - name: Hydra Network
+      docker_network:
+        name: "{{ network }}"
+
+    - name: stop hydra
+      docker_container:
+        name: hydra
+        state: stopped
+
+    - name: Make Hydra
+      docker_container:
+        name: hydra
+        image: linuxserver/hydra2
+        state: started
+        env:
+          PUID=1000
+          PGID=1000
+          TZ=Europe/London
+        ports:
+          - 5076:5076
+        volumes:
+          - "{{ hydra_config }}:/config"
+          - "{{ shared_downloads }}:/downloads"
+        networks:
+          - name: "{{ network }}"

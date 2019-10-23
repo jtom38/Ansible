@@ -1,0 +1,13 @@
+---
+- name: Group Test
+  hosts: localhost
+  vars_files: okta_vars.yml
+
+  tasks:
+    - name: add group
+      okta_groups:
+        organization: "{{ org }}"
+        api_key: "{{ api }}"
+        action: add_user
+        id: "00g1jfcegwGw1Lsuh357"
+        user_id: 00u1kekdg8ewrmdmt357

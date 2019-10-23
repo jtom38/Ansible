@@ -1,0 +1,39 @@
+
+- name: maintain okta users
+  hosts: localhost
+  vars_files:
+    - okta_vars.yml
+
+  tasks: 
+    - name: manage delete.me
+      include_role:
+        name: luther38.okta
+      vars:
+        organization: "{{ org }}"
+        api_key: "{{ api }}"
+        first_name: API
+        last_name: Test
+        email: "{{ email_deleteme }}"
+        login: "{{ email_deleteme }}"
+        isActive: True
+        add_groups: 
+          #- 00g1jfcegwGw1Lsuh357
+        remove_groups:
+          - 00g1jfcegwGw1Lsuh357 
+
+    - name: delete me2
+      include_role:
+        name: luther38.okta
+      vars:
+        organization: "{{ org }}"
+        api_key: "{{ api }}"
+        first_name: API
+        last_name: Test2
+        email: "{{ email_deleteme2 }}"
+        login: "{{ email_deleteme2 }}"
+        isActive: True
+        add_groups: 
+          #- 00g1jfcegwGw1Lsuh357
+        remove_groups:
+          - 00g1jfcegwGw1Lsuh357 
+
