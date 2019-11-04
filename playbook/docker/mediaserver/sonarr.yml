@@ -1,0 +1,37 @@
+---
+- name: sonarr
+  hosts: linux
+  become: yes
+  vars_files:
+    - vars.yml
+
+  tasks:
+    - name: pip docker
+      pip:
+        name: docker
+
+    - name: stop sonarr
+      docker_container:
+        name: sonarr
+        state: stopped
+      ignore_errors: yes
+
+    - name: start sonarr
+      docker_container:
+        name: sonarr
+        image: linuxserver/sonarr:latest
+        state: started
+        env:
+          PUID=1000
+          PGID=1000
+          TZ=Europe/London
+          UMASK_SET=022 #optional
+        ports:
+          - 8989:8989
+        volumes:
+          - "/docker/sonarr/config:/config"
+          - "/docker/sonarr/data:/tv"
+          - "/docker/nzbdownloads:/downloads"
+        networks:
+          - name: "{{ network }}"
+

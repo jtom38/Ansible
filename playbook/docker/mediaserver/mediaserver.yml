@@ -1,0 +1,42 @@
+
+- name: Configure Media Server
+  hosts: mediaserver
+  
+  tasks:
+    - name: install docker
+      import_role:
+        name: geerlingguy.docker
+      become: yes
+
+    - name: make docker folder location
+      file:
+        path: /docker
+        state: directory
+      become: yes
+
+    - name: make docker config path
+      file:
+        path: /docker/config
+        state: directory
+      become: yes
+
+    - name: mount nfs to /docker/config
+      mount:
+        src: "192.168.0.16:/docker/"
+        path: /docker/config
+        fstype: nfs
+        boot: yes
+        state: mounted
+      become: yes
+
+    - name: install docker pip package
+      pip:
+        name: docker
+        state: present
+        executable: pip3
+
+    - name: make docker network
+      docker_network:
+        - name: mediaserver
+        
+    
