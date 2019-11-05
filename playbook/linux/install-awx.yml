@@ -32,11 +32,9 @@
 
     - name: pip remove docker
       pip:
-        name: docker
+        name: docker-py
         state: absent
         executable: pip
-
-
 
   roles:
     #- geerlingguy.repo-epel

@@ -1,0 +1,32 @@
+
+- name: Show okta_users result
+  hosts: localhost
+  vars_files: okta_vars.yml
+
+  #include_vars: okta_vars.yml
+
+  tasks:
+    - name: list 1
+      okta_users:
+        organization: "{{ org }}"
+        api_key: "{{ api }}"
+        action: list
+        email: "{{ email_deleteme }}"
+        #limit: 1
+      register: res
+
+    - name: display result
+      debug: 
+        msg: "{{ res.json }}"
+
+    - name: user groups
+      okta_users:
+        organization: "{{ org }}"
+        api_key: "{{ api }}"
+        action: usergroups
+        id: "{{ res.json.0.id }}"
+      register: grps
+
+    - name: display groups
+      debug:
+        msg: "{{ grps }}"

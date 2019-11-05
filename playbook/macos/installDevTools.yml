@@ -48,6 +48,7 @@
 
     #TODO The job seems to stop here for some reason
     - name: remove cask - dotnet-sdk
+      become: true
       homebrew_cask:
         name: dotnet-sdk
         state: absent
