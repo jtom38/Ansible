@@ -1,0 +1,41 @@
+---
+
+# Make all the required folders
+
+- name: "Make Docker folder - {{ pathDockerRoot }}"
+  file:
+    path:   "{{ pathDockerRoot }}"
+    state:  directory
+
+- name: "Make Docker config folder - {{ pathConfig }}"
+  file:
+    path:   "{{ pathConfig }}"
+    state:  directory
+
+- name: "Make media folder - {{ pathMedia }}"
+  file:
+    path:   "{{ pathMedia }}"
+    state:  directory
+
+- name: "Make downloads folder - {{ pathDownloads }}"
+  file:
+    path:   "{{ pathDownloads }}"
+    state:  directory
+
+
+# Mount all the NFS directories
+- name: "Mount NFS share - Docker Config"
+  mount:
+    src: "{{ nfsAddress }}:/{{ nfsDockerConfig }}"
+    path: "{{ pathConfig }}"
+    fstype: nfs
+    boot: yes
+    state: mounted
+
+- name: "Mount NFS share - Docker Media"
+  mount:
+    src: "{{ nfsAddress }}:/{{ nfsDockerConfig }}"
+    path: "{{ pathConfig }}"
+    fstype: nfs
+    boot: yes
+    state: mounted

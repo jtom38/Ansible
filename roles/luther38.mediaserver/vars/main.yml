@@ -1,0 +1,23 @@
+
+# Docker root location
+pathDockerRoot: "/docker"
+
+# Container mount points
+pathConfig:     "{{ pathDockerRoot }}/config"
+pathMedia:      "{{ pathDockerRoot }}/media"
+pathDownloads:  "{{ pathDockerRoot }}/downloads"
+
+# Container Env
+dockerPuid:       1000
+dockerPgid:       1000
+timezone:         Europe/Londom
+
+# Shares
+nfsAddress:       192.168.0.16
+nfsDockerConfig:  "docker"
+nfsMedia:         "plex"
+#nfsMovies:       "plex"
+#nfsTV:           "plex"
+
+# Networks
+dockerNetwork:    mediaserver

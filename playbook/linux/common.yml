@@ -32,3 +32,8 @@
       vars:
         #unattended_package_blacklist: []
         unattended_automatic_reboot: true
+
+    - name: Install VMware tools if valid
+      include_role:
+        name: ruzickap.vmwaretools
+      when: ansible_virtualization_type == 'VMware'

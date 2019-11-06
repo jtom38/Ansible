@@ -1,0 +1,28 @@
+---
+
+
+- name: Stop Sonarr if found
+  docker_container:
+    name: sonarr
+    state: stopped
+  ignore_errors: yes
+
+- name: Start Sonarr
+  docker_container:
+    name: sonarr
+    image: linuxserver/sonarr:latest
+    state: started
+    env:
+      PUID={{ dockerPuid }}
+      PGID={{ dockerPgid }}
+      TZ={{ timezone }}
+      UMASK_SET=022 #optional
+    ports:
+      - 8989:8989
+    volumes:
+      - "/docker/sonarr/config:/config"
+      - "/docker/sonarr/data:/tv"
+      - "/docker/nzbdownloads:/downloads"
+    networks:
+      - name: "{{ network }}"
+
