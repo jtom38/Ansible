@@ -15,7 +15,6 @@
       vars:
         packages:
           - python3
-          - python3-pip
           - nfs-common
           - tree
       when: ansible_distribution == "Ubuntu"
@@ -23,6 +22,13 @@
     - name: Install pip
       include_role:
         name: geerlingguy.pip
+
+    - name: install pip packages
+      pip:
+        name: "{{ pipPackages}}"
+      vars:
+        pipPackages:
+          - docker
 
     # https://galaxy.ansible.com/jnv/unattended-upgrades
     - name: unattended-upgrades
@@ -33,7 +39,4 @@
         #unattended_package_blacklist: []
         unattended_automatic_reboot: true
 
-    - name: Install VMware tools if valid
-      include_role:
-        name: ruzickap.vmwaretools
-      when: ansible_virtualization_type == 'VMware'
+    # VMWare Tools

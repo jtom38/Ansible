@@ -1,0 +1,28 @@
+---
+
+- name: install pihole on device
+  host: pihole
+  become: yes
+  vars:
+    repo: "https://github.com/pi-hole/pi-hole.git"
+
+  tasks:
+    - name: ensure dependancies are available
+      apt:
+        name: "{{ packages }}"
+      vars:
+        packages:
+          - git
+          - wget
+
+    - name: clone repo
+      git:
+        repo: "{{ repo }}"
+        dest: ~/pihole/
+        clone: no
+        update: no
+      register: repoInstalled
+      
+
+
+

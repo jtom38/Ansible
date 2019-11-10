@@ -5,7 +5,9 @@
   become: true
   vars:
     pathDocker: "/docker"
-    pathPiHole: "{{ pathDocker }}/pihole"
+    pathConfig: "{{ pathDocker }}/config"
+    pathLocalPihole: "{{ pathDocker}}/pihole/"
+    pathDnsmasq: "{{ pathDocker }}/dnsmasq/"
 
     nfsAddress: 192.168.0.16
     nfsDockerConfig: "docker"
@@ -20,9 +22,19 @@
         path: "{{ pathDocker }}"
         state: directory
 
-    - name: make pihole folder
+    - name: make config folder
       file:
-        path: "{{ pathPiHole }}"
+        path: "{{ pathConfig }}"
+        state: directory
+
+    - name: make dnsmasq folder
+      file:
+        path: "{{ pathLocalPihole }}"
+        state: directory
+
+    - name: make dnsmasq folder
+      file:
+        path: "{{ pathDnsmasq }}"
         state: directory
 
     - name: mount nfs to /docker/config
@@ -33,25 +45,31 @@
         boot: yes
         state: mounted
 
-    - name: Start PiHole
+    - name: Stop PiHole
       docker_container:
         name: pihole
-        image: 'pihole/pihole:latest'
+        state: stopped
+      ignore_errors: yes
+
+    - name: Get the Docker image
+      docker_image:
+        name: pihole/pihole
+        #source: pull
+        tag: latest
+
+    - name: Start PiHole
+      docker_container:
+        name: piholemk1
+        image: 'pihole/pihole'
         state: started
-        ports:
-          - 53:53/tcp
-          - 53:53/udp
-          - 67:67/udp
-          - 80:80/tcp
-          - 443:443/tcp
-        environment:
-          TZ: 'America/Chicago'
-          # WEBPASSWORD: 'set a secure password here or it will be random'    
+        network_mode: host
+        env:
+          TZ=America/Chicago
+          DNS1="1.1.1.1"
+          DNS2="1.0.0.1"
+          WEBPASSWORD="admin"
+          ServerIP="{{ ansible_host }}"
+          WEB_PORT="8080"
         volumes:
-          - "{{ pathPiHole }}/pihole/config:/etc/pihole/"
-          - "{{ pathPiHole }}/pihole/dnsmasq:/etc/dnsmasq.d/"
-        dns:
-          - 127.0.0.1
-          - 1.1.1.1
-
-
+          - "{{ pathLocalPihole }}:/etc/pihole/"
+          - "{{ pathDnsmasq }}:/etc/dnsmasq.d/"
