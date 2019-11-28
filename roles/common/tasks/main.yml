@@ -1,0 +1,10 @@
+
+- name: Run linux tasks
+  include_tasks: ubuntu.yml
+  when: 
+    - ansible_os_family == 'Debian'
+    - linux == true
+
+- name: Run docker tasks
+  include_tasks: docker.yml
+  when: docker == true

@@ -15,10 +15,11 @@
     dockerNetwork:  mediaserver
   
   tasks:
-    - name: install docker
-      import_role:
-        name: geerlingguy.docker
-      become: yes
+    - name: Run common docker
+      include_role:
+        name: common
+      vars:
+        docker: true
 
     - name: make docker folder location
       file:
@@ -72,11 +73,18 @@
         state: stopped
       ignore_errors: yes
 
+    - name: update hydra
+      docker_image:
+        name: 'linuxserver/hydra2'
+        tag: latest
+        
+
     - name: Make Hydra
       docker_container:
         name: hydra
-        image: 'linuxserver/hydra2:latest'
+        image: 'linuxserver/hydra2'
         state: started
+        restart_policy: unless-stopped 
         env:
           #PUID=1000
           #PGID=1000
@@ -91,6 +99,7 @@
           - "{{ pathDownloads }}:/downloads"
         networks:
           - name: "{{ dockerNetwork }}"
+            ipv4_address: 172.18.0.10
 
     - name: stop sonarr
       docker_container:
@@ -103,6 +112,7 @@
         name: sonarr
         image: linuxserver/sonarr:latest
         state: started
+        restart_policy: unless-stopped 
         env:
           # Use 0 because this runs as root
           #PUID=1000
@@ -119,6 +129,7 @@
           - "{{ pathDownloads }}:/downloads"
         networks:
           - name: "{{ dockerNetwork }}"
+            ipv4_address: 172.18.0.11
 
     - name: stop nzb
       docker_container:
@@ -131,6 +142,7 @@
         name: nzbget
         image: linuxserver/nzbget:latest
         state: started
+        restart_policy: unless-stopped 
         env:
           PUID=0
           PGID=0
@@ -142,6 +154,7 @@
           - "{{ pathDownloads }}:/downloads"
         networks:
           - name: "{{ dockerNetwork }}"
+            ipv4_address: 172.18.0.12
 
     - name: Stop Radarr if present
       docker_container:
@@ -154,6 +167,7 @@
         name: radarr
         image: linuxserver/radarr:latest
         state: started
+        restart_policy: unless-stopped
         env:
           PUID=0
           PGID=0
@@ -167,6 +181,7 @@
           - "{{ pathDownloads }}:/downloads"
         networks:
           - name : "{{ dockerNetwork }}"
+            ipv4_address: 172.18.0.13
 
     - name: Stop Plex
       docker_container:
@@ -180,6 +195,7 @@
         image: linuxserver/plex:latest
         state: started
         network_mode: host
+        restart_policy: unless-stopped
         env:
           PUID=0
           PGID=0

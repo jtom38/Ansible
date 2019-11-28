@@ -1,0 +1,30 @@
+---
+
+- name: Maintain Collins
+  hosts: localhost
+
+  tasks:
+    - name: Determine OSX Vars
+      set_fact:
+        path_root: ~/docker
+      when: ansible_distribution == "MacOSX"
+
+    - name: stop collins
+      docker_container:
+        name: collins
+        state: stopped
+      ignore_errors: yes
+
+    - name: update collins
+      docker_image:
+        name: 'tumblr/collins'
+        tag: latest
+        
+    - name: Deploy Collins
+      docker_container:
+        name: collins
+        image: 'tumblr/collins'
+        state: started
+        restart_policy: unless-stopped 
+        ports:
+          - 9001:9000

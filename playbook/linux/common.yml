@@ -8,35 +8,7 @@
   become: yes
 
   tasks:
-    - name: install packages
-      apt:
-        name: "{{ packages }}"
-        state: present
+    - include_role:
+        name: common
       vars:
-        packages:
-          - python3
-          - nfs-common
-          - tree
-      when: ansible_distribution == "Ubuntu"
-
-    - name: Install pip
-      include_role:
-        name: geerlingguy.pip
-
-    - name: install pip packages
-      pip:
-        name: "{{ pipPackages}}"
-      vars:
-        pipPackages:
-          - docker
-
-    # https://galaxy.ansible.com/jnv/unattended-upgrades
-    - name: unattended-upgrades
-      become: true
-      include_role:
-        name: jnv.unattended-upgrades
-      vars:
-        #unattended_package_blacklist: []
-        unattended_automatic_reboot: true
-
-    # VMWare Tools
+        linux: true

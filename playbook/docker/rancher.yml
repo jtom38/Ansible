@@ -1,0 +1,42 @@
+---
+
+- name: DSC Rancher
+  hosts: rancher
+  become: true
+
+  tasks:
+    - include_role:
+        name: common
+      vars:
+        linux: true
+        docker: true
+
+    - name: Stop rancher if found
+      docker_container:
+        name: rancher
+        state: stopped
+      ignore_errors: yes
+
+    - name: download/update rancher
+      docker_image:
+        name: rancher/rancher
+    
+    - name: Start Rancher
+      docker_container:
+        name: rancher
+        image: 'rancher/rancher'
+        state: started
+        network_mode: host
+        #env:
+          
+        #ports:
+        #  - 80:80
+        #  - 443:443
+        #volumes:
+        #  - "{{ hydra_config }}:/config"
+        #  - "{{ pathConfig }}/hydra:/config"
+        #  - "{{ pathDownloads }}:/downloads"
+        #networks:
+        #  - name: "{{ dockerNetwork }}"
+
+
