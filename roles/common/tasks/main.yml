@@ -8,3 +8,6 @@
 - name: Run docker tasks
   include_tasks: docker.yml
   when: docker == true
+
+- include_tasks: mediaserver.yml
+  when: mediaserver == true

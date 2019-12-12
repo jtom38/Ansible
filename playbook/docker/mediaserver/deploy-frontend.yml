@@ -1,0 +1,70 @@
+---
+
+- name: deploy plex
+  hosts: mediaserver-front
+  become: true
+  vars:
+    pathDockerRoot: "/docker"
+    pathConfig:     "{{ pathDockerRoot }}/config"
+    pathMedia:      "{{ pathDockerRoot }}/media"
+    pathTranscode:  "{{ pathDockerRoot }}/transcode"
+    pathPlexDB:     "{{ pathConfig }}/plex/Library/Application Support/Plex Media Server/Plug-in Support/Databases"
+    update: false
+ 
+  tasks:
+    - name: Maintain Defaults
+      include_role:
+        name: common
+      vars:
+        mediaserver: true
+        plex: true
+
+    - name: Stop Plex
+      docker_container:
+        name: plex
+        state: stopped
+      ignore_errors: yes
+
+    - name: Backup Plex blobs DB
+      file:
+        src: "{{ pathPlexDB }}/com.plexapp.plugins.library.blobs.db"
+        dest: "{{ pathPlexDB }}/com.plexapp.plugins.library.blobs.db.ansible"
+        remote_src: yes
+
+    - name: Backup Plex Library DB
+      file:
+        src: "{{ pathPlexDB }}/com.plexapp.plugins.library.db"
+        dest: "{{ pathPlexDB }}/com.plexapp.plugins.library.db.ansible"
+        remote_src: yes
+
+    #- name: stop Plex
+    #  shell: docker container stop plex
+
+    - name: update image
+      shell: docker pull linuxserver/plex
+      when: update == true
+
+    - name: remove old container
+      shell: docker container rm plex
+      ignore_errors: true
+
+    - name: Start Plex
+      docker_container:
+        name: plex
+        image: linuxserver/plex:1.18.2.2058-e67a4e892-ls70
+        state: started
+        network_mode: host
+        restart_policy: unless-stopped
+        env:
+          PUID=0
+          PGID=0
+          TZ=Europe/London
+          UMASK_SET=022
+        volumes:
+          - "{{ pathConfig }}/plex:/config"
+          - "{{ pathMedia }}:/tv"
+          #- "{{ pathTranscode }}:/transcode"
+          #- /path/to/movies:/movies
+
+    - name: remove old image
+      shell: docker image prune --force

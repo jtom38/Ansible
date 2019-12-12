@@ -1,0 +1,12 @@
+# Check if the tag exists
+- name: "check for tag {{ tag_name }}"
+  uri:
+    url: "{{ api_url }}/api/asettype/{{ tag_name }}"
+    method: PUT
+    
+
+
+# Remove tag if requested and exists
+
+# Add Tag if Does not exist and 
+

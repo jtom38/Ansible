@@ -1,8 +1,9 @@
 
 - name: Configure Media Server
-  hosts: mediaserver
+  hosts: mediaserver-back
   become: yes
   vars:
+    update: false
     pathDockerRoot: "/docker"
     pathConfig:     "{{ pathDockerRoot }}/config"
     pathMedia:      "{{ pathDockerRoot }}/media"
@@ -10,8 +11,8 @@
     nfsAddress:     192.168.0.16
     nfsDockerConfig: "docker"
     nfsMedia:       "plex"
-    #nfsMovies:      "plex"
-    #nfsTV:          "plex"
+    nfsMovies:      "plex"
+    nfsTV:          "plex"
     dockerNetwork:  mediaserver
   
   tasks:
@@ -19,53 +20,7 @@
       include_role:
         name: common
       vars:
-        docker: true
-
-    - name: make docker folder location
-      file:
-        path: "{{ pathDockerRoot }}"
-        state: directory
-
-    - name: make docker config folder
-      file:
-        path: "{{ pathConfig }}"
-        state: directory
-
-    - name: make download folder
-      file:
-        path: "{{ pathDownloads }}"
-        state: directory
-
-    - name: make media folder
-      file:
-        path: "{{ pathMedia }}"
-        state: directory
-
-    - name: mount nfs to /docker/config
-      mount:
-        src: "{{ nfsAddress }}:/{{ nfsDockerConfig }}"
-        path: "{{ pathConfig }}"
-        fstype: nfs
-        boot: yes
-        state: mounted
-
-    - name: mount nfs to /docker/plex
-      mount:
-        src: "{{ nfsAddress }}:/{{ nfsMedia }}"
-        path: "{{ pathMedia }}"
-        fstype: nfs
-        boot: yes
-        state: mounted
-
-    - name: install docker pip package
-      pip:
-        name: docker
-        state: present
-        executable: pip3
-
-    - name: make docker network
-      docker_network:
-        name: "{{ dockerNetwork }}"
+        medaiserver: true
 
     - name: stop hydra
       docker_container:
@@ -73,13 +28,17 @@
         state: stopped
       ignore_errors: yes
 
-    - name: update hydra
-      docker_image:
-        name: 'linuxserver/hydra2'
-        tag: latest
-        
+    # Get version of container
 
-    - name: Make Hydra
+    - name: hydra - update image
+      shell: docker pull linuxserver/hydra2
+      when: update == true
+
+    - name: hydra - remove old container
+      shell: docker container rm hydra
+      ignore_errors: true
+
+    - name: hydra - Make Hydra
       docker_container:
         name: hydra
         image: 'linuxserver/hydra2'
@@ -101,13 +60,32 @@
           - name: "{{ dockerNetwork }}"
             ipv4_address: 172.18.0.10
 
-    - name: stop sonarr
+    - name: sonarr - stop container
       docker_container:
         name: sonarr
         state: stopped
       ignore_errors: yes
 
-    - name: start sonarr
+    - name: sonarr - update image
+      shell: docker pull linuxserver/hydra2
+      when: update == true
+
+    - name: sonarr - remove old container
+      shell: docker container rm sonarr
+
+    - name: backup sonarr db
+      copy:
+        remote_src: true
+        src: "{{ pathConfig }}/sonarr/nzbdrone.db"
+        dest: "{{ pathConfig }}/sonarr/nzbdrone.db.ansible"
+
+    - name: sonarr - backup logs db
+      copy:
+        remote_src: true
+        src: "{{ pathConfig }}/sonarr/logs.db"
+        dest: "{{ pathConfig }}/sonarr/logs.db.ansible"
+
+    - name: sonarr - start 
       docker_container:
         name: sonarr
         image: linuxserver/sonarr:latest
@@ -137,7 +115,14 @@
         state: stopped
       ignore_errors: yes
 
-    - name: Make Nzb
+    - name: nzb - update image
+      shell: docker pull linuxserver/nzbget
+      when: update == true
+
+    - name: nzb - remove old container
+      shell: docker container rm nzbget
+
+    - name: Nzb - deploy
       docker_container:
         name: nzbget
         image: linuxserver/nzbget:latest
@@ -156,13 +141,20 @@
           - name: "{{ dockerNetwork }}"
             ipv4_address: 172.18.0.12
 
-    - name: Stop Radarr if present
+    - name: radarr - stop
       docker_container:
         name: radarr
         state: stopped
       ignore_errors: yes
 
-    - name: Start Radarr
+    - name: radarr - update
+      shell: docker pull linuxserver/radarr
+      when: update == true
+
+    - name: radarr - remove old container
+      shell: docker container rm radarr
+
+    - name: radarr - deploy
       docker_container:
         name: radarr
         image: linuxserver/radarr:latest
@@ -183,27 +175,5 @@
           - name : "{{ dockerNetwork }}"
             ipv4_address: 172.18.0.13
 
-    - name: Stop Plex
-      docker_container:
-        name: plex
-        state: stopped
-      ignore_errors: yes
-
-    - name: Start Plex
-      docker_container:
-        name: plex
-        image: linuxserver/plex:latest
-        state: started
-        network_mode: host
-        restart_policy: unless-stopped
-        env:
-          PUID=0
-          PGID=0
-          TZ=Europe/London
-          UMASK_SET=022
-        volumes:
-          - "{{ pathConfig }}/plex:/config"
-          - "{{ pathMedia }}:/tv"
-          #- /path/to/movies:/movies
-        #networks:
-        #  - name: "{{ dockerNetwork }}"
+    - name: remove old images
+      shell: docker image prune --force

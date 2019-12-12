@@ -1,0 +1,42 @@
+---
+
+# This is a job that will work on weekly rotation to update images.
+
+- name: update containers
+  hosts: mediaserver
+  become: true
+
+  tasks:
+    - name: download latest sonarr
+      docker_image:
+        name: linuxserver/sonarr
+        tag: latest
+        state: present
+        source: pull
+
+    - name: download latest hydra
+      docker_image:
+        name: linuxserver/hydra2
+        tag: latest
+        state: present
+        source: pull
+
+    - name: download latest radarr
+      docker_image:
+        name: linuxserver/radarr
+        tag: latest
+        state: present
+        source: pull
+
+    - name: download latest nzbget
+      docker_image:
+        name: linuxserver/nzbget
+        tag: latest
+        state: present
+        source: pull
+
+    #- name: remove old images
+    #  docker_prune:
+    #    images: true
+    #    images_filters:
+    #      dangling: true

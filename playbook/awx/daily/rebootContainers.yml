@@ -1,0 +1,8 @@
+---
+
+#  Reboot all known containers 
+- name: health - reboot containers
+  hosts: docker
+  become: true
+  vars:
+    - 

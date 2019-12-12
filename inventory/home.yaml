@@ -6,7 +6,8 @@ all:
         #192.168.0.60:
         192.168.0.76:
         192.168.0.240:
-        192.168.0.241:
+        #192.168.0.241:
+        192.168.0.242:
       vars:
         ansible_user: !vault |
           $ANSIBLE_VAULT;1.1;AES256
@@ -35,10 +36,14 @@ all:
     docker:
       hosts:
         192.168.0.76:
-        192.168.0.241:
-    mediaserver:
+        #192.168.0.241:
+        192.168.0.242:
+    mediaserver-back:
       hosts:
         192.168.0.76:
+    mediaserver-front:
+      hosts:
+        192.168.0.242:
     pihole:
       hosts:
         192.168.0.44:

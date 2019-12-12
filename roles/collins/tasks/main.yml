@@ -1,0 +1,7 @@
+- name: health check
+  uri:
+    url:        "{{ auth_uri }}/api/ping"
+    method:     GET
+    #user:       "{{ auth_user }}"
+    #password:   "{{ auth_pass }}"
+    force_basic_auth: true
