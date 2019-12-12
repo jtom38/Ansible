@@ -1,0 +1,9 @@
+
+# required
+container_name: ''
+
+# required
+mount_point: ''
+backup_location: ''
+
+tar_file:

@@ -1,0 +1,48 @@
+---
+
+- name: hydra test
+  hosts: localhost
+
+  tasks:
+    - name: stop hydra
+      docker_container:
+        name: hydra
+        state: stopped
+      ignore_errors: yes
+
+    # Get version of container
+
+    - name: hydra - update image
+      shell: docker pull linuxserver/hydra2
+      #when: update == true
+
+    - name: hydra - remove old container
+      shell: docker container rm hydra
+      ignore_errors: true
+
+    - name: hydra - config vol
+      docker_volume:
+        name: hydraConfig
+        state: present
+
+    - name: hydra - Make Hydra
+      docker_container:
+        name: hydra
+        image: 'linuxserver/hydra2'
+        state: started
+        restart_policy: unless-stopped 
+        env:
+          #PUID=1000
+          #PGID=1000
+          PUID=0
+          PGID=0
+          TZ=Europe/London
+        ports:
+          - 5076:5076
+        volumes:
+          #- "{{ hydra_config }}:/config"
+          - hydraConfig:/config
+          #- "{{ pathDownloads }}:/downloads"
+        #networks:
+        #  - name: "{{ dockerNetwork }}"
+        #    ipv4_address: 172.18.0.10
