@@ -1,0 +1,4 @@
+- name: install docker cli
+  yum:
+    name: docker
+    state: present

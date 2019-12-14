@@ -1,7 +1,0 @@
----
-# tasks file for luther38.filebeat
-
-
-- name: Install Filebeat on Ubuntu
-  when: ansible_distribution == 'Ubuntu'
-  include: ubuntu.yml

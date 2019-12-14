@@ -12,9 +12,14 @@
 
     # Get version of container
 
+    - name: Confirm config volume
+      docker_volume:
+        name: hydraConfig
+        state: present
+
     - name: hydra - update image
       shell: docker pull linuxserver/hydra2
-      #when: update == true
+      when: update == true
 
     - name: hydra - remove old container
       shell: docker container rm hydra
@@ -40,7 +45,7 @@
         ports:
           - 5076:5076
         volumes:
-          #- "{{ hydra_config }}:/config"
+          - "{{ hydra_config }}:/config"
           - hydraConfig:/config
           #- "{{ pathDownloads }}:/downloads"
         #networks:

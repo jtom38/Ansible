@@ -1,6 +1,0 @@
-Pipfile export-ignore
-Pipfile.lock export-ignore
-.travis.yml export-ignore
-docs/ export-ignore
-mkdocs.yml export-ignore
-molecule/ export-ignore

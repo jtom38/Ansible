@@ -1,9 +1,0 @@
-
-volume_name: ''
-create_volume: false
-
-container_name: ''
-stop_container: false
-
-backup_folder: ''
-tar_file: ''

@@ -2,10 +2,8 @@
 *.retry
 *.swp
 
-
 # OSX files
 .DS_Store
-
 
 # Ansible Inventory
 hosts

@@ -1,0 +1,17 @@
+
+
+- import_tasks: ubuntu.yml
+  when: ansible_os_family == 'Debian'
+
+- import_tasks: rhel.yml
+  when: ansible_os_family == 'RedHat'
+
+- import_tasks: backup.yml
+  when: action == 'backup'
+
+- import_tasks: restore.yml
+  when: action == 'restore'
+
+#- name: "{{ container_name }} - stop container"
+#  shell: "docker container stop {{ container_name }}"
+

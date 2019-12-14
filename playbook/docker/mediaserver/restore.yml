@@ -1,32 +1,21 @@
 ---
 
 - name: restore test
-  hosts: localhost
+  hosts: mediaserver-back
+  become: true
 
   tasks:
-    #- name: stop hydra
-    #  shell: docker container stop hydra
-    #  ignore_errors: true
-
-    #- name: make new vol
-    #  docker_volume:
-    #    name: hydraConfig
-    #    state: absent
-
-    #- name: make new vol
-    #  docker_volume:
-    #    name: hydraConfig
-    #    state: present
 
     #- name: restore data from tar
     #  shell: docker run --rm -v hydraConfig:/recover -v ~/docker/backup:/backup ubuntu bash -c 'cd /recover && tar xvf /backup/hydraConfig.tar'
 
     - import_role:
-        name: docker_volume_restore
+        name: luther38.docker_volume_management
       vars:
+        action: restore
         volume_name: hydraConfig
         create_volume: true
         container_name: hydra
         stop_container: true
-        backup_folder: '~/docker/backup'
+        backup_folder: '/docker/backup'
         tar_file: HydraConfig.tar

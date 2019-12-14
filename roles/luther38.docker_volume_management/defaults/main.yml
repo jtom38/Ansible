@@ -1,0 +1,17 @@
+
+
+# Required vars
+## T
+action: ''
+
+# This will import all the 
+container_name: ''
+
+# required
+mount_point: ''
+backup_folder: ''
+tar_file: ' '
+
+# optional
+create_volume: false
+stop_container: false

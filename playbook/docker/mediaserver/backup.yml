@@ -1,11 +1,12 @@
 ---
 
 - name: Backup container volumes
-  hosts: localhost
+  hosts: mediaserver-back
+  become: true
   vars:
     name: hydra
     mount_point: "/config"
-    backup_location: ~/docker/backup
+    backup_location: /docker/backup
     tar_file: hydraConfig.tar
 
   tasks:
@@ -14,12 +15,12 @@
       ignore_errors: true
 
     - import_role:
-        name: docker_backup
+        name: luther38.docker_volume_management
       vars:
-        state: backup
+        action: backup
         container_name: hydra
         mount_point: '/config'
-        backup_location: ~/docker/backup
+        backup_folder: /docker/backup
         tar_file: HydraConfig.tar
 
     #- name: hydra Backup 
