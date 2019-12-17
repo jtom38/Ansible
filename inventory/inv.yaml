@@ -3,10 +3,9 @@ all:
   children:
     linux-all:
       hosts:
-        #192.168.0.60:
         192.168.0.76:
         192.168.0.240:
-        #192.168.0.241:
+        192.168.0.241:
         192.168.0.242:
       vars:
         ansible_user: !vault |
@@ -36,7 +35,7 @@ all:
     docker:
       hosts:
         192.168.0.76:
-        #192.168.0.241:
+        192.168.0.241:
         192.168.0.242:
     mediaserver-back:
       hosts:
@@ -47,12 +46,7 @@ all:
     pihole:
       hosts:
         192.168.0.44:
-    portainer:
+    awx:
       hosts:
         192.168.0.241:
-        192.168.0.76:
-    rancher-worker:
-      hosts:
-        192.168.0.76:
-
 

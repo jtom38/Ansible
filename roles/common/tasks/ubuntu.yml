@@ -8,7 +8,14 @@
       - python3-pip
       - nfs-common
       - tree
-  when: ansible_distribution == "Ubuntu"
+      - ranger
+      - docker
+      - htop
+
+- name: remove snap
+  apt:
+    name: snapd
+    state: absent
 
 - name: Install pip
   include_role:

@@ -1,33 +1,31 @@
 ---
 
 - name: Backup container volumes
-  hosts: mediaserver-back
+  hosts: mediaserver-front
   become: true
   vars:
-    name: hydra
-    mount_point: "/config"
-    backup_location: /docker/backup
-    tar_file: hydraConfig.tar
+    name: plex
 
   tasks:
-    - name: hydra - stop
+    - name: "{{ name }} - stop"
       shell: docker container stop {{ name }}
       ignore_errors: true
 
     - import_role:
-        name: luther38.docker_volume_management
+        name: docker_volume_management
       vars:
-        action: backup
-        container_name: hydra
-        mount_point: '/config'
+        role_action: backup
+        container_name: "{{ name }}"
+        mount_point: '/config/Library/Application Support/Plex Media Server/Plug-in Support/Databases/'
         backup_folder: /docker/backup
-        tar_file: HydraConfig.tar
+        tar_file: "{{ name }}Config.tar"
 
     #- name: hydra Backup 
     #  shell: docker run --rm --volumes-from {{ name }} -v {{ backup_location }}:/backup ubuntu bash -c 'cd {{ mount_point }} && tar cvf /backup/{{ tar_file }} .'
 
-    #- name: Copy backup to external
-
-
-      
+    - name: Copy backup to external
+      copy:
+        src: /docker/backup/{{ name }}Config.tar
+        dest: /docker/config/backup/
+        remote_src: true
 

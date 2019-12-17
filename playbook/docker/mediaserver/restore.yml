@@ -1,8 +1,10 @@
 ---
 
 - name: restore test
-  hosts: mediaserver-back
+  hosts: mediaserver-front
   become: true
+  vars:
+    name: plex
 
   tasks:
 
@@ -10,12 +12,13 @@
     #  shell: docker run --rm -v hydraConfig:/recover -v ~/docker/backup:/backup ubuntu bash -c 'cd /recover && tar xvf /backup/hydraConfig.tar'
 
     - import_role:
-        name: luther38.docker_volume_management
+        name: docker_volume_management
       vars:
-        action: restore
-        volume_name: hydraConfig
+        role_action: restore
+        volume_name: "{{ name }}Config"
         create_volume: true
-        container_name: hydra
+        container_name: "{{ name }}"
         stop_container: true
         backup_folder: '/docker/backup'
-        tar_file: HydraConfig.tar
+        tar_file: "{{ name }}Config.tar"
+        recovery_folder: 'Library/Application Support/Plex Media Server/Plug-in Support/Databases/'

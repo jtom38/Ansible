@@ -1,7 +1,0 @@
----
-
-- name: Install docker cli - debian
-  become: true
-  apt:
-    name: docker
-    state: present

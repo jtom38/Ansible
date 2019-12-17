@@ -5,7 +5,7 @@
   vars:
     update: false
     pathDockerRoot: "/docker"
-    pathConfig:     "{{ pathDockerRoot }}/config"
+    pathConfig:     "{{ pathDockerRoot }}/cfg"
     pathMedia:      "{{ pathDockerRoot }}/media"
     pathDownloads:  "{{ pathDockerRoot }}/downloads"
     nfsAddress:     192.168.0.16
@@ -30,6 +30,14 @@
 
     # Get version of container
 
+    # Backup hydraConfig
+    - name: hydra - backup config
+      archive:
+        path: "{{ pathConfig }}/hydra"
+        dest: "/docker/backup/hydraconfig.gz"
+        format: gz
+        remove: false
+
     - name: hydra - update image
       shell: docker pull linuxserver/hydra2
       when: update == true
@@ -45,15 +53,12 @@
         state: started
         restart_policy: unless-stopped 
         env:
-          #PUID=1000
-          #PGID=1000
           PUID=0
           PGID=0
           TZ=Europe/London
         ports:
           - 5076:5076
         volumes:
-          #- "{{ hydra_config }}:/config"
           - "{{ pathConfig }}/hydra:/config"
           - "{{ pathDownloads }}:/downloads"
         networks:
@@ -73,17 +78,12 @@
     - name: sonarr - remove old container
       shell: docker container rm sonarr
 
-    - name: backup sonarr db
-      copy:
-        remote_src: true
-        src: "{{ pathConfig }}/sonarr/nzbdrone.db"
-        dest: "{{ pathConfig }}/sonarr/nzbdrone.db.ansible"
-
-    - name: sonarr - backup logs db
-      copy:
-        remote_src: true
-        src: "{{ pathConfig }}/sonarr/logs.db"
-        dest: "{{ pathConfig }}/sonarr/logs.db.ansible"
+    - name: sonarr- backup config 
+      archive:
+        path: "{{ pathConfig }}/sonarr"
+        dest: /docker/backup/sonarrconfig.gz
+        format: gz
+        remove: false
 
     - name: sonarr - start 
       docker_container:
@@ -93,8 +93,6 @@
         restart_policy: unless-stopped 
         env:
           # Use 0 because this runs as root
-          #PUID=1000
-          #PGID=1000
           PUID=0
           PGID=0
           TZ=Europe/London
@@ -114,6 +112,13 @@
         name: nzbget
         state: stopped
       ignore_errors: yes
+
+    - name: nzb - backup config
+      archive:
+        path: "{{ pathConfig }}/nzbget"
+        dest: "/docker/backup/nzbgetconfig.gz"
+        format: gz
+        remove: false
 
     - name: nzb - update image
       shell: docker pull linuxserver/nzbget
@@ -147,6 +152,14 @@
         state: stopped
       ignore_errors: yes
 
+    # backup radarrConfig
+    - name: radarr - backup config
+      archive:
+        path: "{{ pathConfig }}/radarr"
+        dest: "/docker/backup/radarrconfig.gz"
+        format: gz
+        remove: false
+
     - name: radarr - update
       shell: docker pull linuxserver/radarr
       when: update == true
@@ -175,5 +188,5 @@
           - name : "{{ dockerNetwork }}"
             ipv4_address: 172.18.0.13
 
-    - name: remove old images
-      shell: docker image prune --force
+    #- name: remove old images
+    #  shell: docker image prune --force

@@ -27,7 +27,7 @@
     path: "{{ pathConfig }}"
     fstype: nfs
     boot: yes
-    state: mounted
+    state: unmounted
 
 - name: mount nfs to /docker/plex
   mount:

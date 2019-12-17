@@ -5,7 +5,7 @@
   become: true
   vars:
     pathDockerRoot: "/docker"
-    pathConfig:     "{{ pathDockerRoot }}/config"
+    pathConfig:     "{{ pathDockerRoot }}/cfg"
     pathMedia:      "{{ pathDockerRoot }}/media"
     pathTranscode:  "{{ pathDockerRoot }}/transcode"
     pathPlexDB:     "{{ pathConfig }}/plex/Library/Application Support/Plex Media Server/Plug-in Support/Databases"
@@ -25,20 +25,17 @@
         state: stopped
       ignore_errors: yes
 
-    - name: Backup Plex blobs DB
-      file:
-        src: "{{ pathPlexDB }}/com.plexapp.plugins.library.blobs.db"
-        dest: "{{ pathPlexDB }}/com.plexapp.plugins.library.blobs.db.ansible"
-        remote_src: yes
+    #- name: Backup Plex blobs DB
+    #  file:
+    #    src: "{{ pathPlexDB }}/com.plexapp.plugins.library.blobs.db"
+    #    dest: "{{ pathPlexDB }}/com.plexapp.plugins.library.blobs.db.ansible"
+    #    remote_src: yes
 
-    - name: Backup Plex Library DB
-      file:
-        src: "{{ pathPlexDB }}/com.plexapp.plugins.library.db"
-        dest: "{{ pathPlexDB }}/com.plexapp.plugins.library.db.ansible"
-        remote_src: yes
-
-    #- name: stop Plex
-    #  shell: docker container stop plex
+    #- name: Backup Plex Library DB
+    #  file:
+    #    src: "{{ pathPlexDB }}/com.plexapp.plugins.library.db"
+    #    dest: "{{ pathPlexDB }}/com.plexapp.plugins.library.db.ansible"
+    #    remote_src: yes
 
     - name: update image
       shell: docker pull linuxserver/plex
@@ -63,8 +60,6 @@
         volumes:
           - "{{ pathConfig }}/plex:/config"
           - "{{ pathMedia }}:/tv"
-          #- "{{ pathTranscode }}:/transcode"
-          #- /path/to/movies:/movies
 
-    - name: remove old image
-      shell: docker image prune --force
+    #- name: remove old image
+    #  shell: docker image prune --force
