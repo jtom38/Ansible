@@ -1,0 +1,51 @@
+---
+
+- name: testing role
+  hosts: localhost
+  vars:
+    corgi_ansible: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          61336238643261633430303664386565333131313636663235663733656538633165623438333030
+          3739316137393937646162313266636563656132653866620a653465643138323363376263383931
+          62666461333464393165383466333764303235613562313631353239306664373761393663656533
+          3166663432313933320a333332383737616337336562623435623131653935353165316266356133
+          33343166616161343734376465666563313932333864343230623339326562653435323862623031
+          38376666326536393034306161636563633061383239323330326232326165383538323266323736
+          65313736656530653261646562646161643062616533363633633935653566373362366539623030
+          30313331323661616438303031633666343231353837383561613666653937616265613533306436
+          65343435363937393732316333633961376635343332316132396238383435653364616138386438
+          6634346462383838636264656436326361316535393139636436
+
+        
+  
+  tasks:
+#    - include_role:
+#        name: ansible_discord_webhook
+#      vars:
+#        discord_message: "HI!  I am nothing more then a test playbook\nPlease save me."
+
+      - name: Test if the container is alive
+        uri:
+          url: http://192.168.0.242:32401/web/index.html
+          method: GET
+        ignore_errors: true
+        register: PlexStatus
+
+      - debug:
+          msg: "{{ PlexStatus }}"
+
+      - name: Send Service Alive
+        include_role:
+          name: ansible_discord_webhook
+        vars:
+          discord_webhook: "{{ corgi_ansible }}"
+          discord_message: "Plex Status: OK\nDebug: {{ PlexStatus.msg }}"
+        when: PlexStatus.status == 200
+
+      - name: Service Offline
+        include_role:
+          name: ansible_discord_webhook
+        vars:
+          discord_webhook: "{{ corgi_ansible }}"
+          discord_message: "Plex Status: Offline\nDebug: {{ PlexStatus.msg }}"
+        when: PlexStatus.status == -1

@@ -1,0 +1,64 @@
+---
+
+- name: Maintain and Configure Cron jobs
+  hosts: mediaserver-back
+  become: true
+  vars:
+    aptPackages:
+      - git
+
+    pipPackages:
+      - ansible
+
+  tasks:
+    - name: Install Required packages
+      apt: 
+        name: git
+        state: present
+
+    - name: Install Ansible
+      pip:
+        name: ansible
+        state: present
+    
+#    - name: Make working dir
+#      file:
+#        path: /usr/ansible
+#        state: directory
+
+    - name: Configure Ansible Repo
+      git:
+        repo: 'https://github.com/luther38/ansible.git'
+        dest: /usr/ansible
+
+    - name: Install Requirements.yml
+      shell: cd /usr/ansible 
+
+    # Add vault pass
+    - name: Confirm vault password
+      file:
+
+
+    - name: Cron - pull down newest dev branch
+      cron: 
+        name: Update ansible repo
+        state: present
+        job: /usr/ansible && git checkout dev && git pull > /usr/ansible/log/pull.log
+        minute: "0"
+        hour: "*"
+        day: "*"
+
+    - name: Cron - Make sure cron is up to date
+      cron:
+        name: Update crontabs
+        state: present
+        job: /usr/ansible ansible-playbook ./playbook/docker/mediaserver/back/cron.yml > /usr/ansible/log/cron.log
+        minute: "5"
+        hour: "*"
+        day: "*"
+
+    # Restart Containers
+
+    # Backup Containers
+
+    # Update Containers on Saturday

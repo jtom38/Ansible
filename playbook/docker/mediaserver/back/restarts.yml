@@ -1,0 +1,30 @@
+---
+
+- name: restart all containers
+  hosts: mediaserver-back
+  become: true
+  vars:
+    containers:
+      - hydra
+      - nzbget
+      - sonarr
+      - radarr
+
+  tasks:
+    - name: stop containers
+      docker_container:
+        name: "{{ item }}"
+        state: stopped
+      loop: "{{ containers }}"
+
+    - name: start containers
+      docker_container:
+        name: "{{ item }}"
+        state: started
+      loop: "{{ containers }}"
+
+    - name: Wait 3 Minutes before checking services
+      wait_for:
+        timeout: 180
+
+    - 

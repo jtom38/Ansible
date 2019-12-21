@@ -14,4 +14,10 @@ roles:
   - src: https://github.com/luther38/docker_volume_management
     name: luther38.docker_volume_management
 
+  - src: https://github.com/luther38/nagioscore
+    name: luther38.nagioscore
+
+  - src: https://github.com/luther38/ansible_discord_webhook
+    name: luther38.discord_webhook
+
 #collections:

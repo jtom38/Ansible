@@ -1,0 +1,22 @@
+---
+
+- name: restart frontend containers
+  hosts: mediaserver-front
+  become: true
+  vars:
+    containers:
+      - plex
+
+  tasks:
+    - name: stop containers
+      docker_container:
+        name: "{{ item }}"
+        state: stopped
+      loop: "{{ containers }}"
+
+    - name: start containers
+      docker_container:
+        name: "{{ item }}"
+        state: started
+      loop: "{{ containers }}"
+  

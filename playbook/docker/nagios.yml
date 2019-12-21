@@ -1,0 +1,17 @@
+---
+
+- name: deploy nagios core
+  hosts: awx
+  become: true
+
+  tasks:
+    - include_role:
+        name: nagioscore
+      vars:
+        nagios_action: install
+        pathEtc: '/docker/nagios/etc'
+        pathVar: '/docker/nagios/var'
+        pathPlugins: '/docker/nagios/plugins'
+        pathNagiosGraphVar: '/docker/nagios/graph/var'
+        pathNagiosGraphEtc: '/docker/nagios/graph/etc'
+        port: 8080
