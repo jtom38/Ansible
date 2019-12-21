@@ -2,6 +2,9 @@
 *.retry
 *.swp
 
+# Ignore the roles path as production roles are handled with requirements.yml
+roles/*
+
 # OSX files
 .DS_Store
 

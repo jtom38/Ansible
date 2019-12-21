@@ -32,19 +32,30 @@
         dest: /usr/ansible
 
     - name: Install Requirements.yml
-      shell: cd /usr/ansible 
+      shell: cd /usr/ansible && ansible-galaxy install -r requirements.yml
+
+    - name: Make Cron log location
+      file:
+        state: directory
+        path: /tmp/ansible/log/
 
     # Add vault pass
-    - name: Confirm vault password
-      file:
-
 
     - name: Cron - pull down newest dev branch
       cron: 
         name: Update ansible repo
         state: present
-        job: /usr/ansible && git checkout dev && git pull > /usr/ansible/log/pull.log
+        job: cd /usr/ansible && git checkout dev && git pull > /tmp/ansible/log/pull.log
         minute: "0"
+        hour: "*"
+        day: "*"
+
+    - name: Cron - Update roles
+      cron: 
+        name: Update Ansible Roles
+        state: present
+        job: cd /usr/ansible && ansible-galaxy install -r requirements.yml > /tmp/ansible/logs/galaxy.log
+        minute: "1"
         hour: "*"
         day: "*"
 
@@ -52,8 +63,8 @@
       cron:
         name: Update crontabs
         state: present
-        job: /usr/ansible ansible-playbook ./playbook/docker/mediaserver/back/cron.yml > /usr/ansible/log/cron.log
-        minute: "5"
+        job: cd /usr/ansible ansible-playbook ./playbook/docker/mediaserver/back/cron.yml > /tmp/ansible/log/cron.log
+        minute: "1"
         hour: "*"
         day: "*"
 

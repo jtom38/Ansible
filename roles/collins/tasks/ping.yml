@@ -1,3 +1,0 @@
-- name: ping Collins
-  uri:
-    url: "{{ }}/api/ping"

@@ -11,20 +11,40 @@
       - radarr
 
   tasks:
-    - name: stop containers
-      docker_container:
-        name: "{{ item }}"
-        state: stopped
-      loop: "{{ containers }}"
+#    - name: stop containers
+#      docker_container:
+#        name: "{{ item }}"
+#        state: stopped
+#      loop: "{{ containers }}"
 
-    - name: start containers
-      docker_container:
-        name: "{{ item }}"
-        state: started
-      loop: "{{ containers }}"
+#    - name: start containers
+#      docker_container:
+#        name: "{{ item }}"
+#        state: started
+#      loop: "{{ containers }}"
 
-    - name: Wait 3 Minutes before checking services
-      wait_for:
-        timeout: 180
+#    - name: Wait 3 Minutes before checking services
+#      wait_for:
+#        timeout: 180
 
-    - 
+    - name: Test Hydra
+      uri:
+        url: http://192.168.0.76:5076
+        method: GET
+      ignore_errors: true
+      register: HydraStatus
+
+    - include_role:
+        name: luther38.discord_webhook
+      vars:
+        discord_webhook: "{{ discord_test_hook }}"
+        discord_message: "Hydra Status: OK\nDebug: {{ HydraStatus.msg }}"
+      when: HydraStatus.status == 200
+
+    - include_role:
+        name: luther38.discord_webhook
+      vars:
+        discord_webhook: "{{ discord_test_hook }}"
+        discord_message: "Hydra Status: Offline\nDebug: {{ HydraStatus.msg }}"
+      when: HydraStatus.status == -1
+

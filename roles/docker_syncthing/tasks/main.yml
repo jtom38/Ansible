@@ -1,4 +1,0 @@
-
-
-- include_tasks: install.yml
-  when: role_action == 'install'
