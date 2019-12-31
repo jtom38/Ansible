@@ -1,0 +1,20 @@
+---
+
+- name: Test if the container is alive
+  uri:
+    url: "{{ container_url }}"
+    method: GET
+    status_code: "{{ http_code }}"
+  ignore_errors: true
+  register: status
+
+#- debug:
+#    msg: "{{ status }}"
+
+- include_role:
+    name: luther38.discord_webhook
+  vars:
+    discord_webhook: "{{ discord_test_hook }}"
+    discord_message: "{{ container_name }}\n  - Status: {{ status.status }}\n  - Message: {{ status.msg }}"
+  #when: HydraStatus.status == -1
+

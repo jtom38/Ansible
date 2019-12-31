@@ -1,0 +1,44 @@
+---
+
+
+- name: Deploy Syncthing
+  hosts: localhost
+  vars:
+    pathConfig: ~/docker/syncthing/config
+    pathData: ~/docker/syncthing/data
+
+
+  tasks:
+    - name: stop container
+      docker_container:
+        name: wiggles
+        state: stopped
+      ignore_errors: true
+
+    - name: Pull container
+      docker_image:
+        name: linuxserver/syncthing
+        source: pull
+
+    - name: Destroy old Container
+      docker_container:
+        name: wiggles
+        state: absent
+      ignore_errors: true
+    
+    - name: Deploy new container
+      docker_container:
+        name: wiggles
+        image: linuxserver/syncthing
+        state: started
+        restart_policy: unless-stopped
+        env:
+          PUID=0
+          PGID=0
+        ports:
+          - 8384:8384
+          - 22000:22000
+          - 21027:21027/udp
+        volumes:
+          - "{{ pathConfig }}:/config"
+          - "{{ pathData }}:/data1"

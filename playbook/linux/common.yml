@@ -7,8 +7,35 @@
   hosts: linux-all
   become: yes
 
+  roles:
+    - geerlingguy.git
+    - geerlingguy.pip
+    - geerlingguy.ntp
+    - jnv.unattended-upgrades
+
   tasks:
-    - include_role:
-        name: common
+    - name: install packages
+      apt:
+        name: "{{ packages }}"
+        state: present
       vars:
-        linux: true
+        packages:
+          - python3
+          - python3-pip
+          - nfs-common
+          - tree
+          - ranger
+      when: ansible_distribution == "Ubuntu"
+
+    - name: Remove built in packages
+      apt:
+        name: snapd
+        state: absent
+      when: ansible_distribution == "Ubuntu"
+
+    - name: install pip packages
+      pip:
+        name: "{{ pipPackages}}"
+      vars:
+        pipPackages:
+          - docker

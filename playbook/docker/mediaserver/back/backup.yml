@@ -1,46 +1,47 @@
 ---
-
 - name: testing backup plan
-  hosts: localhost
+  hosts: mediaserver-back
+  become: true
   vars:
-    containers:
-      - hydra
+    dvb_PathBackup:     '/docker/nfs/backup'
+    dvb_backup_volume:  '/config'
 
   tasks:
+
+#    - include_role:
+#        name: ansible_discord_webhook
+#      vars:
+#        discord_webhook: "{{ discord_test_hook }}"
+#        discord_username: 'Ansible Monitor'
+#        discord_message: "Backend services are going offline for backup jobs to run."
+
+    - set_fact:
+        dvb_container_name: 'sonarr'
+
+    - include_role: 
+        name: ansible-role-docker-volume-backup
+
+#    - include_role:
+#        name: docker_volume_management
+#      vars:
+#        container_name: 'hydra'
+
+#    - include_tasks: task-backup.yml
+#      vars:
+#        container: "hydra"
+#        #pathBackup: '~/docker/backup'
     
+#    - include_tasks: task-backup.yml
+#      vars:
+#        container: "nzbget"
+#        #pathBackup: 
 
-    - name: looping though containers
-      block:
-        - name: Get container data
-          docker_container_info:
-            name: "{{ item }}"
-          register: output
-
-        - debug:
-            msg: "{{ output.container.Name }}"
-
-        - name: stop container for backups
-          docker_container:
-            name: "{{ item }}"
-            state: stopped
-        
-        - name: thing
-          debug:
-            #msg: "{{ item }}"
-            msg: "~/docker/backup{{ output.container.Name }}{{ item.Destination }}"
-          loop: "{{ output.container.Mounts }}"
-          #when: item.Type == 'bind'
-
-        - name: Confirm ~/docker/backup{{ output.container.Name }} exists
-          file:
-            path: "~/docker/backup{{ output.container.Name }}"
-            state: directory
-
-        - name: Backup {{ item.Destination }}
-          archive:
-            path: "{{ item.Source }}"
-            dest: "~/docker/backup{{ output.container.Name }}{{ item.Destination }}.gz"
-          loop: "{{ output.container.Mounts }}"
-          when: item.Type == 'bind'
-      loop: "{{ containers }}"
+#    - include_tasks: task-backup.yml
+#      vars:
+#        container: "sonarr"
+#        ok_mount: '/config' 
+          
+#    - include_tasks: task-backup.yml
+#      vars:
+#        container: "radarr"
       

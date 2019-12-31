@@ -1,0 +1,22 @@
+---
+
+- name: t
+  hosts: mediaserver-back
+
+  tasks:
+    - name: send test message
+      discord_webhook_info:
+        webhook_url: "http://discordapp.com/api/webhooks/657270847530336267/2Lx68Mmtt61wl0F8kI-Zh-CHsoQuexg8ZW6XR9LuRGey5clTwZsVBq63KRFus7UviWVz"
+        #content: "Module test"
+
+      
+
+#    - include_role:
+#        name: ansible_discord_webhook
+#      vars:
+#        discord_webhook: "https://discordapp.com/api/webhooks/657270847530336267/2Lx68Mmtt61wl0F8kI-Zh-CHsoQuexg8ZW6XR9LuRGey5clTwZsVBq63KRFus7UviWVz"
+#        #discord_message: "Tesing embed"
+#        discord_name: 'ansible dev'
+#        discord_embed_title: "title?"
+#        discord_embed_content: "this should be in the embed"
+#        discord_embed_color: "43b581"

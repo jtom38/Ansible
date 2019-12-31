@@ -1,19 +1,26 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 
-# Copyright: (c) 2018, Terry Jones <terry.jones@example.org>
+# Copyright: (c) 2019, James Tombleson <luther38@gmail.com>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
+
+
+from ansible.module_utils.basic import AnsibleModule
+from ansible.module_args.urls import fetch_url
+import json
+
 ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
+    'metadata_version': '1.0',
     'status': ['preview'],
     'supported_by': 'community'
 }
 
 DOCUMENTATION = '''
 ---
-module: collins
+module: discord_webhook
 
-short_description: This module helps you manage your collins inventory from Ansible.
+short_description: This module sends messages to a discord webhook.
 
 version_added: "2.4"
 
@@ -21,20 +28,29 @@ description:
     - "This is my longer description explaining my test module"
 
 options:
-    name:
+    webhook_url:
         description:
-            - This is the message to send to the test module
+            - This defines where ansible will send the json payload for discord to intake.
         required: true
-    new:
+    content:
         description:
-            - Control to demo if the result of this module is changed or not
+            - This defines the message that will be presented within the payload.
+        required: true
+    
+    username:
+        description:
+            - This will allow you to overwrite the default webhook name.  
+            - Useful for when different services use the same webhook.
         required: false
-
-extends_documentation_fragment:
-    - azure
+    
+    avatar_url:
+        description:
+            - Add a URL here if you want to overwrite the default avatar image configured on the webhook.
+        required: false
+    
 
 author:
-    - Your Name (@yourhandle)
+    - James Tombleson (github.com/luther38)
 '''
 
 EXAMPLES = '''
@@ -66,14 +82,10 @@ message:
     returned: always
 '''
 
-from ansible.module_utils.basic import AnsibleModule
 
 def run_module():
     # define available arguments/parameters a user can pass to the module
-    module_args = dict(
-        name=dict(type='str', required=True),
-        new=dict(type='bool', required=False, default=False)
-    )
+
 
     # seed the result dict in the object
     # we primarily care about changed and state
@@ -91,19 +103,9 @@ def run_module():
     # args/params passed to the execution, as well as if the module
     # supports check mode
     module = AnsibleModule(
-        argument_spec= dict(
-            username    = dict(type='str', default=None),
-            password    = dict(type='str', default=None),
-            api         = dict(type='str', default=None),
-            action      = dict(type='str', default=None)
-        ),
+        argument_spec=module_args,
         supports_check_mode=True
     )
-
-    username = module.params['username']
-    password = module.params['password']
-    api = module.params['api']
-    action = module.params['action']
 
     # if the user is working with this module in only check mode we do not
     # want to make any changes to the environment, just return the current
@@ -131,12 +133,48 @@ def run_module():
     # simple AnsibleModule.exit_json(), passing the key/value results
     module.exit_json(**result)
 
-def main():
-    run_module()
+def basic(ansibleModule):
 
-#import json
-#import ansible.module_utils.basic import *
-#import ansible.module_utils.urls import *
+    headers = '{ "Content-Type": "application/json" }'
+    payload = {
+        'content': ansibleModule.argument_spec['content']
+    }
+    resp, info = fetch_url(module=payload, 
+        url= ansibleModule.argument_spec['webhook_url'], 
+        headers= json.loads(headers), 
+        method='GET')
+
+    if info['status'] != 204:
+        ansibleModule.fail_json(msg="Fail: ")
+    
+    try:
+        
+
+    pass
+
+def main():
+    module = AnsibleModule(
+        argument_spec= dict(
+            webhook_url     =dict(type='str', required=True),
+            content         =dict(type='str', required=True),
+            username        =dict(type='str', required=False),
+            avatar_url      =dict(type='str', required=False)
+        ),
+        supports_check_mode= True
+    )
+
+    result = dict(
+        changed= False,
+        original_message= '',
+        message= ''
+    )
+
+    if module.check_mode:
+        return result
+
+    basic(module)    
+
+    #run_module()
 
 if __name__ == '__main__':
     main()

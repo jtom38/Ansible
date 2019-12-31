@@ -4,39 +4,13 @@
   become: yes
   vars:
     update: false
-    pathDockerRoot: "/docker"
-    pathConfig:     "{{ pathDockerRoot }}/cfg"
-    pathMedia:      "{{ pathDockerRoot }}/media"
-    pathDownloads:  "{{ pathDockerRoot }}/downloads"
-    nfsAddress:     192.168.0.16
-    nfsDockerConfig: "docker"
-    nfsMedia:       "plex"
-    nfsMovies:      "plex"
-    nfsTV:          "plex"
-    dockerNetwork:  mediaserver
   
   tasks:
-    - name: Run common docker
-      include_role:
-        name: common
-      vars:
-        medaiserver: true
-
     - name: stop hydra
       docker_container:
         name: hydra
         state: stopped
       ignore_errors: yes
-
-    # Get version of container
-
-    # Backup hydraConfig
-    - name: hydra - backup config
-      archive:
-        path: "{{ pathConfig }}/hydra"
-        dest: "/docker/backup/hydraconfig.gz"
-        format: gz
-        remove: false
 
     - name: hydra - update image
       shell: docker pull linuxserver/hydra2
@@ -78,13 +52,6 @@
     - name: sonarr - remove old container
       shell: docker container rm sonarr
 
-    - name: sonarr- backup config 
-      archive:
-        path: "{{ pathConfig }}/sonarr"
-        dest: /docker/backup/sonarrconfig.gz
-        format: gz
-        remove: false
-
     - name: sonarr - start 
       docker_container:
         name: sonarr
@@ -101,7 +68,7 @@
           - 8989:8989
         volumes:
           - "{{ pathConfig }}/sonarr:/config"
-          - "{{ pathMedia }}:/tv"
+          - "{{ pathNfsMedia }}:/tv"
           - "{{ pathDownloads }}:/downloads"
         networks:
           - name: "{{ dockerNetwork }}"
@@ -112,13 +79,6 @@
         name: nzbget
         state: stopped
       ignore_errors: yes
-
-    - name: nzb - backup config
-      archive:
-        path: "{{ pathConfig }}/nzbget"
-        dest: "/docker/backup/nzbgetconfig.gz"
-        format: gz
-        remove: false
 
     - name: nzb - update image
       shell: docker pull linuxserver/nzbget
@@ -152,14 +112,6 @@
         state: stopped
       ignore_errors: yes
 
-    # backup radarrConfig
-    - name: radarr - backup config
-      archive:
-        path: "{{ pathConfig }}/radarr"
-        dest: "/docker/backup/radarrconfig.gz"
-        format: gz
-        remove: false
-
     - name: radarr - update
       shell: docker pull linuxserver/radarr
       when: update == true
@@ -182,7 +134,7 @@
           - 7878:7878
         volumes:
           - "{{ pathConfig }}/radarr:/config"
-          - "{{ pathMedia }}:/movies"
+          - "{{ pathNfsMedia }}:/movies"
           - "{{ pathDownloads }}:/downloads"
         networks:
           - name : "{{ dockerNetwork }}"

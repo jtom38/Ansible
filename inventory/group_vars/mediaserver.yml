@@ -1,0 +1,18 @@
+---
+
+pathDockerRoot: "/docker"
+
+# local dir
+pathConfig:     "{{ pathDockerRoot }}/cfg"
+pathBackups:     "/docker/backups"
+pathDownloads:  "{{ pathDockerRoot }}/downloads"
+pathNfs:        "{{ pathDockerRoot }}/nfs"
+
+# nfs dir
+pathNfsBackup:  "{{ pathNfs }}/backup"
+pathNfsMedia:   "{{ pathNfs }}/media"
+pathMedia:      "{{ pathDockerRoot }}/media"
+nfsAddress:     192.168.0.16
+nfsDockerConfig: "docker"
+nfsMedia:       "plex"
+dockerNetwork:  mediaserver

@@ -1,0 +1,24 @@
+---
+
+- name: Configure defaults for docker servers
+  hosts: docker
+  become: true
+
+  tasks:
+    - name: install pip packages
+      pip:
+        name: "{{ pipPacks }}"
+        state: present
+      vars:
+        pipPacks:
+          - docker
+      
+    - name: install docker
+      include_role:
+        name: geerlingguy.docker
+
+    - name: make /docker folder
+      file:
+        path: "/docker"
+        state: directory
+

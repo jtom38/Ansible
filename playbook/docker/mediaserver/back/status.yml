@@ -1,0 +1,30 @@
+---
+
+- name: Check on services
+  hosts: mediaserver-back
+  become: true
+
+  tasks:
+    - include_tasks: task-status-checkup.yml
+      vars:
+        container_url: 'http://192.168.0.76:5076'
+        container_name: Hydra
+        http_code: 200
+
+    - include_tasks: task-status-checkup.yml
+      vars:
+        container_url: 'http://192.168.0.76:6789'
+        container_name: Nzbget
+        http_code: 401
+
+    - include_tasks: task-status-checkup.yml
+      vars:
+        container_url: 'http://192.168.0.76:8989'
+        container_name: Sonarr
+        http_code: 200
+
+    - include_tasks: task-status-checkup.yml
+      vars:
+        container_url: 'http://192.168.0.76:7878'
+        container_name: Radarr
+        http_code: 200

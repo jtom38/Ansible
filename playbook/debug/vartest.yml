@@ -1,8 +1,0 @@
----
-
-- name: t
-  hosts: mediaserver-back
-
-  tasks:
-    - debug:
-        msg: "{{ discord_corgi_hook }}"

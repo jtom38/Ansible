@@ -4,11 +4,13 @@
   hosts: mediaserver-back
   become: true
   vars:
+    host_ip: '192.168.0.76'
     containers:
-      - hydra
-      - nzbget
-      - sonarr
-      - radarr
+      - hydra:
+          service_port: 5076
+      - nzbget:
+      - sonarr:
+      - radarr:
 
   tasks:
 #    - name: stop containers
@@ -29,22 +31,25 @@
 
     - name: Test Hydra
       uri:
-        url: http://192.168.0.76:5076
+        url: "http://{{ host_ip }}:{{ containers[0].service_port }}"
         method: GET
       ignore_errors: true
       register: HydraStatus
+    
+    - debug:
+        msg: "{{ HydraStatus }}"
 
-    - include_role:
-        name: luther38.discord_webhook
-      vars:
-        discord_webhook: "{{ discord_test_hook }}"
-        discord_message: "Hydra Status: OK\nDebug: {{ HydraStatus.msg }}"
-      when: HydraStatus.status == 200
+#    - include_role:
+#        name: luther38.discord_webhook
+#      vars:
+#        discord_webhook: "{{ discord_test_hook }}"
+#        discord_message: "Hydra Status: {{ HydraStatus.status }}\nDebug: {{ HydraStatus.msg }}"
+#      when: HydraStatus.status == 200
 
-    - include_role:
-        name: luther38.discord_webhook
-      vars:
-        discord_webhook: "{{ discord_test_hook }}"
-        discord_message: "Hydra Status: Offline\nDebug: {{ HydraStatus.msg }}"
-      when: HydraStatus.status == -1
+#    - include_role:
+#        name: luther38.discord_webhook
+#      vars:
+#        discord_webhook: "{{ discord_test_hook }}"
+#        discord_message: "Hydra Status: Offline\nDebug: {{ HydraStatus.msg }}"
+#      when: HydraStatus.status == -1
 

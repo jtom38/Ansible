@@ -1,0 +1,44 @@
+---
+
+- name: "Get {{ container }} data"
+  docker_container_info:
+    name: "{{ container }}"
+  register: output
+
+- name: stop container for backups
+  docker_container:
+    name: "{{ container }}"
+    state: stopped
+
+#- name: thing
+#  debug:
+#    msg: "{{ item }}"
+#    #msg: "{{ pathBackup }}{{ output.container.Name }}{{ item.Destination }}"
+#  loop: "{{ output.container.Mounts }}"
+#  when: 
+#    - item.Type == 'bind'
+#    - item.Destination == ok_mount
+
+- name: Confirm {{ pathBackup }}{{ output.container.Name }} exists
+  file:
+    path: "{{ pathBackup }}{{ output.container.Name }}"
+    state: directory
+
+- name: "Backup container volumes"
+  archive:
+    path: "{{ item.Source }}"
+    dest: "{{ pathBackup }}{{ output.container.Name }}{{ item.Destination }}.gz"
+  loop: "{{ output.container.Mounts }}"
+  when: 
+    - item.Type == 'bind'
+    - item.Destination == ok_mount
+
+# Start container
+- name: Start {{ container }}
+  docker_container:
+    name: "{{ container }}"
+    state: started
+
+# Copy the backup directory to NFS
+
+# Remove Backup directories to reclaim disk space
