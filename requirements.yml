@@ -2,39 +2,44 @@
 # run 'ansible-galaxy install -r requirements.yml' to install what is defined in this file
 
 roles:
-  #- src: geerlingguy.ansible
+  - src: https://github.com/luther38/docker_volume_backup
+    name: luther38.docker_volume_backup
+    version: dev
+  
+  - src: https://github.com/luther38/nagioscore
+    name: luther38.nagioscore
+    version: dev
+  
+  - src: https://github.com/luther38/ansible_discord_webhook
+    name: luther38.discord_webhook
+    version: dev
+
   - src: https://github.com/geerlingguy/ansible-role-ansible
     name: geerlingguy.ansible
     version: master
   
-  #- src: geerlingguy.awx
   - src: https://github.com/geerlingguy/ansible-role-awx
     name: geerlingguy.awx
     version: master
   
-  #- src: geerlingguy.docker
   - src: https://github.com/geerlingguy/ansible-role-docker
     name: geerlingguy.docker
     version: master
     
-  #- src: geerlingguy.git
   - src: https://github.com/geerlingguy/ansible-role-git
     name: geerlingguy.git
     version: master
 
-  #- src: geerlingguy.java
   - src: https://github.com/geerlingguy/ansible-role-java
     name: geerlingguy.java
     version: master
 
   #- src: geerlingguy.jenkins
 
-  #- src: geerlingguy.nodejs
   - src: https://github.com/geerlingguy/ansible-role-nodejs
     name: geerlingguy.nodejs
     version: master
 
-  #- src: geerlingguy.pip
   - src: https://github.com/geerlingguy/ansible-role-pip
     name: geerlingguy.pip
     version: master
@@ -48,16 +53,9 @@ roles:
     name: jnv.unattended-upgrades
     version: master
   
-  - src: https://github.com/luther38/docker_volume_backup
-    name: luther38.docker_volume_backup
-    version: dev
+  - src: https://github.com/cloudalchemy/ansible-prometheus
+    name: cloudalchemy.prometheus
+    version: master
 
-  - src: https://github.com/luther38/nagioscore
-    name: luther38.nagioscore
-    version: dev
-
-  - src: https://github.com/luther38/ansible_discord_webhook
-    name: luther38.discord_webhook
-    version: dev
 
 #collections:
