@@ -15,8 +15,14 @@
       32613665626238363338343131623666306431313961653937333436343136633232346332393566
       3537666436643536373361393932353430636337386162623735
     
-    discord_message:  "Testing Cron"
+    discord_message:  "
+      Server: 76\n
+      Top of the hour cron job test.\n
+    "
     discord_name:     "Ansible Cron"
+    discord_title:    "Cron Monitor"
+    discord_color:    "12255487"
+    discord_type:     "fancy"
 
   roles:
-    - luther38.discord_webhook
+    - ansible_discord_webhook

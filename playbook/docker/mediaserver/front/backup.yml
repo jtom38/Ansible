@@ -1,0 +1,25 @@
+---
+- name: backup frontend services
+  hosts: mediaserver-front
+  become: true
+  vars:
+    dvb_path_backup:    '/docker/nfs/backup'
+    dvb_backup_volume:  '/config'
+    dvb_container_name: 'plex'
+    discord_webhook:    "{{ discord_mm_hook }}"
+    discord_name:       "Ansible Monitor - Frontend"
+
+  tasks:
+    - include_role:
+        name: ansible_discord_webhook
+      vars:
+        discord_message: "Backup Job:\nJob is starting.  Services will be going offline and brought back up once the service has finished."
+
+    - include_role:
+        name: ansible-role-docker-volume-backup
+
+    - include_role:
+        name: ansible_discord_webhook
+      vars:
+        discord_message: "Backup Job:\nJob has finished and services should be back online."
+

@@ -63,7 +63,7 @@
       cron:
         name: Update crontabs
         state: present
-        job: cd /usr/ansible ansible-playbook ./playbook/docker/mediaserver/back/cron.yml > /tmp/ansible/log/cron.log
+        job: cd /usr/ansible && ansible-playbook ./playbook/docker/mediaserver/back/cron.yml > /tmp/ansible/log/cron.log
         minute: "1"
         hour: "*"
         day: "*"

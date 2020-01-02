@@ -21,11 +21,6 @@
         path: "{{ pathDownloads }}"
         state: directory
 
-    - name: Ensure {{ pathBackups }} exists
-      file:
-        path: "{{ pathBackups }}"
-        state: directory
-
     - name: Ensure {{ pathNfs }} exists
       file:
         path: "{{ pathNfs }}"
@@ -55,7 +50,7 @@
         path: "{{ pathNfsMedia }}"
         fstype: nfs
         boot: yes
-        state: mounted    
+        state: mounted   
         
     - name: make media folder - dep
       file:
@@ -68,7 +63,7 @@
         path: "{{ pathConfig }}"
         fstype: nfs
         boot: yes
-        state: unmounted
+        state: absent
 
     - name: mount nfs to /docker/plex - dep
       mount:
@@ -76,7 +71,7 @@
         path: "{{ pathMedia }}"
         fstype: nfs
         boot: yes
-        state: mounted
+        state: absent
 
     - name: install docker pip package
       pip:
