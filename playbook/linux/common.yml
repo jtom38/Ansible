@@ -25,6 +25,7 @@
           - nfs-common
           - tree
           - ranger
+          - sshpass
       when: ansible_distribution == "Ubuntu"
 
     - name: Remove built in packages

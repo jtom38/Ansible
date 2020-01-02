@@ -74,7 +74,7 @@
       cron:
         name: Discord Test
         state: present
-        job: cd /usr/ansible ansible-playbook /usr/ansible/playbook/localhost/discord_test.yml
+        job: cd /usr/ansible && /usr/local/bin/ansible-playbook ./playbook/localhost/discord_test.yml
         minute: "1"
 
     # Restart Containers
