@@ -7,13 +7,12 @@
     dvb_backup_volume:  '/config'
 
   tasks:
-
-#    - include_role:
-#        name: ansible_discord_webhook
-#      vars:
-#        discord_webhook: "{{ discord_test_hook }}"
-#        discord_username: 'Ansible Monitor'
-#        discord_message: "Backend services are going offline for backup jobs to run."
+    - include_role:
+        name: ansible_discord_webhook
+      vars:
+        discord_webhook: "{{ discord_mm_hook }}"
+        discord_username: 'Ansible Monitor'
+        discord_message: "Backend services are going offline for backup jobs to run."
 
     - set_fact:
         dvb_container_name: 'sonarr'

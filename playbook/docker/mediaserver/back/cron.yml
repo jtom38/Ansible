@@ -32,7 +32,7 @@
         dest: /usr/ansible
 
     - name: Install Requirements.yml
-      shell: cd /usr/ansible && ansible-galaxy install -r requirements.yml
+      shell: cd /usr/ansible && ansible-galaxy install -r requirements.yml --force
 
     - name: Make Cron log location
       file:
@@ -70,6 +70,11 @@
 
     #- name: Cron - Run Linux Common
 
+    - name: Cron - Discord Test
+      cron:
+        name: Discord Test
+        state: present
+        job: cd /usr/ansible ansible-playbook /usr/ansible/playbook/docker/
 
     # Restart Containers
 

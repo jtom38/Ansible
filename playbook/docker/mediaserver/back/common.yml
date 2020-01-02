@@ -1,9 +1,0 @@
----
-
-- name: Ensure node conforms to standards
-  hosts: mediaserver-back
-  become: true
-
-  tasks:
-    
-
