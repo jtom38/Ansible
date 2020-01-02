@@ -21,40 +21,35 @@
         name: ansible
         state: present
     
-#    - name: Make working dir
-#      file:
-#        path: /usr/ansible
-#        state: directory
-
     - name: Configure Ansible Repo
       git:
         repo: 'https://github.com/luther38/ansible.git'
-        dest: /usr/ansible
-
-    - name: Install Requirements.yml
-      shell: cd /usr/ansible && ansible-galaxy install -r requirements.yml --force
+        dest: /usr/ansible 
 
     - name: Make Cron log location
       file:
         state: directory
         path: /tmp/ansible/log/
-
+    
     # Add vault pass
-
+          
     - name: Cron - pull down newest dev branch
       cron: 
         name: Update ansible repo
         state: present
-        job: cd /usr/ansible && git checkout dev && git pull > /tmp/ansible/log/pull.log
+        job: cd /usr/ansible && /usr/bin/git checkout dev && /usr/bin/git pull
         minute: "0"
         hour: "*"
         day: "*"
-
+            
+    - name: Install Requirements.yml
+      shell: cd /usr/ansible && /usr/local/bin/ansible-galaxy install -r requirements.yml --force
+    
     - name: Cron - Update roles
       cron: 
         name: Update Ansible Roles
         state: present
-        job: cd /usr/ansible && ansible-galaxy install -r requirements.yml > /tmp/ansible/logs/galaxy.log
+        job: cd /usr/ansible && /usr/local/bin/ansible-galaxy install -r /usr/ansible/requirements.yml > /tmp/ansible/logs/galaxy.log
         minute: "1"
         hour: "*"
         day: "*"
@@ -63,7 +58,7 @@
       cron:
         name: Update crontabs
         state: present
-        job: cd /usr/ansible && ansible-playbook ./playbook/docker/mediaserver/back/cron.yml > /tmp/ansible/log/cron.log
+        job: cd /usr/ansible && /usr/local/bin/ansible-playbook ./playbook/docker/mediaserver/back/cron.yml > /tmp/ansible/log/cron.log
         minute: "1"
         hour: "*"
         day: "*"

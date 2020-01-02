@@ -1,0 +1,36 @@
+---
+
+- name: Deploy minecraft
+  hosts: localhost
+  vars:
+    volData: "~/docker/minecraft/data"
+
+  tasks:
+    - name: stop container
+      docker_container:
+        name: minecraft
+        state: stopped
+      ignore_errors: true
+
+    - name: Destroy old container
+      docker_container:
+        name: minecraft
+        state: absent
+      ignore_errors: true
+
+    - name: Deploy container
+      docker_container:
+        name: minecraft
+        state: started
+        image: itzg/minecraft-server
+        env:
+          EULA=TRUE
+          #TYPE=FTB
+          #FTB_SERVER_MOD=
+          #TYPE=CURSEFORGE
+          #CF_SERVER_MOD=
+        ports:
+          - 25565:25565
+        volumes:
+          - "{{ volData }}:/data"
+    
