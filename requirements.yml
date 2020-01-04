@@ -57,5 +57,8 @@ roles:
     name: cloudalchemy.prometheus
     version: master
 
+  - src: https://github.com/hispanico/ansible-nginx-revproxy
+    name: hispanico/nginx_revproxy
+    version: master
 
 #collections:

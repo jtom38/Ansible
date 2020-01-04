@@ -6,35 +6,20 @@
   # vars are stored in inventory
 
   tasks:
-    - name: Ensure {{ pathDockerRoot }} exists
+    - name: "Ensure {{ pathNfsSync }} exists"
       file:
-        path: "{{ pathDockerRoot }}"
+        path: "{{ item }}"
         state: directory
-
-    - name: Ensure {{ pathConfig }} exists
-      file:
-        path: "{{ pathConfig }}"
-        state: directory
-
-    - name: Ensure {{ pathDownloads }} exists
-      file:
-        path: "{{ pathDownloads }}"
-        state: directory
-
-    - name: Ensure {{ pathNfs }} exists
-      file:
-        path: "{{ pathNfs }}"
-        state: directory
-
-    - name: Ensure {{ pathNfsBackup }} exists
-      file:
-        path: "{{ pathNfsBackup }}"
-        state: directory
-
-    - name: Ensure {{ pathNfsMedia }} exists
-      file:
-        path: "{{ pathNfsMedia }}"
-        state: directory
+      vars:
+        folders:
+          - "{{ pathDockerRoot }}"
+          - "{{ pathConfig }}"
+          - "{{ pathDownloads }}"
+          - "{{ pathNfs }}"
+          - "{{ pathNfsBackup }}"
+          - "{{ pathNfsMedia }}"
+          - "{{ pathNfsSync }}"
+      loop: "{{ folders }}"
 
     - name: Ensure {{ pathNfsBackup }} is mounted
       mount:
@@ -51,27 +36,16 @@
         fstype: nfs
         boot: yes
         state: mounted   
-        
-    - name: make media folder - dep
-      file:
-        path: "{{ pathMedia }}"
-        state: directory
-
-    - name: unmount nfs to /docker/config - dep
+       
+    - name: "Ensure {{ pathNfsSync }} is mounted"
       mount:
-        src: "{{ nfsAddress }}:/{{ nfsDockerConfig }}"
-        path: "{{ pathConfig }}"
+        src: "{{ nfsAddress }}:/sync"
+        path: "{{ pathNfsSync }}"
         fstype: nfs
         boot: yes
-        state: absent
-
-    - name: mount nfs to /docker/plex - dep
-      mount:
-        src: "{{ nfsAddress }}:/{{ nfsMedia }}"
-        path: "{{ pathMedia }}"
-        fstype: nfs
-        boot: yes
-        state: absent
+        state: mounted
+      # Going to ignore errors because some nodes are unable to touch this
+      ignore_errors: true
 
     - name: install docker pip package
       pip:

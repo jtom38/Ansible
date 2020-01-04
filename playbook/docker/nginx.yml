@@ -1,0 +1,39 @@
+---
+
+- name: Ensure nginx is deployed
+  hosts: mediaserver-back
+  become: true
+  vars:
+    discord_webhook:  "{{ discord_mmt_hook }}"
+    discord_name:     "Ansible Monitor - Backend"
+    discord_type:     "fancy"
+    discord_title:    "nginx deployment"
+    discord_color:    "12255487"
+
+  tasks:
+    - include_role:
+        name: luther38.discord_webhook
+      vars:
+        discord_message: "Nginx is getting rebooted... please wait..."
+
+    - name: Stop and destroy Container
+      docker_container:
+        name: nginx
+        state: absent
+      ignore_errors: true
+    
+    - name: Pull image
+      docker_image:
+        name: nginx
+        source: pull
+
+    - name: Deploy nginx
+      docker_container:
+        name: nginx
+        image: nginx
+        state: started
+        restart_policy: unless-stopped
+        ports:
+          - 80:80
+        volumes:
+          - '/docker/cfg/nginx:/etc/nginx/'

@@ -6,9 +6,7 @@
   vars:
     pathDockerRoot: "/docker"
     pathConfig:     "{{ pathDockerRoot }}/cfg"
-    pathMedia:      "{{ pathDockerRoot }}/media"
-    pathTranscode:  "{{ pathDockerRoot }}/transcode"
-    pathPlexDB:     "{{ pathConfig }}/plex/Library/Application Support/Plex Media Server/Plug-in Support/Databases"
+    pathMedia:      "/docker/nfs/media"    
     update: false
  
   tasks:
