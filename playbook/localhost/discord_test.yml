@@ -25,5 +25,5 @@
     discord_type:     "fancy"
 
   roles:
-    #- luther38.discord_webhook
-    - ansible_discord_webhook
+    - luther38.discord_webhook
+    #- ansible_discord_webhook
