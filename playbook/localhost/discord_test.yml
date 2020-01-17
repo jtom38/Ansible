@@ -22,7 +22,8 @@
     discord_name:     "Ansible Cron"
     discord_title:    "Cron Monitor"
     discord_color:    "12255487"
-    discord_type:     "upload"
+    discord_type:     "fancy"
 
   roles:
-    - luther38.discord_webhook
+    #- luther38.discord_webhook
+    - ansible_discord_webhook
