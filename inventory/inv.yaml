@@ -32,4 +32,7 @@ all:
     awx:
       hosts:
         192.168.0.241:
+    influx:
+      hosts:
+        192.168.0.241:
 

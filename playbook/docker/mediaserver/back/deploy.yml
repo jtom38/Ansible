@@ -65,7 +65,8 @@
           TZ=Europe/London
           UMASK_SET=022 #optional
         ports:
-          - 8989:8989
+          - 8989:8989 #http
+          #- 9898:9898 #https
         volumes:
           - "{{ pathConfig }}/sonarr:/config"
           - "{{ pathNfsMedia }}:/tv"

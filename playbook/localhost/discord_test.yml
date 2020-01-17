@@ -25,4 +25,4 @@
     discord_type:     "upload"
 
   roles:
-    - ansible_discord_webhook
+    - luther38.discord_webhook

@@ -80,5 +80,9 @@ discord_mmt_hook: !vault |
 ntp_enabled: true
 ntp_timezone: 'America/Los_Angeles'
 
+zsh_backup: false
+zsh_ohmyzsh_install: /home/miharu
+zsh_plugins: git ansible dotenv
+
 # Used with 
 unattended_automatic_reboot: true

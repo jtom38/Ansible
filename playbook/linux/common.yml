@@ -12,6 +12,7 @@
     - geerlingguy.pip
     - geerlingguy.ntp
     - jnv.unattended-upgrades
+    - luther38.ohmyzsh
 
   tasks:
     - name: install packages

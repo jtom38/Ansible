@@ -22,3 +22,4 @@ hosts.d
 
 # Debug files
 ansible-vars.all
+res.json

@@ -14,6 +14,10 @@ roles:
     name: luther38.discord_webhook
     version: dev
 
+  - src: https://github.com/luther38/ansible-role-ohmyzsh
+    name: luther38.ohmyzsh
+    version: dev
+
   - src: https://github.com/geerlingguy/ansible-role-ansible
     name: geerlingguy.ansible
     version: master
@@ -48,6 +52,10 @@ roles:
     name: geerlingguy.ntp
     version: master
 
+  - src: https://github.com/geerlingguy/ansible-role-certbot
+    name: geerlingguy.certbot
+    version: master
+
   #- src: jnv.unattended-upgrades
   - src: https://github.com/jnv/ansible-role-unattended-upgrades
     name: jnv.unattended-upgrades
@@ -58,7 +66,15 @@ roles:
     version: master
 
   - src: https://github.com/hispanico/ansible-nginx-revproxy
-    name: hispanico/nginx_revproxy
+    name: hispanico.nginx_revproxy
+    version: master
+
+  - src: https://github.com/rossmcdonald/influxdb
+    name: rossmcdonald.influxdb
+    version: master
+
+  - src: https://github.com/rossmcdonald/telegraf
+    name: rossmcdonald.telegraf
     version: master
 
 #collections:
