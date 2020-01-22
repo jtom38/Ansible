@@ -68,7 +68,7 @@
     - name: Cron - Discord Test
       cron:
         name: Discord Test
-        state: present
+        state: absent
         job: cd /usr/ansible && /usr/local/bin/ansible-playbook ./playbook/localhost/discord_test.yml
         minute: "1"
 

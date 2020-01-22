@@ -139,7 +139,8 @@ def basic(ansibleModule):
     payload = {
         'content': ansibleModule.argument_spec['content']
     }
-    resp, info = fetch_url(module=payload, 
+    resp, info = fetch_url(
+        module=payload, 
         url= ansibleModule.argument_spec['webhook_url'], 
         headers= json.loads(headers), 
         method='GET')
@@ -147,9 +148,6 @@ def basic(ansibleModule):
     if info['status'] != 204:
         ansibleModule.fail_json(msg="Fail: ")
     
-    try:
-        
-
     pass
 
 def main():
