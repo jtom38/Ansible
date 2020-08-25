@@ -1,6 +1,10 @@
 # Ansible Galaxy requirements file
 # run 'ansible-galaxy install -r requirements.yml' to install what is defined in this file
 
+collections:
+
+- community.general
+
 roles:
   - src: https://github.com/luther38/docker_volume_backup
     name: luther38.docker_volume_backup
@@ -29,6 +33,10 @@ roles:
   - src: https://github.com/geerlingguy/ansible-role-docker
     name: geerlingguy.docker
     version: master
+
+  - src: https://github.com/geerlingguy/ansible-role-kubernetes
+    name: geerlingguy.kubernetes
+    version: 4.0.1
     
   - src: https://github.com/geerlingguy/ansible-role-git
     name: geerlingguy.git
@@ -69,12 +77,6 @@ roles:
     name: hispanico.nginx_revproxy
     version: master
 
-  - src: https://github.com/rossmcdonald/influxdb
-    name: rossmcdonald.influxdb
-    version: master
 
-  - src: https://github.com/rossmcdonald/telegraf
-    name: rossmcdonald.telegraf
-    version: master
 
 #collections:

@@ -14,7 +14,6 @@
         folders:
           - "{{ pathDockerRoot }}"
           - "{{ pathConfig }}"
-          - "{{ pathDownloads }}"
           - "{{ pathNfs }}"
           - "{{ pathNfsBackup }}"
           - "{{ pathNfsMedia }}"
@@ -46,6 +45,17 @@
         state: mounted
       # Going to ignore errors because some nodes are unable to touch this
       ignore_errors: true
+
+    - name: "Ensure {{ pathNfsTmp }} is mounted"
+      mount:
+        src: "{{ nfsAddress }}:/tmp"
+        path: "{{ pathNfsTmp }}"
+        fstype: nfs
+        boot: yes
+        state: mounted
+      # Going to ignore errors because some nodes are unable to touch this
+      ignore_errors: true
+
 
     - name: install docker pip package
       pip:

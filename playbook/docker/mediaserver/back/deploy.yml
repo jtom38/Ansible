@@ -6,19 +6,16 @@
     update: false
   
   tasks:
+
+    - docker_network:
+
     - name: stop hydra
       docker_container:
         name: hydra
-        state: stopped
+        state: absent
       ignore_errors: yes
 
-    - name: hydra - update image
-      shell: docker pull linuxserver/hydra2
-      when: update == true
-
-    - name: hydra - remove old container
-      shell: docker container rm hydra
-      ignore_errors: true
+    
 
     - name: hydra - Make Hydra
       docker_container:
@@ -34,7 +31,8 @@
           - 5076:5076
         volumes:
           - "{{ pathConfig }}/hydra:/config"
-          - "{{ pathDownloads }}:/downloads"
+          #- "{{ pathDownloads }}:/downloads"
+          - "{{ pathNfsTmp }}:/downloads"
         networks:
           - name: "{{ dockerNetwork }}"
             ipv4_address: 172.18.0.10
@@ -42,15 +40,12 @@
     - name: sonarr - stop container
       docker_container:
         name: sonarr
-        state: stopped
+        state: absent
       ignore_errors: yes
 
     - name: sonarr - update image
       shell: docker pull linuxserver/hydra2
       when: update == true
-
-    - name: sonarr - remove old container
-      shell: docker container rm sonarr
 
     - name: sonarr - start 
       docker_container:
@@ -70,7 +65,8 @@
         volumes:
           - "{{ pathConfig }}/sonarr:/config"
           - "{{ pathNfsMedia }}:/tv"
-          - "{{ pathDownloads }}:/downloads"
+          #- "{{ pathDownloads }}:/downloads"
+          - "{{ pathNfsTmp}}:/downloads"
         networks:
           - name: "{{ dockerNetwork }}"
             ipv4_address: 172.18.0.11
@@ -78,15 +74,12 @@
     - name: stop nzb
       docker_container:
         name: nzbget
-        state: stopped
+        state: absent
       ignore_errors: yes
 
     - name: nzb - update image
       shell: docker pull linuxserver/nzbget
       when: update == true
-
-    - name: nzb - remove old container
-      shell: docker container rm nzbget
 
     - name: Nzb - deploy
       docker_container:
@@ -102,7 +95,8 @@
           - 6789:6789
         volumes:
           - "{{ pathConfig }}/nzbget:/config"
-          - "{{ pathDownloads }}:/downloads"
+          #- "{{ pathDownloads }}:/downloads"
+          - "{{ pathNfsTmp }}:/downloads"
         networks:
           - name: "{{ dockerNetwork }}"
             ipv4_address: 172.18.0.12
@@ -110,15 +104,12 @@
     - name: radarr - stop
       docker_container:
         name: radarr
-        state: stopped
+        state: absent
       ignore_errors: yes
 
     - name: radarr - update
       shell: docker pull linuxserver/radarr
       when: update == true
-
-    - name: radarr - remove old container
-      shell: docker container rm radarr
 
     - name: radarr - deploy
       docker_container:
@@ -136,10 +127,13 @@
         volumes:
           - "{{ pathConfig }}/radarr:/config"
           - "{{ pathNfsMedia }}:/movies"
-          - "{{ pathDownloads }}:/downloads"
+          #- "{{ pathDownloads }}:/downloads"
+          - "{{ pathNfsTmp }}:/downloads"
         networks:
           - name : "{{ dockerNetwork }}"
             ipv4_address: 172.18.0.13
 
     #- name: remove old images
     #  shell: docker image prune --force
+
+

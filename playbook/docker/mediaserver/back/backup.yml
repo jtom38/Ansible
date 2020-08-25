@@ -14,6 +14,29 @@
       vars:
         discord_message: "Backup Job:\nJob is starting.  Services will be going offline and brought back up once the service has finished."
 
+    - name: Ensure backup location is present
+      file:
+        path: /tmp/docker/backup
+        state: directory
+
+    - block:
+        - name: stop hydra
+          docker_container:
+            name: hydra
+            state: stopped
+
+        - name: copy cfg to tmp
+          copy:
+            src: /docker/cfg/hydra
+            dest: "{{ pathBackup}}/hydra"
+            remote_src: true
+
+        - name: archive directory
+          archive:
+            path: "{{ pathBackup }}/hydra"
+            dest: "{{}}"
+          
+
     - set_fact:
         dvb_container_name: 'hydra'
     - include_role:

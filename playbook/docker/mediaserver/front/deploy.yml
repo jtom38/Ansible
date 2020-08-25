@@ -8,44 +8,71 @@
     pathConfig:     "{{ pathDockerRoot }}/cfg"
     pathMedia:      "/docker/nfs/media"    
     update: false
+    containers:
+      - plex
+      - plex_app_1
+      - plex_logs_1
+    images:
+      - linuxserver/plex:latest
+      - tautulli/tautulli 
  
   tasks:
-    #- name: Maintain Defaults
-    #  include_role:
-    #    name: common
-    #  vars:
-    #    mediaserver: true
-    #    plex: true
 
-    - name: Stop Plex
+    - name: Stop and remove Containers
       docker_container:
-        name: plex
-        state: stopped
+        name: "{{ item }}"
+        state: absent
+      loop: "{{ containers }}"
       ignore_errors: yes
 
-    - name: update image
-      shell: docker pull linuxserver/plex
-      when: update == true
+    #- name: Start Plex
+    #  docker_container:
+    #    name: plex
+    #    image: linuxserver/plex:1.18.2.2058-e67a4e892-ls70
+    #    state: started
+    #    network_mode: host
+    #    restart_policy: unless-stopped
+    #    env:
+    #      PUID=0
+    #      PGID=0
+    #      TZ="{{ ntp_timezone }}"
+    #      UMASK_SET=022
+    #    volumes:
+    #      - "{{ pathConfig }}/plex:/config"
+    #      - "{{ pathMedia }}:/tv"
 
-    - name: remove old container
-      shell: docker container rm plex
-      ignore_errors: true
+    - name: Ensure containers are running
+      docker_compose:
+        project_name: plex
+        definition:
+          version: "3.4"
+          services:
+            app:
+              image: linuxserver/plex:latest
+              environment:
+                - PUID=0
+                - PGID=0
+                - TZ="{{ ntp_timezone }}" 
+                - UMASK_SET=022
+              restart: always
+              network_mode: host
+              volumes:
+                - "{{ pathConfig }}/plex:/config"
+                - "{{ pathMedia }}:/tv"
 
-    - name: Start Plex
-      docker_container:
-        name: plex
-        image: linuxserver/plex:1.18.2.2058-e67a4e892-ls70
-        state: started
-        network_mode: host
-        restart_policy: unless-stopped
-        env:
-          PUID=0
-          PGID=0
-          TZ="{{ ntp_timezone }}"
-          UMASK_SET=022
-        volumes:
-          - "{{ pathConfig }}/plex:/config"
-          - "{{ pathMedia }}:/tv"
+            logs:
+              image: tautulli/tautulli
+              restart: always
+              volumes:
+                - "{{ pathConfig }}/tatulli:/config"
+                - "{{ pathConfig }}/plex/Library/Application Support/Plex Media Server/Logs:/plex_logs:ro"
+              environment:
+                - PUID=0
+                - PGID=0
+                - TZ="{{ ntp_timezone }}"
+                - ADVANCED_GIT_BRANCH=master
+              ports:
+                - "8181:8181"
 
-    #- name: remove old image
-    #  shell: docker image prune --force
+
+

@@ -1,0 +1,13 @@
+---
+
+# This installs nextcloud on the host OS rather then a container.
+# Doing this more for learning then anything.
+
+- name: Installing NextCloud Server
+  hosts:
+  become: true
+  vars:
+    nextcloud_network_name: nc
+
+  roles:
+    - ansible-role-nextcloud

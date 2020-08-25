@@ -1,0 +1,55 @@
+---
+
+- name: Deploy Newsbot
+  hosts: newsbot
+  become: true
+
+  tasks:
+    - name: stop containers
+      docker_container:
+        name: newsbot_app_1
+        state: absent
+      ignore_errors: true
+
+    - name: Pull Images
+      docker_image:
+        name: jtom38/newsbot:dev
+        source: pull
+        state: present
+
+    - name: Deploy Newsbot
+      docker_compose:
+        project_name: newsbot
+        definition:
+          version: "2"
+
+          networks:
+            newsbot:
+              external: false
+
+          services:
+            app:
+              image: 'jtom38/newsbot:dev'
+              environment:
+                NEWSBOT_POGO_ENABLED: 'true'
+                NEWSBOT_POGO_HOOK: "{{ pogo_hooks }}"
+
+                NEWSBOT_PSO2_ENABLED: 'true'
+                NEWSBOT_PSO2_HOOK: "{{ pso2_hooks }}"
+
+                NEWSBOT_FFXIV_ALL: 'false'
+                NEWSBOT_FFXIV_TOPICS: 'True'
+                NEWSBOT_FFXIV_NOTICES: 'false'
+                NEWSBOT_FFXIV_MAINTENANCE: 'false'
+                NEWSBOT_FFXIV_UPDATES: 'false'
+                NEWSBOT_FFXIV_STATUS: 'false'
+                NEWSBOT_FFXIV_HOOK: "{{ ffxiv_hooks }}"
+              restart: always
+
+              networks:
+                - newsbot
+
+              volumes:
+                - /docker/cfg/newsbot/database:/app/mounts/database
+
+

@@ -17,52 +17,58 @@
         name: ansible_discord_webhook
       vars:
         discord_message: "Backup Job:\nJob is starting.  Services will be going offline and brought back up once the service has finished."
-      
-    - name: stop container
-      docker_container:
-        name: plex
-        state: stopped
-
+        
     - name: Ensure /tmp is ready
       file:
         path: '/tmp/docker/backup/plex'
         state: directory
 
-    - name: Copy db files
-      copy:
-        remote_src: true
-        src: '/docker/cfg/plex/Library/Application Support/Plex Media Server/Plug-in Support/Databases/'
-        dest: '/tmp/docker/backup/plex/'
+    - block:
+      - name: stop container
+        docker_container:
+          name: plex
+          state: stopped
 
-    - name: start container
-      docker_container:
-        name: plex
-        state: started
+      - name: Copy db files
+        copy:
+          remote_src: true
+          src: '/docker/cfg/plex/Library/Application Support/Plex Media Server/Plug-in Support/Databases/'
+          dest: '/tmp/docker/backup/plex/'
 
-    - name: Archive db backups
-      archive:
-        path: '/tmp/docker/backup/plex/'
-        dest: '/tmp/docker/backup/plex/databases.gz'
+      - name: Copy logs
+        copy:
+          remote_src: true
+          src: '/docker/cfg/plex/Library/Application Support/Plex Media Server/Plug-in Support/Logs/'
 
-    - name: Ensure nfs has a backup location
-      file:
-        path: '/docker/nfs/backup/plex'
-        state: directory
+      - name: start container
+        docker_container:
+          name: plex
+          state: started
 
-    - name: Copy archive to a safe place
-      copy:
-        src:        '/tmp/docker/backup/plex/databases.gz'
-        dest:       '/docker/nfs/backup/plex/databases.gz'
-        remote_src: true
-        backup:     true
+      - name: Archive db backups
+        archive:
+          path: '/tmp/docker/backup/plex/'
+          dest: '/tmp/docker/backup/plex/databases.gz'
+
+      - name: Ensure nfs has a backup location
+        file:
+          path: '/docker/nfs/backup/plex'
+          state: directory
+
+      - name: Copy archive to a safe place
+        copy:
+          src:        '/tmp/docker/backup/plex/databases.gz'
+          dest:       '/docker/nfs/backup/plex/databases.gz'
+          remote_src: true
+          backup:     true
+
+    - block:
+
 
     - name: remove temp files
       file:
         path: '/tmp/docker/backup/plex'
         state: absent
-
-    #- include_role:
-    #    name: ansible-role-docker-volume-backup
 
     - include_role:
         name: ansible_discord_webhook

@@ -7,6 +7,9 @@
   hosts: linux-all
   become: yes
 
+  vars:
+    pip_package: python3-pip
+
   roles:
     - geerlingguy.git
     - geerlingguy.pip
@@ -31,8 +34,11 @@
 
     - name: Remove built in packages
       apt:
-        name: snapd
+        name: "{{ packages }}"
         state: absent
+      vars:
+        packages:
+          - snapd
       when: ansible_distribution == "Ubuntu"
 
     - name: install pip packages
@@ -41,3 +47,5 @@
       vars:
         pipPackages:
           - docker
+          - docker-compose
+        

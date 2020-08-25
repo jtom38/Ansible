@@ -1,0 +1,22 @@
+
+- name: Kube - Test
+  hosts: kube-master
+  become: true
+
+  tasks:
+    - name: copy configs to disk
+      copy:
+        dest: /tmp/kube/configs/
+        src: ./
+
+    # https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#creating-a-deployment
+    - name: run deployment
+      shell: kubectl apply -f /tmp/kube/configs/deployments/minecraft.yml
+
+    - name: Run Services
+      shell: kubectl apply -f /tmp/kube/configs/services/minecraft.yml
+
+    #- name: Remove configs from disk
+      #file:
+        #src: /tmp/kube/configs/
+        #state: absent

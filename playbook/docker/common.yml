@@ -12,6 +12,8 @@
       vars:
         pipPacks:
           - docker
+          - docker-compose
+          - jsondiff
       
     - name: install docker
       include_role:
@@ -21,4 +23,6 @@
       file:
         path: "/docker"
         state: directory
+
+      
 

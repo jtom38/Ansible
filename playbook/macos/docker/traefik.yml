@@ -1,0 +1,24 @@
+- name: deploy traefik
+  hosts: mediaserver-back
+  become: true
+
+  tasks:
+
+    - name: 
+
+    - name: 
+      docker_compose:
+        project_name: test_traefik
+        definition:
+          version: "3"
+          services:
+            reverse-proxy:
+              image: traefik:2.1
+              command: --api.insecure=true --providers.docker
+              ports:
+                - "80:80"
+                - 8080:8080
+              volumes:
+                - /var/run/docker.sock:/var/run/docker.sock
+              labels:
+                - traefik.http.routers.reverse-proxy.rule=Host('')

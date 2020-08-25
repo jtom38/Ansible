@@ -1,0 +1,110 @@
+
+- name: Configure Media Server
+  hosts: mediaserver-back
+  #hosts: swarm-host
+  become: yes
+  vars:
+    update: false
+    containers:
+      - mediaserver_search_1
+      - mediasback_son_1
+      - mediaserver_get_1
+      - mediaserver_rad_1
+    images:
+      - 'linuxserver/hydra2:latest'
+      - 'linuxserver/sonarr:latest'
+      - 'linuxserver/nzbget:v21.0-ls48'
+      - 'linuxserver/radarr:latest'
+  
+  tasks:
+    - name: stop and remove containers
+      docker_container:
+        name: "{{ item }}"
+        state: absent
+      loop: "{{ containers }}"
+      ignore_errors: yes
+
+    - name: Pull images
+      docker_image:
+        name: "{{ item }}"
+        source: pull
+      loop: "{{ images }}"
+
+    - name: deploy docker-compose
+      docker_compose:
+        project_name: mediaback
+        definition:
+          version: "2"
+          networks:
+            mediaserver:
+          services:
+            search:
+              image: "{{ images[0] }}"
+              restart: always
+              environment:
+                - PUID=0
+                - PGID=0
+                - TZ=Europe/London
+              ports:
+                - 5076:5076
+              volumes:
+                - "{{ pathConfig }}/hydra:/config"
+                - "{{ pathNfsTmp }}:/downloads"
+              networks:
+                - "{{ dockerNetwork }}"
+
+            get:
+              image: "{{ images[2] }}"
+              restart: always
+              environment:
+                - PUID=0
+                - PGID=0
+                - TZ=Europe/London
+              ports:
+                - 6789:6789
+              volumes:
+                - "{{ pathConfig }}/nzbget:/config"
+                - "{{ pathNfsTmp }}:/downloads"
+              networks:
+                mediaserver:
+
+            son:
+              image: "{{ images[1] }}"
+              restart: always
+              environment:
+                - PUID=0
+                - PGID=0
+                - TZ=Europe/London
+                - UMASK_SET=022 #optional
+              ports:
+                - 8989:8989 #http
+                #- 9898:9898 #https
+              volumes:
+                - "{{ pathConfig }}/sonarr:/config"
+                - "{{ pathNfsMedia }}:/tv"
+                - "{{ pathNfsTmp}}:/downloads"
+              networks:
+                mediaserver:
+              depends_on:
+                - search
+                - get
+
+            rad:
+              image: "{{ images[3] }}"
+              restart: always
+              environment:
+                - PUID=0
+                - PGID=0
+                - TZ=Europe/London
+                - UMASK_SET=022 #optional
+              ports:
+                - 7878:7878
+              volumes:
+                - "{{ pathConfig }}/radarr:/config"
+                - "{{ pathNfsMedia }}:/movies"
+                - "{{ pathNfsTmp }}:/downloads"
+              networks:
+                mediaserver:
+              depends_on:
+                - search
+                - get

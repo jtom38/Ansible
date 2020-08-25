@@ -1,0 +1,9 @@
+---
+
+pathDockerRoot:   "/docker"
+pathConfig:       "/docker/cfg"
+pathDownloads:    "/docker/downloads"
+pathNfsBackup:    "/docker/nfs/backup"
+pathNfsMedia:     "/docker/nfs/media"
+pathNfsSync:      "/docker/nfs/sync"
+pathNfsTmp:       "/docker/nfs/tmp"

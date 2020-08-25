@@ -3,7 +3,14 @@
 *.swp
 
 # Ignore the roles path as production roles are handled with requirements.yml
-roles/*
+roles/geerlingguy*
+roles/cloudalchemy*
+roles/jnv*
+roles/hispanico*
+roles/luther38*
+
+# Ignore collections
+collections/
 
 # OSX files
 .DS_Store

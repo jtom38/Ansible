@@ -1,0 +1,28 @@
+---
+
+apiVersion: apps/v1
+kind: deployment
+
+metadata:
+  labels:
+    app: sonarr
+  name: sonarr
+  namespace: default
+
+spec:
+  selector:
+    matchLabels:
+      app: sonarr
+
+  template:
+    metadata:
+      labels:
+        app: sonarr
+
+    spec:
+      containers:
+        - name: sonarr
+          image: linuxserver/sonarr:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8989
