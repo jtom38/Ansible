@@ -46,7 +46,7 @@ roles:
     name: geerlingguy.java
     version: master
 
-  #- src: geerlingguy.jenkins
+  - src: geerlingguy.jenkins
 
   - src: https://github.com/geerlingguy/ansible-role-nodejs
     name: geerlingguy.nodejs
@@ -76,7 +76,3 @@ roles:
   - src: https://github.com/hispanico/ansible-nginx-revproxy
     name: hispanico.nginx_revproxy
     version: master
-
-
-
-#collections:

@@ -3,6 +3,8 @@
 - name: Configure defaults for docker servers
   hosts: docker
   become: true
+  vars:
+    install_podmon: false
 
   tasks:
     - name: install pip packages
@@ -14,7 +16,23 @@
           - docker
           - docker-compose
           - jsondiff
-      
+
+    # Does not work yet
+    - name: Install Podmon
+      block:
+        - name: Add Repo
+          apt_repository:
+            repo: deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/
+            state: absent
+            filename: devel:kubic:libcontainers:stable.list
+
+        - name: update apt
+          apt:
+            update_cache: true
+            name: podmon
+      when: install_podmon == true
+
+
     - name: install docker
       include_role:
         name: geerlingguy.docker
@@ -24,5 +42,11 @@
         path: "/docker"
         state: directory
 
-      
+    - name: make 'docker' group
+      shell: groupadd docker
+      ignore_errors: true
+
+    - name: add users to 'docker' group
+      shell: gpasswd -a miharu docker
+      ignore_errors: true
 

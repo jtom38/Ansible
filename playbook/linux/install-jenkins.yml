@@ -3,31 +3,29 @@
 
 - name: install Jenkins
   hosts: jenkins
+  become: true
+  vars:
+    jenkins_package_state: latest
+    jenkins_http_port: 8080
+
+  roles:
+    - geerlingguy.java
+    - geerlingguy.jenkins
+    - geerlingguy.docker
 
   tasks:
-        - name: Install Java
-          become: yes
-          import_role:
-                name: geerlingguy.java
+    - name: Give jenkins docker group
+      shell: usermod -a -G docker jenkins
+      
+    - name: Backup Jenkins Jobs
+      become: yes
+      fetch:
+        src: /var/lib/jenkins/jobs/
+        dest: ./jenkins/jobs/
 
-        - name: Backup Jenkins Jobs
-          become: yes
-          fetch:
-                  src: /var/lib/jenkins/jobs/
-                  dest: ./jenkins/jobs/
-
-        - name: Install Jenkins
-          become: yes
-          import_role:
-                  name: geerlingguy.jenkins
-          vars:
-                  jenkins_package_state: latest
-                  jenkins_http_port: 8080
-
-        - name: UFW Allow Jenkins
-          become: yes
-          ufw:
-                rule: allow
-                port: 8080
-                comment: Jenkins
+    - name: UFW Allow Jenkins
+      ufw:
+        rule: allow
+        port: 8080
+        comment: Jenkins
 

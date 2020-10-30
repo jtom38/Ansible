@@ -1,7 +1,7 @@
 ---
 
 - name: install pihole on device
-  host: pihole
+  hosts: pihole
   become: yes
   vars:
     repo: "https://github.com/pi-hole/pi-hole.git"
@@ -22,7 +22,11 @@
         clone: no
         update: no
       register: repoInstalled
-      
+
+    - name: Install pihole
+      shell: 
+        chdir: ~/pihole/
+        
 
 
 
