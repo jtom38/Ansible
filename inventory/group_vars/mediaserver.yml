@@ -12,7 +12,7 @@ pathNfsMedia:   "{{ pathNfs }}/media"
 pathNfsSync:    "{{ pathNfs }}/sync"
 pathNfsTmp:     "{{ pathNfs }}/tmp"
 pathMedia:      "{{ pathDockerRoot }}/media"
-nfsAddress:     192.168.0.76
+nfsAddress:     192.168.1.85
 nfsDockerConfig: "docker"
 nfsMedia:       "plex"
 dockerNetwork:  mediaserver
