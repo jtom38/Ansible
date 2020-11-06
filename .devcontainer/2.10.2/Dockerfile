@@ -35,7 +35,6 @@ RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - \
 RUN pip3 install \
     setuptools \
     molecule \
-    #ansible==2.9.11 \
     ansible==2.10.2 \
     # Docker Support
     docker \
