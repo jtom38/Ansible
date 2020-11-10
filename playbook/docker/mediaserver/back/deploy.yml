@@ -1,139 +1,113 @@
 
 - name: Configure Media Server
   hosts: mediaserver-back
+  #hosts: swarm-host
   become: yes
   vars:
     update: false
+    containers:
+      - mediaback_search_1
+      - mediaback_son_1
+      - mediaback_get_1
+      - mediaback_rad_1
+    images:
+      - 'linuxserver/hydra2:latest'
+      - 'linuxserver/sonarr:latest'
+      - 'linuxserver/nzbget:v21.0-ls48'
+      - 'linuxserver/radarr:latest'
   
   tasks:
-
-    - docker_network:
-
-    - name: stop hydra
+    - name: stop and remove containers
       docker_container:
-        name: hydra
+        name: "{{ item }}"
         state: absent
+      loop: "{{ containers }}"
       ignore_errors: yes
 
-    
+    - name: Pull images
+      docker_image:
+        name: "{{ item }}"
+        source: pull
+      loop: "{{ images }}"
 
-    - name: hydra - Make Hydra
-      docker_container:
-        name: hydra
-        image: 'linuxserver/hydra2'
-        state: started
-        restart_policy: unless-stopped 
-        env:
-          PUID=0
-          PGID=0
-          TZ=Europe/London
-        ports:
-          - 5076:5076
-        volumes:
-          - "{{ pathConfig }}/hydra:/config"
-          #- "{{ pathDownloads }}:/downloads"
-          - "{{ pathNfsTmp }}:/downloads"
-        networks:
-          - name: "{{ dockerNetwork }}"
-            ipv4_address: 172.18.0.10
+    - name: deploy docker-compose
+      docker_compose:
+        project_name: mediaback
+        definition:
+          version: "3"
 
-    - name: sonarr - stop container
-      docker_container:
-        name: sonarr
-        state: absent
-      ignore_errors: yes
+          networks:
+            mediaback:
+              ipam:
+                driver: default
+                config:
+                  - subnet: 172.16.10.0/16
 
-    - name: sonarr - update image
-      shell: docker pull linuxserver/hydra2
-      when: update == true
+          services:
+            search:
+              image: "{{ images[0] }}"
+              restart: always
+              environment:
+                - PUID=0
+                - PGID=0
+                - TZ=Europe/London
+              ports:
+                - 5076:5076
+              volumes:
+                - "{{ pathConfig }}/hydra:/config"
+                - "{{ pathNfsTmp }}:/downloads"
+              networks:
+                mediaback:
+                  ipv4_address: 172.16.10.10
 
-    - name: sonarr - start 
-      docker_container:
-        name: sonarr
-        image: linuxserver/sonarr:latest
-        state: started
-        restart_policy: unless-stopped 
-        env:
-          # Use 0 because this runs as root
-          PUID=0
-          PGID=0
-          TZ=Europe/London
-          UMASK_SET=022 #optional
-        ports:
-          - 8989:8989 #http
-          #- 9898:9898 #https
-        volumes:
-          - "{{ pathConfig }}/sonarr:/config"
-          - "{{ pathNfsMedia }}:/tv"
-          #- "{{ pathDownloads }}:/downloads"
-          - "{{ pathNfsTmp}}:/downloads"
-        networks:
-          - name: "{{ dockerNetwork }}"
-            ipv4_address: 172.18.0.11
+            get:
+              image: "{{ images[2] }}"
+              restart: always
+              environment:
+                - PUID=0
+                - PGID=0
+                - TZ=Europe/London
+              ports:
+                - 6789:6789
+              volumes:
+                - "{{ pathConfig }}/nzbget:/config"
+                - "{{ pathNfsTmp }}:/downloads"
+              networks:
+                mediaback:
+                  ipv4_address: 172.16.10.11
+            son:
+              image: "{{ images[1] }}"
+              restart: always
+              environment:
+                - PUID=0
+                - PGID=0
+                - TZ=Europe/London
+                - UMASK_SET=022 #optional
+              ports:
+                - 8989:8989 #http
+                #- 9898:9898 #https
+              volumes:
+                - "{{ pathConfig }}/sonarr:/config"
+                - "{{ pathNfsMedia }}:/tv"
+                - "{{ pathNfsTmp}}:/downloads"
+              networks:
+                mediaback:
+                  ipv4_address: 172.16.10.12
 
-    - name: stop nzb
-      docker_container:
-        name: nzbget
-        state: absent
-      ignore_errors: yes
-
-    - name: nzb - update image
-      shell: docker pull linuxserver/nzbget
-      when: update == true
-
-    - name: Nzb - deploy
-      docker_container:
-        name: nzbget
-        image: linuxserver/nzbget:latest
-        state: started
-        restart_policy: unless-stopped 
-        env:
-          PUID=0
-          PGID=0
-          TZ=Europe/London
-        ports:
-          - 6789:6789
-        volumes:
-          - "{{ pathConfig }}/nzbget:/config"
-          #- "{{ pathDownloads }}:/downloads"
-          - "{{ pathNfsTmp }}:/downloads"
-        networks:
-          - name: "{{ dockerNetwork }}"
-            ipv4_address: 172.18.0.12
-
-    - name: radarr - stop
-      docker_container:
-        name: radarr
-        state: absent
-      ignore_errors: yes
-
-    - name: radarr - update
-      shell: docker pull linuxserver/radarr
-      when: update == true
-
-    - name: radarr - deploy
-      docker_container:
-        name: radarr
-        image: linuxserver/radarr:latest
-        state: started
-        restart_policy: unless-stopped
-        env:
-          PUID=0
-          PGID=0
-          TZ=Europe/London
-          UMASK_SET=022 #optional
-        ports:
-          - 7878:7878
-        volumes:
-          - "{{ pathConfig }}/radarr:/config"
-          - "{{ pathNfsMedia }}:/movies"
-          #- "{{ pathDownloads }}:/downloads"
-          - "{{ pathNfsTmp }}:/downloads"
-        networks:
-          - name : "{{ dockerNetwork }}"
-            ipv4_address: 172.18.0.13
-
-    #- name: remove old images
-    #  shell: docker image prune --force
-
-
+            rad:
+              image: "{{ images[3] }}"
+              restart: always
+              environment:
+                - PUID=0
+                - PGID=0
+                - TZ=Europe/London
+                - UMASK_SET=022 #optional
+              ports:
+                - 7878:7878
+              volumes:
+                - "{{ pathConfig }}/radarr:/config"
+                - "{{ pathNfsMedia }}:/movies"
+                - "{{ pathNfsTmp }}:/downloads"
+              networks:
+                mediaback:
+                  ipv4_address: 172.16.10.13

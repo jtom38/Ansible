@@ -3,61 +3,133 @@
   hosts: mediaserver-back
   become: true
   vars:
-    dvb_path_backup:    '/docker/nfs/backup'
-    dvb_backup_volume:  '/config'
-    discord_webhook: "{{ discord_mm_hook }}"
-    discord_name: 'Ansible Monitor - Backend'
-
+    backup: false
   tasks:
-    - include_role:
-        name: ansible_discord_webhook
-      vars:
-        discord_message: "Backup Job:\nJob is starting.  Services will be going offline and brought back up once the service has finished."
-
     - name: Ensure backup location is present
       file:
         path: /tmp/docker/backup
         state: directory
 
-    - block:
-        - name: stop hydra
+    - name: Backup Search
+      block:
+        - name: Check on old backups
+          find:
+            path: "{{ pathNfsBackup }}/hydra"
+            age: 4w
+          register: searchRes
+
+        - name: Remove old backups
+          file:
+            path: "{{ item.path }}"
+            state: absent
+          loop: "{{ searchRes.files }}"
+
+        - name: stop search
           docker_container:
-            name: hydra
+            name: mediaback_search_1
             state: stopped
 
-        - name: copy cfg to tmp
-          copy:
-            src: /docker/cfg/hydra
-            dest: "{{ pathBackup}}/hydra"
-            remote_src: true
+        - name: generate archive
+          community.general.archive:
+            path: /docker/cfg/hydra
+            dest: "{{ pathNfsBackup }}/hydra/backup.tgz"
 
-        - name: archive directory
-          archive:
-            path: "{{ pathBackup }}/hydra"
-            dest: "{{}}"
-          
+        - name: start search
+          docker_container:
+            name: mediaback_search_1
+            state: started
+      when: backup == true
 
-    - set_fact:
-        dvb_container_name: 'hydra'
-    - include_role:
-        name: ansible-role-docker-volume-backup
-    
-    - set_fact:
-        dvb_container_name: 'nzbget'
-    - include_role:
-        name: ansible-role-docker-volume-backup
-          
-    - set_fact:
-        dvb_container_name: 'sonarr'
-    - include_role: 
-        name: ansible-role-docker-volume-backup
+    - name: Backup son
+      block:
+        - name: Check on old backups
+          find:
+            path: "{{ pathNfsBackup }}/sonarr"
+            age: 4w
+          register: searchRes
 
-    - set_fact:
-        dvb_container_name: 'radarr'
-    - include_role:
-        name: ansible-role-docker-volume-backup
+        - name: Remove old backups
+          file:
+            path: "{{ item.path }}"
+            state: absent
+          loop: "{{ searchRes.files }}"
 
-    - include_role:
-        name: ansible_discord_webhook
-      vars:
-        discord_message: "Backup Job:\nJob has finished and services should be back online."
+        - name: stop son
+          docker_container:
+            name: mediaback_son_1
+            state: stopped
+
+        - name: generate archive
+          community.general.archive:
+            path: /docker/cfg/sonarr
+            dest: "{{ pathNfsBackup }}/sonarr/backup.tgz"
+
+        - name: start son
+          docker_container:
+            name: mediaback_son_1
+            state: started
+      when: backup == true
+
+    - name: Backup rad
+      block:
+        - name: Check on old backups
+          find:
+            path: "{{ pathNfsBackup }}/radarr"
+            age: 4w
+          register: searchRes
+
+        - name: Remove old backups
+          file:
+            path: "{{ item.path }}"
+            state: absent
+          loop: "{{ searchRes.files }}"
+
+        - name: stop rad
+          docker_container:
+            name: mediaback_rad_1
+            state: stopped
+
+        - name: generate archive
+          community.general.archive:
+            path: /docker/cfg/radarr
+            dest: "{{ pathNfsBackup }}/radarr/backup.tgz"
+
+        - name: start rad
+          docker_container:
+            name: mediaback_rad_1
+            state: started
+      when: backup == true
+
+    - name: Backup get
+      block:
+        - name: ensure backup dir is present
+          file:
+            path: "{{ pathNfsBackup }}/mediback_get_1"
+            state: directory
+
+        - name: Check on old backups
+          find:
+            path: "{{ pathNfsBackup }}/mediaback_get_1"
+            age: 4w
+          register: searchRes
+
+        - name: Remove old backups
+          file:
+            path: "{{ item.path }}"
+            state: absent
+          loop: "{{ searchRes.files }}"
+
+        - name: stop get
+          docker_container:
+            name: mediaback_get_1
+            state: stopped
+            
+        - name: generate archive
+          community.general.archive:
+            path: /docker/cfg/nzbget
+            dest: "{{ pathNfsBackup }}/mediaback_get_1/backup.tgz"
+
+        - name: start get
+          docker_container:
+            name: mediaback_get_1
+            state: started
