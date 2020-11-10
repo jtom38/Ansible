@@ -12,9 +12,18 @@
 
     - name: Backup Search
       block:
+        - set_fact:
+            pathLocal: /docker/cfg/hydra
+            container: mediaback_search_1
+
+        - name: ensure backup dir is present
+          file:
+            path: "{{ pathNfsBackup }}/{{ container }}"
+            state: directory
+
         - name: Check on old backups
           find:
-            path: "{{ pathNfsBackup }}/hydra"
+            path: "{{ pathNfsBackup }}/{{ container }}"
             age: 4w
           register: searchRes
 
@@ -26,25 +35,34 @@
 
         - name: stop search
           docker_container:
-            name: mediaback_search_1
+            name: "{{ container }}"
             state: stopped
 
         - name: generate archive
           community.general.archive:
-            path: /docker/cfg/hydra
-            dest: "{{ pathNfsBackup }}/hydra/backup.tgz"
+            path: "{{ pathLocal }}"
+            dest: "{{ pathNfsBackup }}/{{ container }}/backup.tgz"
 
-        - name: start search
+        - name: start start
           docker_container:
-            name: mediaback_search_1
+            name: "{{ container }}"
             state: started
-      when: backup == true
+      #when: backup == true
 
     - name: Backup son
       block:
+        - set_fact:
+            pathLocal: /docker/cfg/sonarr
+            container: mediaback_son_1
+
+        - name: ensure backup dir is present
+          file:
+            path: "{{ pathNfsBackup }}/{{ container }}"
+            state: directory
+
         - name: Check on old backups
           find:
-            path: "{{ pathNfsBackup }}/sonarr"
+            path: "{{ pathNfsBackup }}/{{ container }}"
             age: 4w
           register: searchRes
 
@@ -56,25 +74,34 @@
 
         - name: stop son
           docker_container:
-            name: mediaback_son_1
+            name: "{{ container }}"
             state: stopped
 
         - name: generate archive
           community.general.archive:
-            path: /docker/cfg/sonarr
-            dest: "{{ pathNfsBackup }}/sonarr/backup.tgz"
+            path: "{{ pathLocal }}"
+            dest: "{{ pathNfsBackup }}/{{ container }}/backup.tgz"
 
         - name: start son
           docker_container:
-            name: mediaback_son_1
+            name: "{{ container }}"
             state: started
-      when: backup == true
+      #when: backup == true
 
     - name: Backup rad
       block:
+        - set_fact:
+            pathLocal: /docker/cfg/radarr
+            container: mediaback_rad_1
+
+        - name: ensure backup dir is present
+          file:
+            path: "{{ pathNfsBackup }}/{{ container }}"
+            state: directory
+
         - name: Check on old backups
           find:
-            path: "{{ pathNfsBackup }}/radarr"
+            path: "{{ pathNfsBackup }}/{{ container }}"
             age: 4w
           register: searchRes
 
@@ -86,30 +113,35 @@
 
         - name: stop rad
           docker_container:
-            name: mediaback_rad_1
+            name: "{{ container }}"
             state: stopped
 
         - name: generate archive
           community.general.archive:
-            path: /docker/cfg/radarr
-            dest: "{{ pathNfsBackup }}/radarr/backup.tgz"
+            path: "{{ pathLocal }}"
+            dest: "{{ pathNfsBackup }}/{{ container }}/backup.tgz"
 
         - name: start rad
           docker_container:
-            name: mediaback_rad_1
+            name: "{{ container }}"
             state: started
-      when: backup == true
+            
+      #when: backup == true
 
     - name: Backup get
       block:
+        - set_fact:
+            pathLocal: /docker/cfg/nzbget
+            container: mediaback_get_1
+
         - name: ensure backup dir is present
           file:
-            path: "{{ pathNfsBackup }}/mediback_get_1"
+            path: "{{ pathNfsBackup }}/{{ container }}"
             state: directory
 
         - name: Check on old backups
           find:
-            path: "{{ pathNfsBackup }}/mediaback_get_1"
+            path: "{{ pathNfsBackup }}/{{ container }}"
             age: 4w
           register: searchRes
 
@@ -121,15 +153,16 @@
 
         - name: stop get
           docker_container:
-            name: mediaback_get_1
+            name: "{{ container }}"
             state: stopped
-            
+
         - name: generate archive
           community.general.archive:
-            path: /docker/cfg/nzbget
-            dest: "{{ pathNfsBackup }}/mediaback_get_1/backup.tgz"
+            path: "{{ pathLocal }}"
+            dest: "{{ pathNfsBackup }}/{{ container }}/backup.tgz"
 
         - name: start get
           docker_container:
-            name: mediaback_get_1
+            name: "{{ container }}"
             state: started
+            

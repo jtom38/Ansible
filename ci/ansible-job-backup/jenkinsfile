@@ -46,11 +46,19 @@ pipeline {
                 '''
             }
         }
-        stage('Run-mediaback-Backup') {
+        stage('Run-MediaBack-Backup') {
             steps {
                 sh '''#!/bin/bash
                 cd ./gitAnsible
                 ansible-playbook ./playbook/docker/mediaserver/back/backup.yml -i ./inventory
+                '''
+            }
+        }
+        stage('Run-MediaBack-Deploy') {
+            steps {
+                sh '''#!/bin/bash
+                cd ./gitAnsible
+                ansible-playbook ./playbook/docker/mediaserver/back/deploy.yml -i ./inventory
                 '''
             }
         }
