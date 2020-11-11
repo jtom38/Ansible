@@ -1,0 +1,81 @@
+---
+- name: testing backup plan
+  hosts: newsbot
+  become: true
+  vars:
+    backup: false
+  tasks:
+    - block:
+        - set_fact:
+            pathLocal: /docker/cfg/newsbot/database
+            container: newsbot_app_1
+
+        - name: "{{ container }} - Ensure backup dir is present"
+          file:
+            path: "{{ pathNfsBackup }}/{{ container }}"
+            state: directory
+
+        - name: "{{ container}} - Check on old backups"
+          find:
+            path: "{{ pathNfsBackup }}/{{ container }}"
+            age: 4w
+          register: searchRes
+
+        - name: "{{ container }} - Remove old backups"
+          file:
+            path: "{{ item.path }}"
+            state: absent
+          loop: "{{ searchRes.files }}"
+
+        - name: "{{ container }} - Stop container"
+          docker_container:
+            name: "{{ container }}"
+            state: stopped
+
+        - name: "{{ container }} - Generate backup"
+          community.general.archive:
+            path: "{{ pathLocal }}"
+            dest: "{{ pathNfsBackup }}/{{ container }}/backup.tgz"
+
+        - name: "{{ container }} - Start container"
+          docker_container:
+            name: "{{ container }}"
+            state: started
+
+    - block:
+        - set_fact:
+            pathLocal: /docker/cfg/newsbot_sin/database
+            container: newsbot_sin_1
+
+        - name: "{{ container }} - Ensure backup dir is present"
+          file:
+            path: "{{ pathNfsBackup }}/{{ container }}"
+            state: directory
+
+        - name: "{{ container}} - Check on old backups"
+          find:
+            path: "{{ pathNfsBackup }}/{{ container }}"
+            age: 4w
+          register: searchRes
+
+        - name: "{{ container }} - Remove old backups"
+          file:
+            path: "{{ item.path }}"
+            state: absent
+          loop: "{{ searchRes.files }}"
+
+        - name: "{{ container }} - Stop container"
+          docker_container:
+            name: "{{ container }}"
+            state: stopped
+
+        - name: "{{ container }} - Generate backup"
+          community.general.archive:
+            path: "{{ pathLocal }}"
+            dest: "{{ pathNfsBackup }}/{{ container }}/backup.tgz"
+
+        - name: "{{ container }} - Start container"
+          docker_container:
+            name: "{{ container }}"
+            state: started
+

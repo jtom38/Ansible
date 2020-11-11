@@ -1,0 +1,100 @@
+---
+
+- name: Deploy Newsbot
+  hosts: newsbot
+  become: true
+  vars:
+    image: jtom38/newsbot:0.6.0
+
+  tasks:
+    - name: stop containers
+      docker_container:
+        name: "{{ item }}"
+        state: absent
+      ignore_errors: true
+      loop:
+        - "newsbot_app_1"
+        - "newsbot_sin_1"
+
+    - name: Pull Images
+      docker_image:
+        name: "{{ image }}"
+        source: pull
+        state: present
+        force_source: true
+
+    - name: Deploy Newsbot
+      docker_compose:
+        project_name: newsbot
+        definition:
+          version: "2"
+
+          networks:
+            newsbot:
+              external: false
+
+          services:
+            app:
+              image: "{{ image }}"
+              environment:
+                NEWSBOT_POGO_ENABLED: 'true'
+                NEWSBOT_POGO_HOOK: "{{ mm_pogo_hooks }}"
+
+                NEWSBOT_PSO2_ENABLED: 'true'
+                NEWSBOT_PSO2_HOOK: "{{ mm_pso2_hooks }}"
+
+                NEWSBOT_FFXIV_ALL: 'false'
+                NEWSBOT_FFXIV_TOPICS: 'True'
+                NEWSBOT_FFXIV_NOTICES: 'false'
+                NEWSBOT_FFXIV_MAINTENANCE: 'false'
+                NEWSBOT_FFXIV_UPDATES: 'false'
+                NEWSBOT_FFXIV_STATUS: 'false'
+                NEWSBOT_FFXIV_HOOK: "{{ mm_ffxiv_hooks }}"
+
+                NEWSBOT_REDDIT_SUB_0: "ProgrammerHumor"
+                NEWSBOT_REDDIT_HOOK_0: "{{ mm_programmer_humor_hooks }}"
+
+                NEWSBOT_YOUTUBE_URL_0: 'https://www.youtube.com/user/loadingreadyrun/'
+                NEWSBOT_YOUTUBE_NAME_0: "LoadingReadyRun"
+                NEWSBOT_YOUTUBE_HOOK_0: "{{ mm_lrr_hooks }}"
+
+                NEWSBOT_TWITTER_API_KEY: "{{ twitter_api_key }}"
+                NEWSBOT_TWITTER_API_KEY_SECRET: "{{ twitter_api_key_secret }}"
+                NEWSBOT_TWITTER_USER_NAME_0: "GenshinImpact"
+                NEWSBOT_TWITTER_USER_HOOK_0: "{{ mm_genshin_hooks }}"
+
+                NEWSBOT_INSTAGRAM_USER_NAME_1: madmax_fluffyroad
+                NEWSBOT_INSTAGRAM_USER_HOOK_1: "{{ mm_happyfeed_hooks}}"
+                NEWSBOT_INSTAGRAM_TAG_NAME_1: corgi
+                NEWSBOT_INSTAGRAM_TAG_HOOK_1: "{{ mm_happyfeed_hooks }}"
+
+                NEWSBOT_TWITCH_CLIENT_ID: "{{ twitch_client_id }}"
+                NEWSBOT_TWITCH_CLIENT_SECRET: "{{ twitch_client_secret }}"
+
+              restart: always
+
+              networks:
+                - newsbot
+
+              volumes:
+                - /docker/cfg/newsbot/database:/app/mounts/database
+                - /docker/logs/newsbot/logs:/app/mounts/logs
+
+            sin:
+              image: "{{ image }}"
+              environment:
+                NEWSBOT_REDDIT_SUB_0: "Cringetopia"
+                NEWSBOT_REDDIT_HOOK_0: "{{ sin_newsbot_hooks }}"
+
+                NEWSBOT_REDDIT_SUB_1: "cursedfood"
+                NEWSBOT_REDDIT_HOOK_1: "{{ sin_newsbot_hooks }}"
+              restart: always
+
+              networks:
+                - newsbot
+
+              volumes:
+                - /docker/cfg/newsbot_sin/database:/app/mounts/database
+                - /docker/logs/newsbot_sin/logs:/app/mounts/logs
+
+

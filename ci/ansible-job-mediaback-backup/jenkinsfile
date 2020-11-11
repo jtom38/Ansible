@@ -7,7 +7,7 @@ pipeline {
         }
     }
     triggers {
-        cron('H 2 * * 7')
+        cron('H 2 * * 6')
     }
     environment {
         GIT_BRANCH='dev'
@@ -15,7 +15,8 @@ pipeline {
         ANSIBLE_VAULT_FILE='./.ansible_vault'
         ANSIBLE_HOST_KEY_CHECKING='False'
         DISCORD_HOOK=credentials('discord-mm-hook')
-        DISCORD_JOB_NAME='ansible-job-common'
+        DISCORD_JOB_NAME='ansible-job-mediaback-backup'
+        DISCORD_FOOTER='Jenkins Automation'
     }
     stages {
         stage('Checkout-Code') {
@@ -67,7 +68,7 @@ pipeline {
     post {
         always {
             sh 'rm -f ./gitAnsible/.ansible_vault'
-            discordSend description: "Job Status is "+currentBuild.currentResult+"!", footer: "Footer Text", link: env.BUILD_URL, result: currentBuild.currentResult, title: env.DISCORD_JOB_NAME, webhookURL: env.DISCORD_HOOK
+            discordSend description: "Job Status is "+currentBuild.currentResult+"!", footer: env.DISCORD_FOOTER, link: env.BUILD_URL, result: currentBuild.currentResult, title: env.DISCORD_JOB_NAME, webhookURL: env.DISCORD_HOOK
         }
         /*
         success {}

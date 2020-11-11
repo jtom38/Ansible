@@ -7,27 +7,21 @@ pipeline {
         }
     }
     triggers {
-        cron('H 2 * * 7')
+        cron('H 2 * * 6')
     }
     environment {
         GIT_BRANCH='dev'
         GIT_URL='https://github.com/jtom38/ansible.git'
         ANSIBLE_VAULT_FILE='./.ansible_vault'
-        
-        // This will allow us to not pass
         ANSIBLE_HOST_KEY_CHECKING='False'
-
         DISCORD_HOOK=credentials('discord-mm-hook')
-        DISCORD_JOB_NAME='ansible-job-common'
+        DISCORD_JOB_NAME='ansible-job-newsbot-backup'
         DISCORD_FOOTER='Jenkins Automation'
     }
     stages {
         stage('Checkout-Code') {
             steps {
-                sh ''' #!/bin/bash
-                #echo "Cleaning up old builds"
-                #rm ./gitAnsible -f -r
-                
+                sh ''' #!/bin/bash               
                 git clone ${GIT_URL} gitAnsible || echo "skip checkout"
                 cd ./gitAnsible
                 git checkout ${GIT_BRANCH}
@@ -53,27 +47,19 @@ pipeline {
                 '''
             }
         }
-        stage('Run-Linux-Common') {
+        stage('Run-MediaBack-Backup') {
             steps {
                 sh '''#!/bin/bash
                 cd ./gitAnsible
-                ansible-playbook ./playbook/linux/common.yml -i ./inventory
+                ansible-playbook ./playbook/docker/newsbot/backup.yml -i ./inventory
                 '''
             }
         }
-        stage('Run-Docker-Common') {
+        stage('Run-MediaBack-Deploy') {
             steps {
                 sh '''#!/bin/bash
                 cd ./gitAnsible
-                ansible-playbook ./playbook/docker/common.yml -i ./inventory 
-                '''
-            }
-        }
-        stage('Run-MediaServer-Common') {
-            steps {
-                sh '''#!/bin/bash
-                cd ./gitAnsible
-                ansible-playbook ./playbook/docker/mediaserver/common.yml -i ./inventory
+                ansible-playbook ./playbook/docker/newsbot/deploy.yml -i ./inventory
                 '''
             }
         }
