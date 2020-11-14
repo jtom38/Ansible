@@ -35,7 +35,21 @@
         - name: "{{ container }} - Generate backup"
           community.general.archive:
             path: "{{ pathLocal }}"
-            dest: "{{ pathNfsBackup }}/{{ container }}/backup.tgz"
+            dest: "{{ pathNfsBackup }}/{{ container }}/temp.tgz"
+
+        - name: "{{ container }} - Copy backup"
+          copy:
+            src: "{{ pathNfsBackup}}/{{ container }}/temp.tgz"
+            dest: "{{ pathNfsBackup}}/{{ container }}/backup.tgz"
+            backup: true
+            remote_src: true
+
+        - name: "{{ container }} - Remove temp file"
+          #shell: "rm {{ PathNfsBackup }}/{{ container }}/temp.tgz"
+          file:
+            path: "{{ pathNfsBackup }}/{{ container }}/temp.tgz"
+            state: absent
+
 
         - name: "{{ container }} - Start container"
           docker_container:
@@ -72,7 +86,19 @@
         - name: "{{ container }} - Generate backup"
           community.general.archive:
             path: "{{ pathLocal }}"
-            dest: "{{ pathNfsBackup }}/{{ container }}/backup.tgz"
+            dest: "{{ pathNfsBackup }}/{{ container }}/temp.tgz"
+
+        - name: "{{ container }} - Copy backup"
+          copy:
+            src: "{{ pathNfsBackup}}/{{ container }}/temp.tgz"
+            dest: "{{ pathNfsBackup}}/{{ container }}/backup.tgz"
+            backup: true
+            remote_src: true
+
+        - name: "{{ container }} - Remove temp file"
+          file:
+            path: "{{ pathNfsBackup }}/{{ container }}/temp.tgz"
+            state: absent
 
         - name: "{{ container }} - Start container"
           docker_container:
