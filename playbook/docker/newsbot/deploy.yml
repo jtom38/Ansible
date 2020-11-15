@@ -7,6 +7,9 @@
     image: jtom38/newsbot:0.6.0
 
   tasks:
+    - debug:
+        msg: "Deploying image: {{ image }}"
+
     - name: stop containers
       docker_container:
         name: "{{ item }}"
