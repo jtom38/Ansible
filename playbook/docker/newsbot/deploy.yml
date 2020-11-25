@@ -61,10 +61,10 @@
                 NEWSBOT_YOUTUBE_NAME_0: "LoadingReadyRun"
                 NEWSBOT_YOUTUBE_HOOK_0: "{{ mm_lrr_hooks }}"
 
-                NEWSBOT_TWITTER_API_KEY: "{{ twitter_api_key }}"
-                NEWSBOT_TWITTER_API_KEY_SECRET: "{{ twitter_api_key_secret }}"
-                NEWSBOT_TWITTER_USER_NAME_0: "GenshinImpact"
-                NEWSBOT_TWITTER_USER_HOOK_0: "{{ mm_genshin_hooks }}"
+                #NEWSBOT_TWITTER_API_KEY: "{{ twitter_api_key }}"
+                #NEWSBOT_TWITTER_API_KEY_SECRET: "{{ twitter_api_key_secret }}"
+                #NEWSBOT_TWITTER_USER_NAME_0: "GenshinImpact"
+                #NEWSBOT_TWITTER_USER_HOOK_0: "{{ mm_genshin_hooks }}"
 
                 NEWSBOT_INSTAGRAM_USER_NAME_1: madmax_fluffyroad
                 NEWSBOT_INSTAGRAM_USER_HOOK_1: "{{ mm_happyfeed_hooks}}"
