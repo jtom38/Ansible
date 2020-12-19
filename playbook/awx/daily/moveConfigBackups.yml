@@ -1,8 +1,0 @@
----
-
-- name: Move Container backups to external
-  hosts: mediaserver-back
-  become: true
-
-  tasks:
-    

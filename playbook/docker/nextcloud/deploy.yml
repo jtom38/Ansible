@@ -1,0 +1,93 @@
+---
+
+- name: Deploy NextCloud
+  hosts: nextcloud
+  become: true
+  vars:
+    removeLocalData: false
+    localData:
+      - /docker/cfg/nextcloud_app/
+      - /docker/cfg/nextcloud_db/
+    containers:
+      - nextcloud_db_1
+      - nextcloud_cache_1
+      - nextcloud_app_1
+
+  tasks:
+    - name: Remove Existing containers
+      docker_container:
+        name: "{{ item }}"
+        state: absent
+      loop: "{{ containers }}"
+
+    - name: Remove local data
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop: "{{ localData }}"
+      when: removeLocalData == True
+
+    - name: Deploy containers
+      docker_compose:
+        project_name: "nextcloud"
+        definition:
+          version: "3"
+
+          networks:
+            nextcloudBack:
+              #ipam:
+              #  driver: default
+              #  config:
+              #    - subnet: 172.16.30.0/16
+
+            #nextcloudFront:
+            #  external: false
+
+          services:
+            cache:
+              image: redis:6.0.9-alpine
+              ports:  
+                - 6379:6379
+              networks:
+                nextcloudBack:
+                  #ipv4_address: 172.16.30.10
+                  
+            db:
+              image: postgres:13.0-alpine
+              volumes:
+                - /docker/cfg/nextcloud_db/:/var/lib/postgresql/data
+              environment:
+                POSTGRES_USER: nextcloud
+                POSTGRES_PASSWORD: "pgcloud"
+                POSTGRES_DB: nextcloud
+              ports:
+                - 5432:5432
+              networks:
+                nextcloudBack:
+                  #ipv4_address: 172.16.30.20
+
+            app:
+              image: nextcloud:20.0.1
+              volumes:
+                - /docker/cfg/nextcloud_app/html:/var/www/html/
+                #- /docker/cfg/nextcloud_app/data:/var/www/html/data
+                #- /docker/cfg/nextcloud_app/custom_apps:/var/www/html/custom_apps
+                #- /docker/cfg/nextcloud_app/config:/var/www/html/config
+              environment:
+                #REDIS_HOST: nextcloud_cache_1
+                #REDIS_HOST_PORT: 6379
+
+                POSTGRES_DB: nextcloud
+                POSTGRES_USER: nextcloud
+                POSTGRES_PASSWORD: "pgcloud"
+                POSTGRES_HOST: nextcloud_db_1
+              ports:
+                - 8090:80
+                #- 8091:443
+              networks:
+                nextcloudBack:
+                  #ipv4_address: 172.16.30.30
+
+                
+
+                

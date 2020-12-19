@@ -3,7 +3,7 @@
   hosts: pihole
   become: true
   vars:
-    image: pihole/pihole:v5.1.2
+    image: pihole/pihole:v5.2.1
   tasks:
     - name: stop containers
       docker_container:
@@ -33,10 +33,6 @@
         definition:
           version: "2"
 
-          networks:
-            duckdns:
-              external: false
-
           services:
             app:
               image: "{{ image }}"
@@ -53,7 +49,7 @@
                 - /docker/pihole/etc/pihole/:/etc/pihole/
                 - /docker/pihole/etc/dnsmasq:/etc/dnsmasq.d/
               restart: always
-              network_mode: host
+              #network_mode: host
 
 
 

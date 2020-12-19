@@ -1,0 +1,71 @@
+pipeline {
+    environment {
+        GIT_URL='https://github.com/jtom38/docker-ansible.git'
+        GIT_PROJECT='docker-ansible'
+        GIT_BRANCH='main'
+        DOCKER_USER='jtom38'
+        DOCKER_IMAGE='ansible'
+        DOCKER_TAG_1='2.9.11'
+        DOCKER_TAG_2='2.10.3'
+        DOCKER_REPO_LOCAL='192.168.1.221:30002'
+        GITHUB_SITE='docker.pkg.github.com'
+        TF_VER='0.13.5'
+    }
+    agent {
+        kubernetes{
+            //defaultContainer 'docker'
+            yaml """
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+    - name: docker
+      image: docker
+      command: ['cat']
+      tty: true
+      volumeMounts:
+        - name: dockersock
+          mountPath: /var/run/docker.sock
+  volumes:
+    - name: dockersock
+      hostPath:
+        path: /var/run/docker.sock
+        """
+        }
+    }
+
+
+    stages {
+        stage('Pull-Source') {
+            steps {
+                sh "git clone ${GIT_URL}"
+                //sh 'git checkout ${GIT_BRANCH}'
+            }
+        }
+        stage('Build-Image-2.9') {
+            steps {
+                container('docker') {
+                    sh 'docker build -t ${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG_1} ${GIT_PROJECT}/ --build-arg ANSIBLE_VER=${DOCKER_TAG_1} --build-arg TF_VER=${TF_VER}'
+                }
+            }
+        }
+        stage('Build-Image-2.10') {
+            steps {
+                container('docker'){
+                    sh 'docker build -t ${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG_2} ${GIT_PROJECT}/ --build-arg ANSIBLE_VER=${DOCKER_TAG_2} --build-arg TF_VER=${TF_VER}'
+                }
+            }
+        }
+    }
+    post {
+        always {
+            container('docker') {
+                sh 'docker rmi ${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG_1}'
+                sh 'docker rmi ${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG_2}'
+                //catch ( echo 'Did not find ${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG_1} to remove.' )
+                //sh 'docker rmi ${DOCKER_REPO_LOCAL}/${DOCKER_IMAGE}:${DOCKER_TAG_1}'
+                //catch ( )
+            }
+        }
+    }
+}

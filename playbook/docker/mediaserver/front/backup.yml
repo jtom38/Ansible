@@ -2,27 +2,8 @@
 - name: backup frontend services
   hosts: mediaserver-front
   become: true
-  vars:
-    dvb_path_backup:    '/docker/nfs/backup'
-    dvb_backup_volume:  '/config'
-    dvb_container_name: 'plex'
-    discord_webhook:    "{{ discord_mm_hook }}"
-    discord_name:       "Ansible Monitor"
-    discord_type:       "fancy"
-    discord_title:      "Frontend - Backup"
-    #discord_color:      "12255487"
 
   tasks:
-    - include_role:
-        name: ansible_discord_webhook
-      vars:
-        discord_message: "Backup Job:\nJob is starting.  Services will be going offline and brought back up once the service has finished."
-        
-    - name: Ensure /tmp is ready
-      file:
-        path: '/tmp/docker/backup/plex'
-        state: directory
-
     - block:
       - name: stop container
         docker_container:
@@ -61,9 +42,6 @@
           dest:       '/docker/nfs/backup/plex/databases.gz'
           remote_src: true
           backup:     true
-
-    - block:
-
 
     - name: remove temp files
       file:

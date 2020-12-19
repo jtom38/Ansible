@@ -1,0 +1,33 @@
+---
+
+- name: Make NFS Host
+  hosts: l
+  become: true
+
+  tasks: 
+    - name: Install Requirements
+      apt:
+        state: present
+        name: nfs-kernel-server
+
+    - name: Enable NFS Service
+      systemd:
+        name: nfs-kernel
+        state: started
+        enabled: true
+
+    - name: Make shares
+      file:
+        state: directory
+        path: "{{ item }}"
+      with_items:
+        - '/mnt/nfsshare'
+
+    - name: Add update /etc/exports
+      lineinfile:
+        path: /etc/exports
+        line: "/mnt/nfsshare *(rw,sync,no_root_squash)"
+    
+    - name: Update NFS Exports
+      shell: exportfs -rav
+

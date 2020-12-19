@@ -1,5 +1,4 @@
 ---
-
 - name: deploy plex
   hosts: mediaserver-front
   become: true
@@ -48,7 +47,7 @@
           version: "3.4"
           services:
             app:
-              image: linuxserver/plex:latest
+              image: linuxserver/plex:version-1.20.3.3483-211702a9f
               environment:
                 - PUID=0
                 - PGID=0
@@ -61,7 +60,7 @@
                 - "{{ pathMedia }}:/tv"
 
             logs:
-              image: tautulli/tautulli
+              image: tautulli/tautulli:v2.6.0
               restart: always
               volumes:
                 - "{{ pathConfig }}/tatulli:/config"

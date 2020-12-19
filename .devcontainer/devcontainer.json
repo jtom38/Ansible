@@ -2,8 +2,9 @@
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.128.0/containers/azure-ansible
 {
 	"name": "Ansible Workspace",
-	//"dockerFile": "Dockerfile",
-	"image": "jtom38/ansible:2.10.3", 
+	"dockerFile": "Dockerfile",
+	//"image": "docker.pkg.github.com/jtom38/docker-ansible/ansible:2.10.3", 
+	//"image":"jtom38/ansible:2.10.3",
 	"mounts": [
 		// [Optional] Anisble Collections: Uncomment if you want to mount your local .ansible/collections folder.
 		// "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ansible/collections,target=/root/.ansible/collections,type=bind,consistency=cached",

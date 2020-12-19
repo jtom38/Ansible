@@ -3,44 +3,46 @@ all:
   children:
     linux-all:
       hosts:
-        192.168.1.241:
-        192.168.1.242:
-        #192.168.1.243:
+        #192.168.1.241:
+        #192.168.1.242:
+        192.168.1.243:
         192.168.1.244:
-        192.168.1.245: 
+        #192.168.1.245: 
         192.168.1.246: 
         #192.168.0.250:
+        #192.168.1.221:
+        #192.168.1.222:
+        #192.168.1.223:
+      children:
+        kube:
+        kube-fs:
+        docker:
+
     docker:
       hosts:
-        192.168.1.241:
+        #192.168.1.241:
         #192.168.1.242:
-        #192.168.1.243:
+        192.168.1.243:
         192.168.1.244:
-        192.168.1.245:
+        #192.168.1.245:
         #192.168.0.250:
-    master:
-      hosts:
-        192.168.1.250:
-
-    node:
-      hosts:
-        192.168.1.244:
+        192.168.1.221:
+      children:
+        kube:
 
     mediaserver:
-      hosts:
+      children:
         #192.168.1.243:
         #192.168.1.244:
         #mediaserver-front:
         mediaserver-back:
+
     mediaserver-back:
       hosts:
         192.168.1.244:
     mediaserver-front:
       hosts:
-        #192.168.1.243:
-    d1:
-      hosts:
-        192.168.1.241:
+        192.168.1.243:
           
     newsbot:
       hosts:
@@ -50,7 +52,8 @@ all:
         192.168.1.244:
     pihole:
       hosts:
-        192.168.1.245:
+        #192.168.1.245:
+        192.168.1.223:
     jenkins:
       hosts:
         192.168.1.246:
@@ -58,6 +61,24 @@ all:
       hosts:
         192.168.1.244:
 
-    auth:
+    kube:
+      children:
+        kube-master:
+        kube-node:
+
+    kube-master:
       hosts:
-        192.168.1.242:
+        192.168.1.221:
+      vars:
+        kubernetes_role: "master"
+
+    kube-node:
+      hosts:
+        192.168.1.223:
+        192.168.1.224:
+      vars:
+        kubernetes_role: "node"
+
+    kube-fs:
+      hosts:
+        192.168.1.222: 

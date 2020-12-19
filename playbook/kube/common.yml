@@ -1,0 +1,24 @@
+
+# Notes.
+# Disable swap for kube, it really wants it dead
+# https://askubuntu.com/questions/912623/how-to-permanently-disable-swap-file
+
+- name: Install Kube commons
+  hosts: kube
+  become: true
+  vars:    
+    #kubernetes_role: "master"
+    kubernetes_allow_pods_on_master: true
+    kubernetes_kubelet_extra_args: "--fail-swap-on=false"
+    kubernetes_enable_web_ui: true
+    kubernetes_web_ui_manifest_file: https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
+
+  tasks:
+    - include_role:
+        name: geerlingguy.docker
+
+    - name: Disable swap
+      shell: swapoff -a
+
+    - include_role:
+        name: geerlingguy.kubernetes            

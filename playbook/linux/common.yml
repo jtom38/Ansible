@@ -18,7 +18,7 @@
     - luther38.ohmyzsh
 
   tasks:
-    #- include: ansible_config.yml
+    #- include: ansible_config.yml 
 
     - name: install packages
       #ansible.builtin.apt:
@@ -35,15 +35,15 @@
           - sshpass
       when: ansible_distribution == "Ubuntu"
 
-    - name: Remove built in packages
+    #- name: Remove built in packages
       #ansible.builtin.apt:
-      apt:
-        name: "{{ packages }}"
-        state: absent
-      vars:
-        packages:
-          - snapd
-      when: ansible_distribution == "Ubuntu"
+    #  apt:
+    #    name: "{{ packages }}"
+    #    state: absent
+    #  vars:
+    #    packages:
+    #      - snapd
+    #  when: ansible_distribution == "Ubuntu"
 
     - name: install pip packages
       #ansible.builtin.pip:
