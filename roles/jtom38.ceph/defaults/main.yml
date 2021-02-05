@@ -1,0 +1,27 @@
+---
+# defaults file for jtom38.ceph
+
+# This defines what version to install
+ceph_release: 'octopus'
+
+# cephadm deploys the cluster in 'docker' or 'podmon'
+ceph_runtime: 'docker'
+
+# This defines the host that will be primary in the cluster.
+# Set this to true and it will find the IP and use it to bootstrap
+ceph_primary: false
+
+
+# Flip this to true if you want to see the stdout from the bootstraping of the cluster.
+ceph_bootstrap_log: false
+
+ceph_network: 192.168.1.1/24
+
+# role examples
+# monitor
+# ods
+
+ceph_hosts:
+  - hostname: localhost
+    address: 127.0.0.1
+    role: node

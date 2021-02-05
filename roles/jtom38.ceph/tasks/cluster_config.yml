@@ -1,0 +1,10 @@
+---
+
+- block:
+  - name: Define where ceph nodes can be found on the network.
+    shell: "ceph config set mon public_network {{ ceph_network }}"
+
+  - name: Add hosts to the cluster
+    shell: "ceph orch host add {{ item.hostname }}"
+    with_items: "{{ ceph_hosts }}"
+  when: ceph_primary == true

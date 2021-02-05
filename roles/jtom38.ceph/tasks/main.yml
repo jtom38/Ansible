@@ -1,0 +1,14 @@
+---
+# tasks file for jtom38.ceph
+
+- include: install.yml
+  tags: install
+
+- include: seed.yml
+  tags: seed
+
+- include: bootstrap.yml
+  tags: bootstrap
+
+- include: cluster_config.yml
+  tags: config

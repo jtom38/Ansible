@@ -1,0 +1,26 @@
+---
+
+- name: Checking for previous cluster
+  file:
+    dest: /etc/ceph/bootstrapped
+  ignore_errors: true
+  register: bootstrapped
+- block: 
+  - name: Bootstrap a ceph cluster (this is slow)
+    shell: "cephadm bootstrap --mon-ip {{ ansible_default_ipv4.address }}"
+    register: bootstrapLog
+
+  - name: Show Bootstrap log
+    debug:
+      msg: "{{ bootstrapLog }}"
+    when: ceph_bootstrap_log == true
+
+  - name: Write bootstrap log
+    template:
+      src: bootstrap.log.j2
+      dest: /etc/ceph/bootstrap.log
+
+  when: 
+    - ceph_primary == true
+    - bootstrapped.failed == true
+
