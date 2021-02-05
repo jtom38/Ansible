@@ -1,0 +1,17 @@
+
+
+- name: Install Ceph
+  hosts: ceph
+  become: true
+  vars:
+    ceph_hosts:
+      - hostname: k8sfs
+        address: 192.168.1.222
+      - hostname: k8sfs02
+        address: 192.168.1.225
+    ceph_network: 192.168.1.1/24
+
+  roles:
+    #- geerlingguy.docker
+    - jtom38/ceph
+

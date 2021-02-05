@@ -1,7 +1,7 @@
 ---
 
 - name: Make NFS Host
-  hosts: l
+  hosts: kube-fs
   become: true
 
   tasks: 
@@ -12,7 +12,7 @@
 
     - name: Enable NFS Service
       systemd:
-        name: nfs-kernel
+        name: nfs-mountd
         state: started
         enabled: true
 
@@ -23,11 +23,24 @@
       with_items:
         - '/mnt/nfsshare'
 
-    - name: Add update /etc/exports
+    - name: mount data disk
+      mount: 
+        path: /mnt/data
+        src: /dev/sdb
+        fstype: ext4
+        opts: rw,relatime
+        state: present
+
+    - name: Add /mnt/nfsshare as a NFS Share
       lineinfile:
         path: /etc/exports
         line: "/mnt/nfsshare *(rw,sync,no_root_squash)"
     
+    - name: Add /mnt/data as a NFS Share
+      lineinfile:
+        path: /etc/exports
+        line: "/mnt/data *(rw,sync,no_root_squash)"
+
     - name: Update NFS Exports
       shell: exportfs -rav
 

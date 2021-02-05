@@ -11,46 +11,9 @@
     pip_package: python3-pip
 
   roles:
-    - geerlingguy.git
-    - geerlingguy.pip
-    - geerlingguy.ntp
-    - jnv.unattended-upgrades
-    - luther38.ohmyzsh
-
-  tasks:
-    #- include: ansible_config.yml 
-
-    - name: install packages
-      #ansible.builtin.apt:
-      apt:
-        name: "{{ packages }}"
-        state: present
-      vars:
-        packages:
-          - python3
-          - python3-pip
-          - nfs-common
-          - tree
-          - ranger
-          - sshpass
-      when: ansible_distribution == "Ubuntu"
-
-    #- name: Remove built in packages
-      #ansible.builtin.apt:
-    #  apt:
-    #    name: "{{ packages }}"
-    #    state: absent
-    #  vars:
-    #    packages:
-    #      - snapd
-    #  when: ansible_distribution == "Ubuntu"
-
-    - name: install pip packages
-      #ansible.builtin.pip:
-      pip:
-        name: "{{ pipPackages}}"
-      vars:
-        pipPackages:
-          - docker
-          - docker-compose
-        
+    #- geerlingguy.git
+    #- geerlingguy.pip
+    #- geerlingguy.ntp
+    #- jnv.unattended-upgrades
+    #- jtom38.monit
+    - jtom38.linux_common

@@ -1,0 +1,12 @@
+---
+
+- name: Install and configure monit
+  hosts: linux-all
+  become: true
+  roles:
+    - jtom38.monit
+
+
+
+
+
