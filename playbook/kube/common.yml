@@ -8,7 +8,7 @@
   become: true
   vars:    
     #kubernetes_role: "master"
-    kubernetes_allow_pods_on_master: true
+    kubernetes_allow_pods_on_master: false
     kubernetes_kubelet_extra_args: "--fail-swap-on=false"
     kubernetes_enable_web_ui: true
     kubernetes_web_ui_manifest_file: https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
@@ -21,4 +21,13 @@
       shell: swapoff -a
 
     - include_role:
-        name: geerlingguy.kubernetes            
+        name: geerlingguy.kubernetes     
+
+    - name: Mount kube nfs share
+      mount:
+        src: "{{ kube_fs_ip }}:{{ kube_fs_mount }}"
+        path: "{{ kube_fs_mount }}"
+        fstype: nfs
+        boot: yes
+        state: mounted
+      ignore_errors: true
