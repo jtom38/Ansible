@@ -11,10 +11,10 @@
       - mediaback_get_1
       - mediaback_rad_1
     images:
-      - 'linuxserver/hydra2:latest'
-      - 'linuxserver/sonarr:latest'
-      - 'linuxserver/nzbget:v21.0-ls48'
-      - 'linuxserver/radarr:latest'
+      - 'linuxserver/nzbhydra2:version-v3.9.0'
+      - 'linuxserver/sonarr:version-2.0.0.5344'
+      - 'linuxserver/nzbget:version-v21.0'
+      - 'linuxserver/radarr:version-3.0.1.4259'
   
   tasks:
     - name: stop and remove containers
