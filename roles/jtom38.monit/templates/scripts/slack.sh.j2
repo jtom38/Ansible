@@ -1,0 +1,24 @@
+#!/bin/bash
+# Notice:
+# This is maintained by ansible.
+# Any changes made to this file outside of ansible will be lost.
+
+URL=https://{{ monit_alert_slack.slack_instance }}.slack.com/services/hooks/incoming-webhook?token={{ monit_alert_slack.webhook_token }}
+CHANNEL={{ monit_alert_slack.channel }}
+USERNAME={{ monit_alert_slack.username }}
+HOST={{ monit_hostname.stdout }}
+MONIT_URL=http://{{ ansible_host }}:{{ monit_http.port}}
+DATE=$(date "+%m/%d/%y %H:%M:%S")
+
+/usr/bin/curl \
+    -X POST \
+    -s \
+    --data-urlencode "payload={ \
+        \"channel\": \"${CHANNEL}\", \
+        \"username\": \"${USERNAME}\", \
+        \"pretext\": \"servername | $MONIT_DATE\", \
+        \"color\": \"danger\", \
+        \"icon_emoji\": \":warning:\", \
+        \"text\": \"**Host**: ${HOST}\n**Service**: ${MONIT_SERVICE}\n**Message**: ${MONIT_DESCRIPTION}\n**URL**: ${MONIT_URL}\n**When**: ${DATE}\" 
+    }" \
+    ${URL}
