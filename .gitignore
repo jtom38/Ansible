@@ -2,12 +2,10 @@
 *.retry
 *.swp
 
+*.ignore.*
+
 # Ignore the roles path as production roles are handled with requirements.yml
-roles/geerlingguy*
-roles/cloudalchemy*
-roles/jnv*
-roles/hispanico*
-roles/luther38*
+roles/*
 
 # Ignore collections
 collections/
