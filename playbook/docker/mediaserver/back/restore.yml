@@ -1,0 +1,25 @@
+---
+
+- name: restore container data
+  hosts: mediaserver-back
+  become: true
+  vars:
+    container: "nzbget"
+    mount: 'config'
+
+  tasks:
+    - name: stop container
+      docker_container:
+        name: hydra
+        state: stopped
+
+    - name: ensure restore point is present
+      file:
+        path: "/docker/cfg/{{ container }}"
+        state: directory
+
+    - name: unarchive old backup
+      unarchive:
+        remote_src: true
+        src: "/docker/nfs/backup/{{ container }}/{{ mount }}.gz"
+        dest: "/docker/cfg/"

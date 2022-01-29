@@ -1,0 +1,48 @@
+---
+
+# This maintains the portainer host
+
+- name: maintain portainer host
+  hosts: portainer
+  become: true
+  vars:
+    d_name: portainer
+    d_image: "{{ d_name }}/{{ d_name }}"
+    d_data: "/docker/{{ d_name }}"
+
+  tasks:
+    #- include_role:
+    #    name: common
+    #  vars:
+    #    docker: true
+
+    - name: Confirm portainer folder
+      file:
+        path: "{{ d_data }}"
+        state: directory
+
+    - name: Check is portainer exists
+      docker_container:
+        name: "{{ d_name }}"
+        image: "{{ d_image }}"
+        state: stopped
+      register: cfg_portainer
+      ignore_errors: true
+
+    - name: Update portainer image if we can
+      docker_image:
+        name: "{{ d_image }}"
+        tag: latest
+    
+    - name: deploy portainer container
+      docker_container:
+        name: "{{ d_name }}"
+        image: "{{ d_image }}"
+        restart_policy: unless-stopped 
+        ports:
+          - 8000:8000
+          - 9000:9000
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock 
+          - "{{ d_data }}/data:/data"
+

@@ -1,0 +1,12 @@
+---
+
+- name: Ensure InfluxDB is installed
+  hosts: influx
+  become: true
+  vars:
+    influxdb_install_version: stable
+
+  roles:
+    #- luther38.influxdb
+    - ansible-role-influxdb
+

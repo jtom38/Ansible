@@ -1,0 +1,9 @@
+---
+
+- name: NextCloud Role
+  hosts: localhost
+  vars:
+    nextcloud_network_name: nc
+
+  roles:
+    - ansible-role-nextcloud

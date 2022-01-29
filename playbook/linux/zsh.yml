@@ -1,0 +1,17 @@
+---
+
+- name: Install ohmyzsh
+  hosts: mediaserver-back
+  vars:
+    zsh_backup: false
+    zsh_ohmyzsh_install: /home/miharu
+    #zsh_download_url: 'https://raw.githubusercontent.com/geerlingguy/dotfiles/master/.zshrc'
+    #zsh_theme: robbyrussell
+    zsh_plugins: git ansible dotenv
+
+  roles:
+    # Debug role
+    - ansible-role-ohmyzsh
+
+    # prod
+    #- luther38.ohmyzsh

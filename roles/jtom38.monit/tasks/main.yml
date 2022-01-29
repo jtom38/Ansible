@@ -1,0 +1,120 @@
+---
+# tasks file for jtom38/monit
+
+# Application installs and checks
+- block:
+  - name: Install monit (Debian)
+    apt:
+      name: monit
+      state: present
+
+  - name: make script directory
+    file:
+      state: directory
+      dest: /etc/monit/scripts
+
+#  Slack Notification script
+- block:
+  - name: Deploy Slack notification script
+    template:
+      src: scripts/slack.sh.j2
+      dest: "{{ monit_slack_alert_script }}"
+    register: slack
+
+  - name: Make Slack notifiaction executable
+    file:
+      dest: "{{ monit_slack_alert_script }}"
+      mode: a+x
+  when: monit_alert_slack.deploy == true
+
+# Discord Notification script
+- block:
+  - name: Getting systems hostname
+    shell: hostname
+    register: monit_hostname
+
+  - name: Deploy Discord Notification script
+    template:
+      src: scripts/discord.sh.j2
+      dest: "{{ monit_discord_alert_script }}"
+    register: discord
+
+  - name: Make Discord script executable
+    file:
+      dest: "{{ monit_discord_alert_script }}"
+      mode: a+x
+  when: monit_alert_discord.deploy == true
+
+# Update configs
+- block: 
+  - name: Remove 'http.conf' if needed
+    file:
+      path: /etc/monit/conf.d/http.conf
+      state: absent
+    when: monit_http is not defined
+
+  - name: Check 'http.conf' config
+    template:
+      src: conf/http.conf.j2
+      dest: /etc/monit/conf.d/http.conf
+    register: http
+    when: monit_http is defined
+
+
+  - name: Remove 'processes.conf' if needed
+    file:
+      path: /etc/monit/conf.d/processes.conf
+      state: absent
+    when: monit_processes is not defined
+
+  - name: Check 'processes.conf' config
+    template:
+      src: conf/processes.conf.j2
+      dest: /etc/monit/conf.d/processes.conf
+    register: processes
+    when: monit_processes is defined
+
+
+  - name: Remove 'filesystems.conf' if needed
+    file:
+      path: /etc/monit/conf.d/filesystems.conf
+      state: absent
+    when: monit_filesystems is not defined
+
+  - name: Check 'filesystems.conf' config
+    template:
+      src: conf/filesystems.conf.j2
+      dest: /etc/monit/conf.d/filesystems.conf
+    register: filesystem
+    when: monit_filesystems is defined
+
+  - name: Remove 'hosts.conf' if needed
+    file:
+      path: /etc/monit/conf.d/hosts.conf
+      state: absent
+    when: monit_hosts is not defined
+
+  - name: Check 'hosts.conf' config
+    template:
+      src: conf/hosts.conf.j2
+      dest: /etc/monit/conf.d/hosts.conf
+    when: monit_hosts is defined
+    register: hosts
+
+
+  - name: Remove 'system.conf' if needed
+    file:
+      path: /etc/monit/conf.d/system.conf
+      state: absent
+    when: monit_system is not defined
+
+  - name: Check 'system.conf' config
+    template:
+      src: conf/system.conf.j2
+      dest: /etc/monit/conf.d/system.conf
+    register: system
+
+- name: Reload monit
+  shell: monit reload
+  register: reload
+

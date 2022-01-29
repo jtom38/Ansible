@@ -1,0 +1,30 @@
+---
+
+
+- name: Deploy Grafana in a container
+  hosts: localhost
+
+  tasks:
+    - name: Stop container
+      docker_container:
+        name: grafana
+        state: stopped
+
+    - name: destroy container
+      docker_container:
+        name: grafana
+        state: absent
+        
+    - name: Deploy container
+      docker_container:
+        name: grafana
+        image: grafana/grafana
+        state: started
+        env:
+          GF_INSTALL_PLUGINS=andig-darksky-datasource
+          #GF_SECURITY_ADMIN_PASSWORD=secret
+        ports:
+          - 3000:3000
+        volumes:
+          - "~/docker/grafana/data:/var/lib/grafana"
+          #- "~/docker/grafana/config:/etc/grafana/"

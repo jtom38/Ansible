@@ -1,0 +1,28 @@
+---
+
+- name: Install Infuxdb
+  hosts: localhost
+  vars:
+    images:
+      - influxdb
+      - telegraf
+      - chronograf
+
+  tasks:
+
+    - name: pull containers
+      docker_image:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ images }}"
+
+    - name: deploy influxdb
+      docker_container:
+        name: influxdb
+        image: influxdb
+        env:
+          INFLUX_ADMIN_ENABLED=true
+        ports:
+          - 8086:8086
+          - 8083:8083
+          #- 2003:2003

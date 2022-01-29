@@ -1,0 +1,19 @@
+---
+# defaults file for jtom38.linux_common
+
+users:
+  - ansible
+
+
+aptPackages:
+  - python3
+  - python3-pip
+  - nfs-common
+  - tree
+  - ranger
+  - sshpass
+  - mosh
+
+pipPackages:
+  - docker
+  - docker-compose

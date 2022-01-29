@@ -1,0 +1,78 @@
+# Ansible Galaxy requirements file
+# run 'ansible-galaxy install -r requirements.yml' to install what is defined in this file
+
+collections:
+- community.general
+- community.kubernetes
+
+roles:
+  - src: https://github.com/luther38/docker_volume_backup
+    name: luther38.docker_volume_backup
+    version: dev
+  
+  - src: https://github.com/luther38/nagioscore
+    name: luther38.nagioscore
+    version: dev
+  
+  - src: https://github.com/luther38/ansible_discord_webhook
+    name: luther38.discord_webhook
+    version: dev
+
+  - src: https://github.com/luther38/ansible-role-ohmyzsh
+    name: luther38.ohmyzsh
+    version: dev
+
+  - src: https://github.com/geerlingguy/ansible-role-ansible
+    name: geerlingguy.ansible
+    version: master
+  
+  - src: https://github.com/geerlingguy/ansible-role-awx
+    name: geerlingguy.awx
+    version: master
+  
+  - src: https://github.com/geerlingguy/ansible-role-docker
+    name: geerlingguy.docker
+    version: master
+
+  - src: https://github.com/geerlingguy/ansible-role-kubernetes
+    name: geerlingguy.kubernetes
+    version: 4.0.1
+    
+  - src: https://github.com/geerlingguy/ansible-role-git
+    name: geerlingguy.git
+    version: master
+
+  - src: https://github.com/geerlingguy/ansible-role-java
+    name: geerlingguy.java
+    version: master
+
+  - src: geerlingguy.jenkins
+
+  - src: https://github.com/geerlingguy/ansible-role-nodejs
+    name: geerlingguy.nodejs
+    version: master
+
+  - src: https://github.com/geerlingguy/ansible-role-pip
+    name: geerlingguy.pip
+    version: master
+
+  - src: https://github.com/geerlingguy/ansible-role-ntp
+    name: geerlingguy.ntp
+    version: master
+
+  - src: https://github.com/geerlingguy/ansible-role-certbot
+    name: geerlingguy.certbot
+    version: master
+
+  #- src: jnv.unattended-upgrades
+  - src: https://github.com/jnv/ansible-role-unattended-upgrades
+    name: jnv.unattended-upgrades
+    version: master
+  
+  - src: https://github.com/cloudalchemy/ansible-prometheus
+    name: cloudalchemy.prometheus
+    version: master
+
+  - src: https://github.com/hispanico/ansible-nginx-revproxy
+    name: hispanico.nginx_revproxy
+    version: master

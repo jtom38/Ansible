@@ -1,0 +1,48 @@
+---
+- name: Deploy Syncthing
+  hosts: mediaserver-back
+  become: true
+  vars:
+    #pathConfig: ~/docker/syncthing/config
+    # This will place the config in the common location
+    #pathConfig: '/docker/cfg/syncthing/'
+
+    # No data should be stored on the host device 
+    #pathData: ~/docker/syncthing/data
+    #pathData: '/docker/nfs/sync'
+
+
+  tasks:
+    - name: stop container
+      docker_container:
+        name: synct
+        state: stopped
+      ignore_errors: true
+
+    - name: Pull container
+      docker_image:
+        name: linuxserver/syncthing
+        source: pull
+
+    - name: Destroy old Container
+      docker_container:
+        name: synct
+        state: absent
+      ignore_errors: true
+    
+    - name: Deploy new container
+      docker_container:
+        name: synct
+        image: linuxserver/syncthing
+        state: started
+        restart_policy: unless-stopped
+        env:
+          PUID=0
+          PGID=0
+        ports:
+          - 8384:8384
+          - 22000:22000
+          - 21027:21027/udp
+        volumes:
+          - "{{ pathConfig }}/syncthing:/config"
+          - "{{ pathNfsSync }}:/data"

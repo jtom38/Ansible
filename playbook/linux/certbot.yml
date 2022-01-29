@@ -1,0 +1,11 @@
+---
+
+- name: deploy certbot
+  hosts: mediaserver
+  become: true
+  vars:
+    certbot_auto_renew_user: miharu
+    certbot_auto_renew_minute: "20"
+    certbot_auto_renew_hour: "5"
+  roles:
+    - geerlingguy.certbot

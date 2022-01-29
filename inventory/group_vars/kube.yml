@@ -1,0 +1,56 @@
+
+kube_fs_ip: 192.168.1.222
+kube_fs_mount: /mnt/data
+
+monit_processes:
+  - name: ssh
+    pidfile: '/var/run/sshd.pid'
+    matching: ''
+    start: '/bin/systemctl start ssh'
+    stop: '/bin/systemctl stop ssh'
+    timeout: '30 seconds'
+    when:
+    - type: 'totalmem'
+      usage: '> 80%'
+      cycles: 1
+      alert: false
+      exec: "{{ monit_discord_alert_script }}"
+
+  - name: 'kubelet'
+    pidfile: ''
+    matching: 'kubelet'
+    start: '/bin/systemctl start kubelet'
+    stop: '/bin/systemctl stop kubelet'
+    timeout: '30 seconds'
+    when:
+    - type: 'totalmem'
+      usage: '> 80%'
+      cycles: 1
+      alert: false
+      exec: "{{ monit_discord_alert_script }}"
+
+  - name: docker
+    pidfile: '/var/run/docker.pid'
+    matching: ''
+    start: '/bin/systemctl start docker'
+    stop: '/bin/systemctl stop docker'
+    timeout: '30 seconds'
+    when:
+    - type: 'totalmem'
+      usage: '> 80%'
+      cycles: 1
+      alert: false
+      exec: "{{ monit_discord_alert_script }}"
+
+  - name: containerd
+    pidfile: ''
+    matching: containerd
+    start: '/bin/systemctl start containerd'
+    stop: '/bin/systemctl stop containerd'
+    timeout: '30 seconds'
+    when:
+    - type: 'totalmem'
+      usage: '> 80%'
+      cycles: 1
+      alert: false
+      exec: "{{ monit_discord_alert_script }}"

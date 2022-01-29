@@ -1,0 +1,26 @@
+
+- name: Deploy Folding@home
+  hosts: mediaserver-back
+  become: true
+
+  tasks:
+    - name: deploy containers
+      docker_compose:
+        project_name: gitea
+        definition:
+          version: "2"
+          services:
+            app:
+              image: johnktims/folding-at-home:latest
+              restart: always
+              volumes:
+                - /docker/cfg/gitea/data:/data
+                - /etc/timezone:/etc/timezone:ro
+                - /etc/localtime:/etc/localtime:ro
+              ports:
+                - "3000:3000"
+                - "222:22"
+              depends_on:
+                - db
+
+

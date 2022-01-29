@@ -1,0 +1,56 @@
+pipeline {
+    //agent any
+    agent {
+        docker {
+            image 'ansible:2.9.11'
+            args '-u 0:0'
+        }
+    }
+    environment {
+        GIT_BRANCH='dev'
+        GIT_URL='https://github.com/jtom38/ansible.git'
+        ANSIBLE_VAULT_FILE='./.ansible_vault'
+        ANSIBLE_HOST_KEY_CHECKING='False'
+    }
+    stages {
+        stage('Checkout-Code') {
+            steps {
+                sh ''' #!/bin/bash
+                echo "Checking where we start"
+                pwd
+                
+                echo "Checking current dir"
+                ls
+                
+                echo "Checking active user"
+                whoami
+                
+                echo "Cleaning up old builds"
+                rm ./gitAnsible -f -r
+                
+                git clone ${GIT_URL} gitAnsible
+                cd ./gitAnsible
+                git checkout ${GIT_BRANCH}
+                '''
+            }
+        }
+        stage('Get-Galaxy-Requirements'){
+            steps {
+                sh '''#!/bin/bash
+                pwd
+                cd ./gitAnsible
+                ansible-galaxy install -r requirements.yml
+                '''
+            }
+        }
+        stage('Run-Linux-Common') {
+            steps {
+                withCredentials([file(credentialsId: 'ansible-vault-file', variable: 'FILE')]) {
+                    sh '''#!/bin/bash
+                    ansible-playbook ./gitAnsible/playbook/linux/common.yml -i ./gitAnsible/inventory --vault-password-file $FILE
+                    '''
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,27 @@
+---
+
+- name: debug
+  hosts: ceph-primary
+  become: true
+  vars:
+    ceph_network: 192.168.1.1/24
+    ceph_monitors:
+    - hostname: k8sfs
+      address: 192.168.1.222
+    - hostname: k8sfs02
+      address: 192.168.1.225
+  tasks:
+    - debug:
+        msg: "{{ item }}"
+      with_items: "{{ ceph_monitors }}"
+
+    - file:
+        path: /tmp/test
+        state: touch
+
+    - name: write file
+      lineinfile:
+        path: /tmp/test
+        line: "{{ item.address }} {{ item.hostname }}"
+      with_items: "{{ ceph_monitors }}"
+

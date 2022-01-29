@@ -1,0 +1,38 @@
+---
+- name: Deploy DuckDNS
+  hosts: duckdns
+  become: true
+  tasks:
+    - name: stop containers
+      docker_container:
+        name: duckdns_app_1
+        state: absent
+      ignore_errors: true
+    
+    - name: Pull images
+      docker_image:
+        name: linuxserver/duckdns:latest
+        source: pull
+
+    - name: deploy containers
+      docker_compose:
+        project_name: duckdns
+        definition:
+          version: "2"
+
+          networks:
+            duckdns:
+              external: false
+
+          services:
+            app:
+              image: linuxserver/duckdns:latest
+              environment:
+                SUBDOMAINS: luther38
+                TOKEN: "{{ duckdns_token }}"
+              restart: always
+              networks:
+                - duckdns
+
+
+

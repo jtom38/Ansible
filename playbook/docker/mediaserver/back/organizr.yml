@@ -1,0 +1,19 @@
+---
+
+- name: deploy Organizr
+  hosts: mediaserver-back
+  become: true
+
+  tasks:
+    - name: Deploy Organizr
+      docker_container:
+        name: mediaback_organizr_1
+        state: started
+        image: organizrtools/organizr-v2
+        restart_policy: unless-stopped 
+        ports:
+          - 8080:80
+        volumes:
+          - "{{ pathConfig }}/organizr:/config"
+        networks:
+          - name: "{{ dockerNetwork }}"

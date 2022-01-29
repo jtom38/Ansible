@@ -1,7 +1,0 @@
----
-# tasks file for kibana
-
-
-- name: install kibana on ubuntu
-  when: ansible_distribution == "Ubuntu"
-  include: ubuntu.yml

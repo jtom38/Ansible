@@ -1,0 +1,110 @@
+----
+
+- name: Deploy NextCloud on Kube
+  hosts: kube-master
+
+  tasks:
+    - name: define nextcloud storage
+      community.kubernetes.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: PersistentVolume
+
+          metadata:
+            name: nextcloud-pv
+
+          spec:
+            capacity:
+              storage: 10Gi
+            
+            accessModes:
+              - ReadWriteOnce
+            persistentVolumeReclaimPolicy: Retain
+            storageClassName: local-storage
+            local:
+              path: /kube/volumes/nextcloud
+            nodeAffinity:
+              required:
+                nodeSelectorTerms:
+                  - matchExpressions:
+                    - key: kubernetes.io/hostname
+                      operator: In
+                      values:
+                      - k8s-worker-01
+
+    - name: define storage claim
+      community.kubernetes.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: PersistentVolumeClaim
+          metadata:
+            name: nextcoud-pvc
+          spec:
+            accessModes:
+            - ReadWriteOnce
+            storageClassName: local-storage
+            resources:
+              requests:
+                storage: 10Gi
+
+    - name: Define NextCloud Service
+      community.kubernetes.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Service
+
+          metadata:
+            name: nextcloud-service
+
+          spec:
+            selector:
+              app: nextcloud      
+            
+            type: NodePort
+            ports:
+              - protocol: TCP
+                port: 8083
+                targetPort: 80
+
+    - name: Create NextCloud Deployment
+      community.kubernetes.k8s:
+        state: present
+        definition:
+          apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            name: nextcloud-deployment
+            labels:
+              app: nextcloud
+
+          spec:
+            replicas: 2 
+            
+            selector: 
+              matchLabels:
+                app: nextcloud
+
+            template:
+              metadata:
+                labels:
+                  app: nextcloud
+              
+              spec:
+                containers:
+                  - name: nextcloud
+                    image: nextcloud:latest
+                    #env:
+                    #  - name:
+                    ports:
+                      - containerPort: 80
+                    volumeMounts:
+                      - name: nextcloud-storage
+                        persistentVolumeClaim:
+                          claimName: nextcloud-pvc
+                volumes:
+                  - name: local-persistent-storage
+                    persistentVolumeClaim:
+                    claimName: nextcloud-pvc

@@ -2,10 +2,16 @@
 *.retry
 *.swp
 
+*.ignore.*
+
+# Ignore the roles path as production roles are handled with requirements.yml
+roles/*
+
+# Ignore collections
+collections/
 
 # OSX files
 .DS_Store
-
 
 # Ansible Inventory
 hosts
@@ -21,3 +27,4 @@ hosts.d
 
 # Debug files
 ansible-vars.all
+res.json

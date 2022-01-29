@@ -1,0 +1,55 @@
+---
+
+- name: restart all containers
+  hosts: mediaserver-back
+  become: true
+  vars:
+    host_ip: '192.168.0.76'
+    containers:
+      - hydra:
+          service_port: 5076
+      - nzbget:
+      - sonarr:
+      - radarr:
+
+  tasks:
+#    - name: stop containers
+#      docker_container:
+#        name: "{{ item }}"
+#        state: stopped
+#      loop: "{{ containers }}"
+
+#    - name: start containers
+#      docker_container:
+#        name: "{{ item }}"
+#        state: started
+#      loop: "{{ containers }}"
+
+#    - name: Wait 3 Minutes before checking services
+#      wait_for:
+#        timeout: 180
+
+    - name: Test Hydra
+      uri:
+        url: "http://{{ host_ip }}:{{ containers[0].service_port }}"
+        method: GET
+      ignore_errors: true
+      register: HydraStatus
+    
+    - debug:
+        msg: "{{ HydraStatus }}"
+
+#    - include_role:
+#        name: luther38.discord_webhook
+#      vars:
+#        discord_webhook: "{{ discord_test_hook }}"
+#        discord_message: "Hydra Status: {{ HydraStatus.status }}\nDebug: {{ HydraStatus.msg }}"
+#      when: HydraStatus.status == 200
+
+#    - include_role:
+#        name: luther38.discord_webhook
+#      vars:
+#        discord_webhook: "{{ discord_test_hook }}"
+#        discord_message: "Hydra Status: Offline\nDebug: {{ HydraStatus.msg }}"
+#      when: HydraStatus.status == -1
+

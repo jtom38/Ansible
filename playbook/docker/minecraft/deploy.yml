@@ -1,0 +1,55 @@
+---
+# https://hub.docker.com/r/itzg/minecraft-server
+# https://www.curseforge.com/minecraft/modpacks/ftb-ultimate-reloaded/files
+
+- name: Deploy minecraft
+  hosts: mediaserver-front
+  become: true
+  vars:
+    volData: "~/docker/minecraft/data"
+
+    #zip: FTBUltimateReloadedServer_1.9.0.zip
+    zip: "SkyFactory-4_Server_4.2.2.zip"
+
+  tasks:
+    - name: stop container
+      docker_container:
+        name: minecraft
+        state: absent
+      ignore_errors: true
+
+    - name: Ensure tmp is present
+      file:
+        path: /docker/mc/
+        state: directory
+
+    - name: Copy zip to the host
+      copy:
+        src: "~/Downloads/{{ zip }}"
+        dest: "/docker/mc/{{ zip }}"
+
+    # Curse is trash and curl and wget cant get the direct path
+    #- name: Download ModPack
+    #  get_url:
+    #    url: https://www.curseforge.com/minecraft/modpacks/ftb-ultimate-reloaded/download/2778970/file?client=n
+    #    dest: "{{ zip }}"
+
+    - name: compose deploy
+      docker_compose:
+        project_name: minecraft
+        definition:
+          version: '2'
+
+          services:
+            server:
+              image: itzg/minecraft-server
+              environment:
+                - EULA=TRUE
+                - TYPE=CURSEFORGE
+                - CF_SERVER_MOD={{ zip }}
+              restart: always
+              volumes:
+                - /docker/mc/:/data
+              ports:
+                - 25565:25565
+    

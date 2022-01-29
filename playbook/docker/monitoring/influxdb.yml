@@ -1,0 +1,96 @@
+---
+
+- name: Deploy InfluxDB
+  hosts: d1
+  become: true
+  vars:
+    containers:
+      - "monitor_db_1"
+      - "monitor_web_1"
+      - "monitor_alert_1"
+
+    images:
+      - 'influxdb:1.8-alpine'
+      - 'chronograf:1.8-alpine'
+      - 'kapacitor:1.5-alpine'
+      - 'grafana/grafana:6.7.2'
+
+
+  tasks:
+    - name: stop and remove containers
+      docker_container:
+        name: "{{ item }}"
+        state: absent
+      loop: "{{ containers }}"
+
+    - name: pull images
+      docker_image:
+        name: "{{ item }}"
+        source: pull
+      loop: "{{ images }}"
+
+    - name: Generate Telegraf vmware Config
+      include_role:
+        name: telegraf_cfg
+      vars:
+        telegraf_config_dir: /docker/influx/vmware/
+        telegraf_target: vmware
+        telegraf_vmware_hosts: "http://192.168.0.75/sdk, http://192.168.0.230/sdk"
+        telegraf_vmware_username: root
+        telegraf_vmware_password: Lm38iq
+
+    - name: Deploy Influx Stack
+      docker_compose:
+        project_name: monitor
+        definition:
+          version: "3"
+          networks:
+            influx:
+          services:
+            db:
+              image: "{{ images[0] }}"
+              restart: always
+              ports:
+                - 8086:8086
+              volumes:
+                - /docker/influx/db:/var/lib/influxdb
+              networks:
+                influx:
+
+            web:
+              image: "{{ images[1] }}"
+              restart: always
+              ports:
+                - 8888:8888
+              volumes:
+                - /docker/influx/web:/var/lib/chronograf
+              networks:
+                influx:
+
+            alert:
+              image: "{{ images[2] }}"
+              restart: always
+              ports:
+                - 9092:9092
+              volumes:
+                - /docker/influx/alert:/var/lib/kapacitor
+              networks:
+                influx:
+
+            vmware:
+              image
+
+              
+
+            #dash:
+            #  image: "{{ images[3] }}"
+            #  restart: always
+            #  ports:
+            #    - 3000:3000
+            #  volumes:
+
+              
+
+
+    
+

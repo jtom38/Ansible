@@ -1,0 +1,28 @@
+
+# Notes.
+# Disable swap for kube, it really wants it dead
+# https://askubuntu.com/questions/912623/how-to-permanently-disable-swap-file
+
+# The difference between the master and node is defined in the inventory.
+
+- name: Install Kube commons
+  hosts: kube_node01
+  become: true
+  vars:
+    backup_path: "/mnt/kube/backup/backup/media-son-config/media-son-config-12282021.011010.tar.gz"
+
+  tasks:
+    - name: Copy backup to node
+      ansible.builtin.copy:
+        src: "{{ backup_path }}"
+        dest: /tmp
+        mode: "0644"
+        remote_src: true
+
+    - name: Unzip
+      ansible.builtin.unarchive:
+        src: "{{ backup_path }}"
+        dest: "/tmp"
+        remote_src: true
+
+    #- name: Move Backups

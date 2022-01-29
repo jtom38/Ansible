@@ -7,28 +7,13 @@
   hosts: linux-all
   become: yes
 
-  tasks:
-    - name: install packages
-      apt:
-        name: "{{ packages }}"
-        state: present
-      vars:
-        packages:
-          - python3
-          - python3-pip
-          - nfs-common
-          - tree
-      when: ansible_distribution == "Ubuntu"
+  vars:
+    pip_package: python3-pip
 
-    - name: Install pip
-      include_role:
-        name: geerlingguy.pip
-
-    # https://galaxy.ansible.com/jnv/unattended-upgrades
-    - name: unattended-upgrades
-      become: true
-      include_role:
-        name: jnv.unattended-upgrades
-      vars:
-        #unattended_package_blacklist: []
-        unattended_automatic_reboot: true
+  roles:
+    #- geerlingguy.git
+    #- geerlingguy.pip
+    #- geerlingguy.ntp
+    #- jnv.unattended-upgrades
+    #- jtom38.monit
+    - jtom38.linux_common

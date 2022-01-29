@@ -1,0 +1,10 @@
+---
+
+- name: Install Telegraf
+  hosts: linux-all
+  become: true
+  vars:
+    telegraf_output_influxdb_urls: "['http://192.168.0.241:8086']"
+
+  roles:
+    - ansible-role-telegraf

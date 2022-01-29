@@ -1,0 +1,16 @@
+---
+
+- name: Deploy Synthing to dev env
+  hosts: localhost
+
+  tasks:
+    - include_role:
+        name: ansible_discord_webhook
+      vars:
+      
+
+#    - include_role:
+        #name: docker_syncthing
+      #vars:
+        #role_action: install
+

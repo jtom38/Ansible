@@ -1,0 +1,34 @@
+---
+
+- name: Deploy OwnCloud Test
+  hosts: localhost
+  vars:
+    ocName: 'owncloud'
+    ocImage: 'owncloud:8.1'
+    DockerRoot: '~/docker/owncloud'
+
+
+  tasks:
+    - name: stop container
+      docker_container:
+        name: "{{ ocName }}"
+        state: stopped
+      ignore_errors: true
+
+    - name: Pull image
+      docker_image:
+        name: "{{ ocImage }}"
+        source: pull
+
+    - name: Deploy Service
+      docker_container:
+        name: "{{ ocName }}"
+        image: "{{ ocImage }}"
+        ports:
+          - 80:80
+        volumes:
+          - "{{ DockerRoot }}/config:/var/www/html/config"
+          - "{{ DockerRoot }}/data:/var/www/html/data"
+          - "{{ DockerRoot }}/apps:/var/www/html/apps"
+
+

@@ -1,0 +1,120 @@
+---
+
+- name: Deploy NextCloud
+  hosts: localhost
+  vars:
+    dockerRoot: '~/docker/nextcloud'
+    image: nextcloud
+    c_name: nextcloud
+
+# Notes:
+# NextCloud has a command line tool that can be used from within docker.  
+# docker exec --user www-data nextcloud php occ
+# This is good to know when changes need to be made
+# - This playbook is made for testing on a personal device, not for production. 
+
+  tasks:
+    - name: Make NextCloud Network
+      docker_network:
+        name: nc
+        force: true
+        ipam_config:
+          - subnet: 172.19.10.0/24
+            gateway: 172.19.10.1
+            iprange: 172.19.10.0/26
+
+    - name: stop postgres if present
+      docker_container:
+        name: nextcloudsql
+        state: stopped
+      ignore_errors: true
+
+    - name: Pull postgres image
+      docker_image:
+        name: postgres:alpine
+        source: pull
+
+    - name: deploy postgres
+      docker_container:
+        name: nextcloudsql
+        image: postgres:alpine
+        state: started
+        env:
+          POSTGRES_PASSWORD: demo
+          POSTGRES_DB: nextcloud
+          POSTGRES_USER: nextcloud
+        ports:
+          - 5432:5432
+        volumes:
+          - "{{ dockerRoot }}/sql:/var/lib/postgresql/data"
+        networks:
+          - name: nc
+            ipv4_address: 172.19.10.11
+
+    - name: Stop Redis if present
+      docker_container:
+        name: nextcloudredis
+        state: stopped
+      ignore_errors: true
+    
+    - name: Pull redis image
+      docker_image:
+        name: redis:alpine
+        source: pull
+
+    - name: Deploy Redis
+      docker_container:
+        name: nextcloudredis
+        image: redis:alpine
+        state: started
+        ports:
+          - 6379:6379
+        networks:
+          - name: nc
+            ipv4_address: 172.19.10.13
+
+    - name: stop container if present
+      docker_container:
+        name: nextcloud
+        state: stopped
+      ignore_errors: true
+
+    - name: Pull image
+      docker_image:
+        name: nextcloud
+        source: pull
+
+    - name: deploy NextCloud
+      docker_container:
+        name: nextcloud
+        image: nextcloud
+        state: started
+        links:
+          - "nextcloudsql:postgres"
+        env:
+          POSTGRES_DB=nextcloud
+          POSTGRES_USER=nextcloud
+          POSTGRES_PASSWORD=demo
+          POSTGRES_HOST=172.19.10.11:5432
+          REDIS_HOST=172.19.10.13 
+          NEXTCLOUD_ADMIN_USER=admin
+          NEXTCLOUD_ADMIN_PASSWORD=admin
+        ports:
+          - 8080:80
+        volumes:
+          - "{{ dockerRoot }}/config:/var/www/html/config"
+          - "{{ dockerRoot }}/data:/var/www/html/data"
+          - "{{ dockerRoot }}/apps:/var/www/html/custom_apps"
+        networks:
+          - name: nc
+            ipv4_address: 172.19.10.12
+
+    - name: wait for nextcloud to start
+      wait_for:
+        timeout: 30
+
+    - name: Run db:add-missing-indices
+      shell: docker exec --user www-data nextcloud php occ db:add-missing-indices
+
+    - name: Run convert-filecache-bigint
+      shell: docker exec --user www-data nextcloud php occ db:convert-filecache-bigint

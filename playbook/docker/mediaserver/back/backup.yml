@@ -1,0 +1,168 @@
+---
+- name: testing backup plan
+  hosts: mediaserver-back
+  become: true
+  vars:
+    backup: false
+  tasks:
+    - name: Ensure backup location is present
+      file:
+        path: /tmp/docker/backup
+        state: directory
+
+    - name: Backup Search
+      block:
+        - set_fact:
+            pathLocal: /docker/cfg/hydra
+            container: mediaback_search_1
+
+        - name: ensure backup dir is present
+          file:
+            path: "{{ pathNfsBackup }}/{{ container }}"
+            state: directory
+
+        - name: Check on old backups
+          find:
+            path: "{{ pathNfsBackup }}/{{ container }}"
+            age: 4w
+          register: searchRes
+
+        - name: Remove old backups
+          file:
+            path: "{{ item.path }}"
+            state: absent
+          loop: "{{ searchRes.files }}"
+
+        - name: stop search
+          docker_container:
+            name: "{{ container }}"
+            state: stopped
+
+        - name: generate archive
+          community.general.archive:
+            path: "{{ pathLocal }}"
+            dest: "{{ pathNfsBackup }}/{{ container }}/backup.tgz"
+
+        - name: start start
+          docker_container:
+            name: "{{ container }}"
+            state: started
+      #when: backup == true
+
+    - name: Backup son
+      block:
+        - set_fact:
+            pathLocal: /docker/cfg/sonarr
+            container: mediaback_son_1
+
+        - name: ensure backup dir is present
+          file:
+            path: "{{ pathNfsBackup }}/{{ container }}"
+            state: directory
+
+        - name: Check on old backups
+          find:
+            path: "{{ pathNfsBackup }}/{{ container }}"
+            age: 4w
+          register: searchRes
+
+        - name: Remove old backups
+          file:
+            path: "{{ item.path }}"
+            state: absent
+          loop: "{{ searchRes.files }}"
+
+        - name: stop son
+          docker_container:
+            name: "{{ container }}"
+            state: stopped
+
+        - name: generate archive
+          community.general.archive:
+            path: "{{ pathLocal }}"
+            dest: "{{ pathNfsBackup }}/{{ container }}/backup.tgz"
+
+        - name: start son
+          docker_container:
+            name: "{{ container }}"
+            state: started
+      #when: backup == true
+
+    - name: Backup rad
+      block:
+        - set_fact:
+            pathLocal: /docker/cfg/radarr
+            container: mediaback_rad_1
+
+        - name: ensure backup dir is present
+          file:
+            path: "{{ pathNfsBackup }}/{{ container }}"
+            state: directory
+
+        - name: Check on old backups
+          find:
+            path: "{{ pathNfsBackup }}/{{ container }}"
+            age: 4w
+          register: searchRes
+
+        - name: Remove old backups
+          file:
+            path: "{{ item.path }}"
+            state: absent
+          loop: "{{ searchRes.files }}"
+
+        - name: stop rad
+          docker_container:
+            name: "{{ container }}"
+            state: stopped
+
+        - name: generate archive
+          community.general.archive:
+            path: "{{ pathLocal }}"
+            dest: "{{ pathNfsBackup }}/{{ container }}/backup.tgz"
+
+        - name: start rad
+          docker_container:
+            name: "{{ container }}"
+            state: started
+            
+      #when: backup == true
+
+    - name: Backup get
+      block:
+        - set_fact:
+            pathLocal: /docker/cfg/nzbget
+            container: mediaback_get_1
+
+        - name: ensure backup dir is present
+          file:
+            path: "{{ pathNfsBackup }}/{{ container }}"
+            state: directory
+
+        - name: Check on old backups
+          find:
+            path: "{{ pathNfsBackup }}/{{ container }}"
+            age: 4w
+          register: searchRes
+
+        - name: Remove old backups
+          file:
+            path: "{{ item.path }}"
+            state: absent
+          loop: "{{ searchRes.files }}"
+
+        - name: stop get
+          docker_container:
+            name: "{{ container }}"
+            state: stopped
+
+        - name: generate archive
+          community.general.archive:
+            path: "{{ pathLocal }}"
+            dest: "{{ pathNfsBackup }}/{{ container }}/backup.tgz"
+
+        - name: start get
+          docker_container:
+            name: "{{ container }}"
+            state: started
+            

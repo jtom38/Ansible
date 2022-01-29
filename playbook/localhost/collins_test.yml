@@ -1,0 +1,12 @@
+---
+
+- name: test collins role
+  hosts: localhost
+
+  tasks:
+    - name: ping collins
+      import_role:
+        name: collins
+      vars:
+        ping: true
+        auth_uri: http://localhost:9001

@@ -1,0 +1,25 @@
+---
+
+- name: restore frontend
+  hosts: mediaserver-front
+  become: true
+
+  tasks:
+    - name: stop container if active
+      docker_container:
+        name: plex
+        state: stopped
+      ignore_errors: true
+
+    - name: ensure restore point is ready
+      file:
+        path: '/docker/cfg/plex/Library/Application Support/Plex Media Server/Plug-in Support/Databases/'
+        state: directory
+    
+    - name: restore from backup
+      unarchive:
+        remote_src: true
+        src: '/docker/nfs/backup/plex/databases.gz'
+        dest: '/docker/cfg/plex/Library/Application Support/Plex Media Server/Plug-in Support/Databases/'
+
+    

@@ -1,0 +1,10 @@
+- name: Install Kube admin file into workstation
+  hosts: kube-master
+  become: true
+
+  tasks:
+  - name: Copy config file from master
+    ansible.builtin.fetch:
+      src: /etc/kubernetes/admin.conf
+      dest: ~/.kube/config
+      flat: yes

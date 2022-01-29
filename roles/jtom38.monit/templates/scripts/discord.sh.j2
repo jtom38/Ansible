@@ -1,0 +1,19 @@
+#!/bin/bash
+# Notice:
+# This is maintained by ansible.
+# Any changes made to this file outside of ansible will be lost.
+
+WEBHOOK={{ monit_alert_discord.webhook }}
+USERNAME={{ monit_alert_discord.username }}
+HOST={{ monit_hostname.stdout }}
+MONIT_URL=http://{{ ansible_host }}:{{ monit_http.port}}
+DATE=$(date "+%m/%d/%y %H:%M:%S")
+
+curl -X POST \
+    -H "Content-Type: application/json" \
+    -d "{ 
+        \"username\": \"${USERNAME}\", 
+        \"content\": \"**Host**: ${HOST}\n**Service**: ${MONIT_SERVICE}\n**Message**: ${MONIT_DESCRIPTION}\n**URL**: ${MONIT_URL}\n**When**: ${DATE} \"
+    }" \
+    ${WEBHOOK}
+

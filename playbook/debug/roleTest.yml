@@ -1,0 +1,39 @@
+---
+
+- name: testing role
+  hosts: localhost
+  vars:
+
+        
+  
+  tasks:
+#    - include_role:
+#        name: ansible_discord_webhook
+#      vars:
+#        discord_message: "HI!  I am nothing more then a test playbook\nPlease save me."
+
+      - name: Test if the container is alive
+        uri:
+          url: http://192.168.0.242:32401/web/index.html
+          method: GET
+        ignore_errors: true
+        register: PlexStatus
+
+      - debug:
+          msg: "{{ PlexStatus }}"
+
+      - name: Send Service Alive
+        include_role:
+          name: ansible_discord_webhook
+        vars:
+          discord_webhook: "{{ corgi_ansible }}"
+          discord_message: "Plex Status: OK\nDebug: {{ PlexStatus.msg }}"
+        when: PlexStatus.status == 200
+
+      - name: Service Offline
+        include_role:
+          name: ansible_discord_webhook
+        vars:
+          discord_webhook: "{{ corgi_ansible }}"
+          discord_message: "Plex Status: Offline\nDebug: {{ PlexStatus.msg }}"
+        when: PlexStatus.status == -1

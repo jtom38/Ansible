@@ -1,0 +1,60 @@
+---
+- name: Checking for cephadm
+  shell: cephadm version
+  ignore_errors: true
+  register: installed
+- block:
+  - name: Download cephadm
+    get_url:
+      url: https://github.com/ceph/ceph/raw/octopus/src/cephadm/cephadm
+      dest: /tmp/cephadm
+  
+  - name: Make cephadm execuable
+    file:
+      path: /tmp/cephadm
+      mode: +x
+
+  - name: Installing cephadm 
+    shell: /tmp/cephadm install
+
+  - name: Install ceph cli tools
+    shell: cephadm install ceph-common
+
+  - name: Prepare the host
+    shell: cephadm prepare-host
+
+  - name: Add ceph dir
+    file:
+      dest: /etc/ceph
+      state: directory
+
+  when: installed.failed == true  
+
+
+- name: Checking what release has been set
+  file:
+    dest: "/etc/ceph/release_{{ ceph_release }}"
+  ignore_errors: true
+  register: activeRelease
+- block:
+  - name: "Add {{ ceph_release }} release"
+    shell: "/tmp/cephadm add-repo --release {{ ceph_release }}"
+    register: release
+
+  - name: Write the current release to the disk
+    template:
+      src: release.j2
+      dest: "/etc/ceph/release_{{ ceph_release }}"
+
+  - name: Remove ceph gpg key (caused problems in dev)
+    file:
+      dest: /etc/apt/trusted.gpg.d/ceph.release.gpg
+      state: absent
+  when:
+    - activeRelease.state == 'absent'
+
+- name: Remove ceph from apt source (caused problems in dev)
+  file:
+    dest: /etc/apt/sources.list.d/ceph.list
+    state: absent
+

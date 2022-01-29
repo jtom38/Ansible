@@ -1,0 +1,87 @@
+---
+- block:
+  - name: Checking for existing cert
+    file:
+      path: /root/.ssh/ceph_admin
+    ignore_errors: true
+    register: cert
+
+  - debug:
+      msg: "{{ cert }}"
+
+  - name: Generate a new cert
+    shell: ssh-keygen -t rsa -b 4096 -N '' -f /.ssh/ceph_admin
+    when: cert.state == 'absent'
+
+  - name: Copy public key to a common area
+    copy:
+      src: /root/.ssh/ceph_admin.pub
+      dest: /tmp/ceph_admin.pub
+      remote_src: true
+
+  - name: Copy cert public to ansible control
+    fetch: 
+      src: /tmp/ceph_admin.pub
+      dest: /tmp/ceph_admin.pub
+      flat: true
+
+  - name: Check for cephadm public key
+    file:
+      path: '~/ceph.pub'
+    ignore_errors: true
+    register: cephPub
+
+#  - debug:
+#      msg: "{{ cephPub }}"
+
+  - name: Export cephadm public key
+    shell: ceph cephadm get-pub-key > ~/ceph.pub
+    when: cephPub.state == 'absent'
+
+  - name: Copy cephadm public key to ansible control
+    fetch:
+      src: /root/ceph.pub
+      dest: /tmp/ceph.pub
+      flat: true
+
+  - name: Configure SSH on primary
+    template:
+      src: ssh.config.j2
+      dest: /root/.ssh/config
+  when: ceph_primary == true
+
+- block:
+  - name: Copy cephadm public key to nodes
+    copy:
+      src: /tmp/ceph.pub
+      dest: /tmp/ceph.pub      
+
+  - name: Copy ceph_admin public key to nodes
+    copy:
+      src: /tmp/ceph_admin.pub
+      dest: /tmp/ceph_admin.pub    
+
+  - name: Add ceph_admin public key to authorized_key
+    authorized_key:
+      user: root
+      state: present
+      key: "{{ lookup('file', '/tmp/ceph_admin.pub') }}"
+  when: ceph_primary == false
+
+
+- name: Add cephadm public key to authorized_key
+  authorized_key:
+    user: root
+    state: present
+    key: "{{ lookup('file', '/tmp/ceph.pub') }}"
+
+- name: Backup the hosts file
+  copy:
+    src: /etc/hosts
+    dest: /etc/hosts.ceph
+
+- name: Define cluster servers in the hosts file
+  lineinfile:
+    path: /etc/hosts
+    line: "{{ item.address }} {{ item.hostname }}"
+  with_items: "{{ ceph_hosts }}"

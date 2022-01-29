@@ -1,0 +1,58 @@
+---
+- name: Install Kubernetes media requirements
+  hosts: kube_media_node
+  become: true
+
+  tasks:
+
+  - name: Generate directory for /kube/son/config
+    ansible.builtin.file:
+      path: /kube/son/config
+      state: directory
+      mode: '0755'
+
+  - name: Generate directory for /kube/son/download
+    ansible.builtin.file:
+      path: /kube/son/download
+      state: absent
+      mode: '0755'
+
+  - name: Generate directory for /kube/search/config
+    ansible.builtin.file:
+      path: /kube/search/config
+      state: directory
+      mode: '0755'
+
+  - name: Generate directory for /kube/rad/config
+    ansible.builtin.file:
+      path: /kube/rad/config
+      state: directory
+      mode: '0755'
+
+  - name: Add Cron job to rsync the data
+    ansible.builtin.cron:
+      name: "sync /kube/son/config"
+      cron_file: "son_config_backup"
+      job: rsync -r /kube/son/config/* /mnt/kube/backup/backup/media-son-config 
+      user: root
+      hour: 0
+      minute: 0
+
+  - name: Add Cron job to rsync the search config
+    ansible.builtin.cron:
+      name: "sync /kube/search/config"
+      cron_file: "search_config_backup"
+      job: rsync -r /kube/search/config/* /mnt/kube/backup/backup/media-search-config 
+      user: root
+      hour: 0
+      minute: 0
+
+  - name: Add Cron job to rsync the rad config
+    ansible.builtin.cron:
+      name: "sync /kube/rad/config"
+      cron_file: "rad_config_backup"
+      job: rsync -r /kube/rad/config/* /mnt/kube/backup/backup/media-rad-config 
+      user: root
+      hour: 0
+      minute: 0
+

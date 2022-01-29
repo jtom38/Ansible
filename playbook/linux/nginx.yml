@@ -1,0 +1,13 @@
+---
+
+- name: Ensure nginx is installed and configured
+  hosts: mediaserver-back
+  become: true
+
+  tasks:
+    - name: Ensure nginx is installed
+      apt:
+        name: nginx
+        state: present
+
+    

@@ -1,0 +1,55 @@
+---
+- name: backup frontend services
+  hosts: mediaserver-front
+  become: true
+
+  tasks:
+    - block:
+      - name: stop container
+        docker_container:
+          name: plex
+          state: stopped
+
+      - name: Copy db files
+        copy:
+          remote_src: true
+          src: '/docker/cfg/plex/Library/Application Support/Plex Media Server/Plug-in Support/Databases/'
+          dest: '/tmp/docker/backup/plex/'
+
+      - name: Copy logs
+        copy:
+          remote_src: true
+          src: '/docker/cfg/plex/Library/Application Support/Plex Media Server/Plug-in Support/Logs/'
+
+      - name: start container
+        docker_container:
+          name: plex
+          state: started
+
+      - name: Archive db backups
+        archive:
+          path: '/tmp/docker/backup/plex/'
+          dest: '/tmp/docker/backup/plex/databases.gz'
+
+      - name: Ensure nfs has a backup location
+        file:
+          path: '/docker/nfs/backup/plex'
+          state: directory
+
+      - name: Copy archive to a safe place
+        copy:
+          src:        '/tmp/docker/backup/plex/databases.gz'
+          dest:       '/docker/nfs/backup/plex/databases.gz'
+          remote_src: true
+          backup:     true
+
+    - name: remove temp files
+      file:
+        path: '/tmp/docker/backup/plex'
+        state: absent
+
+    - include_role:
+        name: ansible_discord_webhook
+      vars:
+        discord_message: "Backup Job:\nJob has finished and services should be back online."
+

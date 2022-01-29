@@ -1,0 +1,68 @@
+---
+
+- name: Ensure Mediaserver defaults
+  hosts: mediaserver
+  become: true
+  # vars are stored in inventory
+
+  tasks:
+    - name: "Ensure {{ pathNfsSync }} exists"
+      file:
+        path: "{{ item }}"
+        state: directory
+      vars:
+        folders:
+          - "{{ pathDockerRoot }}"
+          - "{{ pathConfig }}"
+          - "{{ pathNfs }}"
+          - "{{ pathNfsBackup }}"
+          - "{{ pathNfsMedia }}"
+          - "{{ pathNfsSync }}"
+      loop: "{{ folders }}"
+
+    - name: Ensure {{ pathNfsBackup }} is mounted
+      mount:
+        src: "{{ nfsAddress }}:/{{ nfsDockerConfig }}"
+        path: "{{ pathNfsBackup }}"
+        fstype: nfs
+        boot: yes
+        state: mounted
+
+    - name: Ensure {{ pathNfsMedia }} is mounted
+      mount:
+        src: "{{ nfsAddress }}:/{{ nfsMedia }}"
+        path: "{{ pathNfsMedia }}"
+        fstype: nfs
+        boot: yes
+        state: mounted   
+       
+    - name: "Ensure {{ pathNfsSync }} is mounted"
+      mount:
+        src: "{{ nfsAddress }}:/sync"
+        path: "{{ pathNfsSync }}"
+        fstype: nfs
+        boot: yes
+        state: mounted
+      # Going to ignore errors because some nodes are unable to touch this
+      ignore_errors: true
+
+    - name: "Ensure {{ pathNfsTmp }} is mounted"
+      mount:
+        src: "{{ nfsAddress }}:/tmp"
+        path: "{{ pathNfsTmp }}"
+        fstype: nfs
+        boot: yes
+        state: mounted
+      # Going to ignore errors because some nodes are unable to touch this
+      ignore_errors: true
+
+
+    - name: install docker pip package
+      pip:
+        name: docker
+        state: present
+        executable: pip3
+
+    - name: make docker network
+      docker_network:
+        name: "{{ dockerNetwork }}"
