@@ -1,0 +1,142 @@
+---
+# Inventory vars for the 'kube-master' host
+kubernetes_role: master
+
+
+
+monit_hosts:
+  - name: jenkins
+    group: kube
+    address: 192.168.1.247
+    when:
+    - http:
+        enabled: true
+        username: ''
+        password: ''
+        port: 80
+        protocol: http
+        request: '/login'
+      then:
+        alert: false
+        exec: "{{ monit_discord_alert_script }}"
+        restart: false
+
+  - name: pihole
+    group: kube
+    address: 192.168.1.248
+    when:
+    - http: 
+        enabled: true
+        username: ''
+        password: ''
+        port: 80
+        protocol: http
+        request: '/'
+      then:
+        alert: false
+        exec: "{{ monit_discord_alert_script }}"
+        restart: false
+  - name: nextcloud
+    group: kube
+    address: 192.168.1.249
+    when:
+    - http: 
+        enabled: true
+        username: ''
+        password: ''
+        port: 80
+        protocol: http
+        request: '/'
+      then:
+        alert: false
+        exec: "{{ monit_discord_alert_script }}"
+        restart: false
+
+  - name: search
+    group: kube
+    address: 192.168.1.251
+    when:
+    - http: 
+        enabled: true
+        protocol: http
+        username: ''
+        password: ''
+        port: 80
+        request: '/'
+      then:
+        alert: false
+        exec: "{{ monit_discord_alert_script }}"
+        restart: false
+  - name: get
+    group: kube
+    address: 192.168.1.252
+    when:
+    - http: 
+        enabled: true
+        username: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          63653338356435333664323436633063663132623530356162653130313435363761613633623266
+          3237623031353935626131346461303034373433366136640a323436613831646432356566626564
+          31653733346164383363373238343534613662613636346334646539636134386365656334333638
+          3037626533363965630a373537363563373566613237663635363132353563656262363939316635
+          3565
+        password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          32383461323230323435386635316166353461316237356138666335363734333338353131303536
+          3032383231323461336565303231316338666436313361630a343332383163333932363734653734
+          62653266623764333335663335623162616235323232653936663166393436633734303363373662
+          6330363538616166320a353063653863613862373834303331666138333836313530313132613962
+          3034
+        port: 80
+        protocol: http
+        request: '/'
+      then:
+        alert: false
+        exec: "{{ monit_discord_alert_script }}"
+        restart: false
+  - name: son
+    group: kube
+    address: 192.168.1.253
+    when:
+    - http: 
+        enabled: true
+        username: ''
+        password: ''
+        port: 80
+        protocol: http
+        request: '/'
+      then:
+        alert: false
+        exec: "{{ monit_discord_alert_script }}"
+        restart: false
+
+  - name: registry
+    group: kube
+    address: 192.168.1.250
+    when:
+    - http:
+        enabled: true
+        username: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          63653338356435333664323436633063663132623530356162653130313435363761613633623266
+          3237623031353935626131346461303034373433366136640a323436613831646432356566626564
+          31653733346164383363373238343534613662613636346334646539636134386365656334333638
+          3037626533363965630a373537363563373566613237663635363132353563656262363939316635
+          3565
+        password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          32383461323230323435386635316166353461316237356138666335363734333338353131303536
+          3032383231323461336565303231316338666436313361630a343332383163333932363734653734
+          62653266623764333335663335623162616235323232653936663166393436633734303363373662
+          6330363538616166320a353063653863613862373834303331666138333836313530313132613962
+          3034'
+        port: 443
+        protocol: https
+        request: '/v2'
+      then:
+        alert: false
+        exec: "{{ monit_discord_alert_script }}"
+        restart: false
+        
+
+

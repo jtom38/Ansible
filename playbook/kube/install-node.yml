@@ -3,19 +3,20 @@
 # Disable swap for kube, it really wants it dead
 # https://askubuntu.com/questions/912623/how-to-permanently-disable-swap-file
 
-- name: Install Kube commons
+# The difference between the master and node is defined in the inventory.
+
+- name: Install Kubernetes
   hosts: kube
   become: true
   vars:    
-    #kubernetes_role: "master"
     kubernetes_allow_pods_on_master: false
     kubernetes_kubelet_extra_args: "--fail-swap-on=false"
     kubernetes_enable_web_ui: true
     kubernetes_web_ui_manifest_file: https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
 
   tasks:
-    - include_role:
-        name: geerlingguy.docker
+    #- include_role:
+    #    name: geerlingguy.docker
 
     - name: Disable swap
       shell: swapoff -a
@@ -27,6 +28,15 @@
       mount:
         src: "{{ kube_fs_ip }}:{{ kube_fs_mount }}"
         path: "{{ kube_fs_mount }}"
+        fstype: nfs
+        boot: yes
+        state: mounted
+      ignore_errors: true
+
+    - name: Mount kube backups nfs share
+      mount:
+        src: "192.168.1.85:/kube/"
+        path: "/mnt/kube/backup"
         fstype: nfs
         boot: yes
         state: mounted

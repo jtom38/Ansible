@@ -3,46 +3,34 @@ all:
   children:
     linux-all:
       hosts:
-        #192.168.1.241:
-        #192.168.1.242:
-        192.168.1.243:
-        192.168.1.244:
-        #192.168.1.245: 
-        192.168.1.246: 
-        #192.168.0.250:
-        #192.168.1.221:
-        #192.168.1.222:
-        #192.168.1.223:
+        
       children:
         kube:
         kube-fs:
         docker:
+        jenkins:
+        ceph:
 
     docker:
       hosts:
-        #192.168.1.241:
-        #192.168.1.242:
         192.168.1.243:
         192.168.1.244:
-        #192.168.1.245:
-        #192.168.0.250:
-        192.168.1.221:
-      children:
-        kube:
+      
+        192.168.1.226:
 
     mediaserver:
       children:
         #192.168.1.243:
         #192.168.1.244:
-        #mediaserver-front:
-        mediaserver-back:
+        mediaserver-front:
+        #mediaserver-back:
 
     mediaserver-back:
       hosts:
         192.168.1.244:
     mediaserver-front:
       hosts:
-        192.168.1.243:
+        192.168.1.226:
           
     newsbot:
       hosts:
@@ -52,33 +40,55 @@ all:
         192.168.1.244:
     pihole:
       hosts:
-        #192.168.1.245:
         192.168.1.223:
+
     jenkins:
       hosts:
         192.168.1.246:
-    nextcloud:
-      hosts:
-        192.168.1.244:
 
-    kube:
+    ceph:
       children:
-        kube-master:
-        kube-node:
+        ceph-primary:
+        ceph-node:
 
+    ceph-primary:
+      hosts:
+        #fs01.k8s.home.local:
+          192.168.1.222:
+      vars:
+        ceph_primary: true
+
+    ceph-node:
+      hosts:
+        #fs02.k8s.home.local:
+          192.168.1.225:
+      vars:
+        ceph_primary: false
+
+kube:
+  children:
     kube-master:
-      hosts:
-        192.168.1.221:
-      vars:
-        kubernetes_role: "master"
-
     kube-node:
-      hosts:
-        192.168.1.223:
-        192.168.1.224:
-      vars:
-        kubernetes_role: "node"
 
-    kube-fs:
-      hosts:
-        192.168.1.222: 
+kube-master:
+  hosts:
+    # master.k8s.home.local:
+    192.168.1.221: # master
+
+kube-node:
+  hosts:
+    #node01.k8s.home.local:
+    #node02.k8s.home.local:
+    #node03.k8s.home.local:
+    192.168.1.223: # node01
+    # 192.168.1.224: # node02
+    # 192.168.1.226: # node03
+    # 192.168.1.225: # node04
+
+kube_media_node:
+  hosts:
+    192.168.1.223:
+
+kube-fs:
+  hosts:
+    fs01.k8s.home.local: 

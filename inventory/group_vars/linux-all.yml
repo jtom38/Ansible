@@ -120,3 +120,80 @@ zsh_plugins: git ansible dotenv
 
 # Used with 
 unattended_automatic_reboot: true
+
+# Monit
+
+
+
+monit_alert_discord:
+  deploy: true
+  webhook: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          36326161303166663837313931653436636531373434353964663766363566336231653063303831
+          6239666434326439333362313961663638303866653735640a626363363031646236613039353263
+          37343331353138303562653237636638623965656133353731383265343164393037323363643666
+          3863643462376538630a613430323030656530386638643537643430343339666561373863656539
+          35663934623331613332343538326334633361333566623466646235396134386237306536646238
+          65653634343537616534303237663763653065333333663266306237363561626132343638613363
+          31636133626635663666386663363332653465336265656433353332643638396235343934646432
+          34333839666637613234666562633130343536663534396433393164306135376435363434356565
+          39386439613861383433656666613231653636363864646564656564613866623934653539313036
+          6664326337363335343236383362663134383464396539356263
+  username: 'Monit'
+
+monit_processes:
+  - name: ssh
+    pidfile: '/var/run/sshd.pid'
+    matching: ''
+    start: '/bin/systemctl start ssh'
+    stop: '/bin/systemctl stop ssh'
+    timeout: '30 seconds'
+    when:
+    - type: 'totalmem'
+      usage: '> 80%'
+      cycles: 1
+      alert: false
+      exec: "{{ monit_discord_alert_script }}"
+
+
+monit_system:
+  hostname: "{{ ansible_hostname }}"
+  when:
+  - type: cpu
+    usage: "usage (user) > 80%"
+    cycles: 5
+    alert: false
+    exec: "{{ monit_discord_alert_script }}"
+  - type: cpu
+    usage: "usage (system) > 30%"
+    cycles: 5
+    alert: false
+    exec: "{{ monit_discord_alert_script }}"
+  - type: cpu
+    usage: "usage (wait) > 20%"
+    cycles: 5
+    alert: false
+    exec: "{{ monit_discord_alert_script }}"
+
+  - type: memory
+    usage: "usage > 90%"
+    cycles: 5
+    alert: false
+    exec: "{{ monit_discord_alert_script }}"
+    
+  - type: swap
+    usage: "usage > 50%"
+    cycles: 5
+    alert: false
+    exec: "{{ monit_discord_alert_script }}"
+
+monit_filesystems:
+  - name: root
+    path: /
+    when:
+    - usage: '> 80%'
+      tries: 1
+      cycles: 1
+      alert: false
+      exec: "{{ monit_discord_alert_script }}"
+
